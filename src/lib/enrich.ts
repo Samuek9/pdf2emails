@@ -26,8 +26,10 @@ function cap(s: string): string {
  * Enriquecimiento con OpenAI: dado el email y su dominio, infiere el cargo
  * profesional probable y la empresa. Resultado es una hipotesis de IA.
  */
-export async function enrichViaOpenAI(
-  emails: string[],
+const ENRICH_CHUNK = 50;
+
+async function enrichChunk(
+  chunk: string[],
   apiKey: string,
 ): Promise<Record<string, { title: string; company: string }>> {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -46,7 +48,7 @@ export async function enrichViaOpenAI(
           content:
             'Eres una herramienta de enriquecimiento B2B. Dada una lista de emails, devuelve SOLO un JSON como {"items":[{"email":"...","title":"cargo profesional probable en esa empresa","company":"nombre de la empresa del dominio"}]}. Si no puedes inferir el cargo, usa "". Idioma: coincide con el del email (es/en).',
         },
-        { role: "user", content: emails.join("\n") },
+        { role: "user", content: chunk.join("\n") },
       ],
     }),
   });
@@ -68,4 +70,19 @@ export async function enrichViaOpenAI(
     if (it?.email) map[it.email] = { title: it.title ?? "", company: it.company ?? "" };
   }
   return map;
+}
+
+export async function enrichViaOpenAI(
+  emails: string[],
+  apiKey: string,
+): Promise<Record<string, { title: string; company: string }>> {
+  const result: Record<string, { title: string; company: string }> = {};
+  for (let i = 0; i < emails.length; i += ENRICH_CHUNK) {
+    try {
+      Object.assign(result, await enrichChunk(emails.slice(i, i + ENRICH_CHUNK), apiKey));
+    } catch {
+      // Si una llamada falla, seguimos con el resto y devolvemos lo que sí se pudo.
+    }
+  }
+  return result;
 }
