@@ -27,6 +27,7 @@ export const de: Messages = {
   "drop.sampleError": "Das Beispiel-PDF konnte nicht geladen werden.",
   "drop.ocr": "Gescanntes Dokument? OCR ausführen, um den Text zu lesen",
   "drop.ocrRunning": "OCR wird ausgeführt… (kann etwas dauern)",
+  "drop.private": "🔒 100% private Garantie: Ihre PDF wird lokal auf Ihrem Gerät verarbeitet. Keine Datei wird an unsere Server gesendet oder in der Cloud gespeichert.",
   "result.filePages": "{pages} Seiten · {emails} E-Mails",
   "result.reset": "Anderes PDF",
   "result.metricFound": "E-Mails gefunden",
