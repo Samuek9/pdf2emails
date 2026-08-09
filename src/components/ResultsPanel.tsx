@@ -1,34 +1,21 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Copy, Download, FileText, Lock, RefreshCw, ShieldCheck } from "lucide-react";
+import { Check, Copy, Download, FileText, RefreshCw, ShieldCheck } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { downloadBlob, toCsv, toTxt } from "@/lib/csv";
 import { applyFilters } from "@/lib/emails";
-import { useLocalPrice } from "@/lib/fx";
 import { t } from "@/lib/i18n";
-import type { EmailCategory, ExtractOptions, ExtractedEmail, ParsedPdf, Pricing } from "@/lib/types";
-
-const FREE_PAGES = 2;
-const FREE_PREVIEW_COUNT = 5;
+import type { EmailCategory, ExtractOptions, ExtractedEmail, ParsedPdf } from "@/lib/types";
 
 interface ResultsPanelProps {
   parsed: ParsedPdf;
-  unlocked: boolean;
-  pricing: Pricing;
-  onRequestUnlock: (lockedCount: number) => void;
   onDownloaded: (format: "csv" | "txt") => void;
+  onVerify: () => void;
   onReset: () => void;
 }
 
-export function ResultsPanel({
-  parsed,
-  unlocked,
-  pricing,
-  onRequestUnlock,
-  onDownloaded,
-  onReset,
-}: ResultsPanelProps) {
+export function ResultsPanel({ parsed, onDownloaded, onVerify, onReset }: ResultsPanelProps) {
   const [options, setOptions] = useState<ExtractOptions>({
     excludeGeneric: true,
     excludePersonal: false,
@@ -51,22 +38,15 @@ export function ResultsPanel({
     }
   }, [parsed, result.totalEmails]);
 
-  const effectivelyUnlocked = unlocked || parsed.numPages <= FREE_PAGES;
-  const visibleEmails = result.emails.slice(0, FREE_PREVIEW_COUNT);
-  const lockedEmails = result.emails.slice(FREE_PREVIEW_COUNT);
-  const lockedCount = result.totalEmails - visibleEmails.length;
-  const showPaywall = !effectivelyUnlocked && lockedCount > 0;
-  const canDownload = effectivelyUnlocked || lockedCount === 0;
-
-  async function handleCopySamples() {
-    const samples = visibleEmails.map((e) => e.email).join("\n");
+  async function handleCopy() {
+    const all = result.emails.map((e) => e.email).join("\n");
     try {
-      await navigator.clipboard.writeText(samples);
+      await navigator.clipboard.writeText(all);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      trackEvent("samples_copied", { count: visibleEmails.length });
+      trackEvent("list_copied", { count: result.totalEmails });
     } catch {
-      // clipboard no disponible; se ignora.
+      // clipboard no disponible
     }
   }
 
@@ -129,10 +109,10 @@ export function ResultsPanel({
             onChange={(v) => setOptions((o) => ({ ...o, excludePersonal: v }))}
           />
         </div>
-        {visibleEmails.length > 0 && (
-          <button onClick={() => void handleCopySamples()} className="btn-secondary !py-2 text-xs">
+        {result.totalEmails > 0 && (
+          <button onClick={() => void handleCopy()} className="btn-secondary !py-2 text-xs">
             {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
-            {copied ? t("result.copied") : t("result.copySamples")}
+            {copied ? t("result.copied") : t("result.copyAll")}
           </button>
         )}
       </div>
@@ -141,68 +121,46 @@ export function ResultsPanel({
         {result.totalEmails === 0 ? (
           <div className="px-5 py-14 text-center">
             <p className="text-sm font-semibold text-slate-700">{t("result.emptyTitle")}</p>
-            <p className="mt-1 text-xs text-slate-400">
-              {t("result.emptySub")}
-            </p>
+            <p className="mt-1 text-xs text-slate-400">{t("result.emptySub")}</p>
           </div>
         ) : (
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                <th className="px-5 py-3">#</th>
+                <th className="px-5 py-3">{t("result.thIndex")}</th>
                 <th className="px-5 py-3">{t("result.thEmail")}</th>
                 <th className="px-5 py-3">{t("result.thType")}</th>
               </tr>
             </thead>
             <tbody>
-              {visibleEmails.map((entry, i) => (
+              {result.emails.map((entry, i) => (
                 <EmailRow key={entry.email} entry={entry} index={i + 1} />
               ))}
-              {showPaywall &&
-                lockedEmails.map((entry, i) => (
-                  <EmailRow key={entry.email} entry={entry} index={visibleEmails.length + i + 1} blurred />
-                ))}
-              {unlocked &&
-                lockedEmails.map((entry, i) => (
-                  <EmailRow key={entry.email} entry={entry} index={visibleEmails.length + i + 1} />
-                ))}
             </tbody>
           </table>
         )}
-
-        {showPaywall && (
-          <PaywallOverlay
-            pricing={pricing}
-            lockedCount={lockedCount}
-            onUnlock={() => onRequestUnlock(lockedCount)}
-            pages={parsed.numPages}
-            emails={result.totalEmails}
-          />
-        )}
       </div>
 
-      {canDownload && result.totalEmails > 0 && (
-        <div className="flex flex-col gap-3 border-t border-slate-100 bg-emerald-50/40 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-bold text-slate-800">
-              {unlocked ? t("result.unlocked") : t("result.allFree")}
-            </p>
-            <p className="text-xs text-slate-500">{t("result.ready", { n: result.totalEmails })}</p>
-          </div>
-          <div className="flex gap-2">
-            <button className="btn-primary" onClick={() => handleDownload("csv")}>
-              <Download size={16} /> {t("result.downloadCsv")}
+      {result.totalEmails > 0 && (
+        <div className="border-t border-slate-100 bg-emerald-50/40 px-5 py-5">
+          <p className="text-sm font-bold text-slate-800">{t("result.ready", { n: result.totalEmails })}</p>
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+            <button className="btn-secondary" onClick={() => handleDownload("csv")}>
+              <Download size={16} /> {t("result.rawBtn")}
             </button>
             <button className="btn-secondary" onClick={() => handleDownload("txt")}>
               <FileText size={16} /> {t("result.downloadTxt")}
             </button>
+            <button className="btn-primary" onClick={onVerify}>
+              <ShieldCheck size={16} /> {t("result.verifyBtn")}
+            </button>
           </div>
+          <p className="mt-2 text-xs font-medium text-red-600">{t("result.rawWarning")}</p>
         </div>
       )}
     </div>
   );
 }
-
 
 function MetricCard({
   label,
@@ -250,13 +208,6 @@ function FilterChip({
   );
 }
 
-const CATEGORY_STYLES: Record<EmailCategory, string> = {
-  corporate: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  generic: "border-amber-200 bg-amber-50 text-amber-700",
-  personal: "border-sky-200 bg-sky-50 text-sky-700",
-  unknown: "border-slate-200 bg-slate-50 text-slate-600",
-};
-
 const CATEGORY_KEYS: Record<EmailCategory, string> = {
   corporate: "result.catCorporate",
   generic: "result.catGeneric",
@@ -264,78 +215,16 @@ const CATEGORY_KEYS: Record<EmailCategory, string> = {
   unknown: "result.catOther",
 };
 
-function EmailRow({
-  entry,
-  index,
-  blurred,
-}: {
-  entry: ExtractedEmail;
-  index: number;
-  blurred?: boolean;
-}) {
+function EmailRow({ entry, index }: { entry: ExtractedEmail; index: number }) {
   return (
-    <tr className={`border-b border-slate-50 last:border-0 ${blurred ? "opacity-70" : ""}`}>
+    <tr className="border-b border-slate-50 last:border-0">
       <td className="px-5 py-2.5 text-xs text-slate-400">{index}</td>
-      <td
-        className={`px-5 py-2.5 font-mono text-sm text-slate-700 ${
-          blurred ? "blur-sm select-none" : ""
-        }`}
-      >
-        {entry.email}
-      </td>
+      <td className="px-5 py-2.5 font-mono text-sm text-slate-700">{entry.email}</td>
       <td className="px-5 py-2.5">
-        <span className={`chip ${CATEGORY_STYLES[entry.category]}`}>
+        <span className="chip border-slate-200 bg-slate-50 text-slate-600">
           {t(CATEGORY_KEYS[entry.category])}
         </span>
       </td>
     </tr>
-  );
-}
-
-function PaywallOverlay({
-  pricing,
-  lockedCount,
-  onUnlock,
-  pages,
-  emails,
-}: {
-  pricing: Pricing;
-  lockedCount: number;
-  onUnlock: () => void;
-  pages: number;
-  emails: number;
-}) {
-  const local = useLocalPrice(pricing.countryCode);
-  return (
-    <div className="absolute inset-0 z-10 flex items-end justify-center bg-gradient-to-t from-white via-white/60 to-transparent px-4 pb-6 pt-20">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-xl">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
-          <Lock size={22} className="text-emerald-700" />
-        </div>
-        <h4 className="mt-3 text-lg font-extrabold text-slate-900">
-          {lockedCount === 1 ? t("result.lockedOne", { n: lockedCount }) : t("result.lockedMany", { n: lockedCount })}
-        </h4>
-        <p className="mt-1 text-sm text-slate-500">
-          {t("result.valueMsg", { pages, emails, price: `$${pricing.priceUsd.toFixed(2)}` })}
-        </p>
-        <div className="mt-4">
-          <span className="text-4xl font-extrabold tracking-tight text-slate-900">
-            {`$${pricing.priceUsd.toFixed(2)}`}
-          </span>
-          <span className="ml-1 text-sm font-semibold text-slate-500">USD</span>
-          {pricing.region === "latam" && (
-            <p className="mt-1 text-xs font-bold text-emerald-600">
-              {local && t("result.latamPrice", { amount: local.amount, currency: local.currency })}
-            </p>
-          )}
-        </div>
-        <button onClick={onUnlock} className="btn-primary mt-5 w-full">
-          {t("result.unlockBtn")}
-        </button>
-        <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-slate-400">
-          <ShieldCheck size={14} /> {t("result.securePay")}
-        </p>
-      </div>
-    </div>
   );
 }

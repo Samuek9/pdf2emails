@@ -1,37 +1,34 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ArrowRight, CreditCard, Download, Landmark, ScanSearch, ShieldCheck, UploadCloud } from "lucide-react";
-import { CheckoutModal } from "@/components/CheckoutModal";
+import {
+  ArrowRight,
+  CreditCard,
+  Download,
+  Landmark,
+  ScanSearch,
+  ShieldCheck,
+  UploadCloud,
+} from "lucide-react";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { PdfDropzone } from "@/components/PdfDropzone";
 import { ResultsPanel } from "@/components/ResultsPanel";
+import { VerifyModal } from "@/components/VerifyModal";
 import { initAnalytics, trackEvent } from "@/lib/analytics";
 import { getClientCountry, getCountryName } from "@/lib/countries";
 import { parseAllEmails } from "@/lib/emails";
-import { getPricing } from "@/lib/pricing";
-import { useLocalPrice } from "@/lib/fx";
 import { t } from "@/lib/i18n";
-import type { Gateway, ParsedPdf } from "@/lib/types";
+import type { ParsedPdf } from "@/lib/types";
 
 export default function HomePage() {
   const country = useMemo(() => getClientCountry(), []);
-  const pricing = useMemo(() => getPricing(country), [country]);
-  const local = useLocalPrice(country);
-
   const [parsed, setParsed] = useState<ParsedPdf | null>(null);
-  const [unlocked, setUnlocked] = useState(false);
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
-  const [lockedCount, setLockedCount] = useState(0);
+  const [verifyOpen, setVerifyOpen] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
 
   useEffect(() => {
     void initAnalytics();
-    trackEvent("page_viewed", { country, region: pricing.region });
-    if (window.localStorage.getItem("pdf2emails_unlocked") === "1") {
-      setUnlocked(true);
-    }
-    // Solo al montar.
+    trackEvent("page_viewed", { country });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -39,31 +36,19 @@ export default function HomePage() {
     const { all, totalRaw } = parseAllEmails(text);
     setParsed({ text, numPages, fileName, all, totalRaw });
     setDownloaded(false);
-    setLockedCount(0);
-    setUnlocked(window.localStorage.getItem("pdf2emails_unlocked") === "1");
   }, []);
 
   const handleReset = useCallback(() => {
     setParsed(null);
     setDownloaded(false);
-    setLockedCount(0);
-  }, []);
-
-  const handleRequestUnlock = useCallback((count: number) => {
-    setLockedCount(count);
-    setCheckoutOpen(true);
-  }, []);
-
-  const handlePaymentSuccess = useCallback((gateway: Gateway | "demo") => {
-    window.localStorage.setItem("pdf2emails_unlocked", "1");
-    setUnlocked(true);
-    setCheckoutOpen(false);
-    setDownloaded(false);
-    trackEvent("unlock_applied", { gateway });
   }, []);
 
   const handleDownloaded = useCallback(() => {
     setDownloaded(true);
+  }, []);
+
+  const handleVerify = useCallback(() => {
+    setVerifyOpen(true);
   }, []);
 
   return (
@@ -81,16 +66,13 @@ export default function HomePage() {
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
             {t("hero.sub")}
-
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a href="#extractor" className="btn-primary !px-8 !py-3.5 !text-base">
               {t("hero.cta")}
               <ArrowRight size={18} />
             </a>
-            <span className="text-xs text-slate-400">
-              {t("hero.note")} {pricing.displayPrice}
-            </span>
+            <span className="text-xs text-slate-400">{t("hero.note")}</span>
           </div>
         </div>
       </section>
@@ -103,16 +85,14 @@ export default function HomePage() {
         ) : (
           <ResultsPanel
             parsed={parsed}
-            unlocked={unlocked}
-            pricing={pricing}
-            onRequestUnlock={handleRequestUnlock}
             onDownloaded={handleDownloaded}
+            onVerify={handleVerify}
             onReset={handleReset}
           />
         )}
       </section>
 
-      {downloaded && unlocked && parsed && (
+      {downloaded && parsed && (
         <div className="mx-auto mt-6 max-w-xl">
           <FeedbackWidget />
         </div>
@@ -122,28 +102,11 @@ export default function HomePage() {
         <h2 className="text-center text-3xl font-extrabold tracking-tight text-slate-900">
           {t("how.title")}
         </h2>
-        <p className="mx-auto mt-2 max-w-xl text-center text-sm text-slate-500">
-          {t("how.sub")}
-        </p>
+        <p className="mx-auto mt-2 max-w-xl text-center text-sm text-slate-500">{t("how.sub")}</p>
         <div className="mt-10 grid gap-6 sm:grid-cols-3">
-          <Step
-            index={1}
-            icon={<UploadCloud size={22} />}
-            title={t("how.step1.title")}
-            description={t("how.step1.desc")}
-          />
-          <Step
-            index={2}
-            icon={<ScanSearch size={22} />}
-            title={t("how.step2.title")}
-            description={t("how.step2.desc")}
-          />
-          <Step
-            index={3}
-            icon={<Download size={22} />}
-            title={t("how.step3.title")}
-            description={t("how.step3.desc")}
-          />
+          <Step index={1} icon={<UploadCloud size={22} />} title={t("how.step1.title")} description={t("how.step1.desc")} />
+          <Step index={2} icon={<ScanSearch size={22} />} title={t("how.step2.title")} description={t("how.step2.desc")} />
+          <Step index={3} icon={<Download size={22} />} title={t("how.step3.title")} description={t("how.step3.desc")} />
         </div>
       </section>
 
@@ -152,87 +115,48 @@ export default function HomePage() {
           {t("pricing.title")}
         </h2>
         <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-slate-500">
-          {t("pricing.sub", { price: pricing.displayPrice })}
-          
+          {t("pricing.sub2", { country: getCountryName(country) })}
         </p>
-        <div className="mx-auto mt-10 max-w-md">
+        <div className="mx-auto mt-10 grid max-w-3xl gap-6 sm:grid-cols-2">
           <div className="card relative p-6 ring-2 ring-emerald-500">
             <span className="absolute -top-3 left-5 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-bold text-white">
-              {t("pricing.yourPrice")}
+              {t("pricing.freeTitle")}
             </span>
-            {pricing.region === "latam" ? (
-              <>
-                <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">{t("pricing.latam")}</p>
-                <p className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">
-                  {`$${pricing.priceUsd.toFixed(2)}`} <span className="text-lg font-semibold text-slate-400">USD</span>
-                </p>
-                {local && <p className="mt-1 text-sm font-semibold text-slate-500">≈ {local.amount} {local.currency}</p>}
-                <ul className="mt-4 space-y-2 text-sm text-slate-600">
-                  <li>✓ {t("pricing.f1")}</li>
-                  <li>✓ {t("pricing.f2")}</li>
-                </ul>
-                <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-                  <Landmark size={14} /> dLocal Go
-                </p>
-              </>
-            ) : (
-              <>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{t("pricing.row")}</p>
-                <p className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">
-                  {`$${pricing.priceUsd.toFixed(2)}`} <span className="text-lg font-semibold text-slate-400">USD</span>
-                </p>
-                <p className="mt-1 text-sm font-semibold text-slate-500">Pago único · sin suscripción</p>
-                <ul className="mt-4 space-y-2 text-sm text-slate-600">
-                  <li>✓ {t("pricing.f4")}</li>
-                  <li>✓ Precio estándar global</li>
-                  <li>✓ {t("pricing.f5")}</li>
-                </ul>
-                <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-                  <CreditCard size={14} /> Wompi
-                </p>
-              </>
-            )}
+            <p className="text-4xl font-extrabold tracking-tight text-slate-900">{t("pricing.freePrice")}</p>
+            <p className="mt-1 text-sm font-semibold text-slate-500">{t("pricing.freeSub")}</p>
+            <ul className="mt-4 space-y-2 text-sm text-slate-600">
+              <li>✓ {t("pricing.freeF1")}</li>
+              <li>✓ {t("pricing.freeF2")}</li>
+              <li>✓ {t("pricing.freeF3")}</li>
+            </ul>
+          </div>
+          <div className="card relative p-6">
+            <span className="absolute -top-3 left-5 rounded-full bg-slate-700 px-3 py-1 text-[11px] font-bold text-white">
+              {t("pricing.verifyTitle")}
+            </span>
+            <p className="text-4xl font-extrabold tracking-tight text-slate-900">{t("pricing.verifyPrice")}</p>
+            <p className="mt-1 text-sm font-semibold text-slate-500">{t("pricing.verifySub")}</p>
+            <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+              <ShieldCheck size={14} className="text-emerald-600" /> {t("verify.price")}
+            </p>
           </div>
         </div>
-        <p className="mt-5 text-center text-xs text-slate-400">
-          {t("pricing.note", { country: getCountryName(country) })}
-
-        </p>
       </section>
 
       <section id="faq" className="mx-auto mt-24 max-w-3xl scroll-mt-20">
-        <h2 className="text-center text-3xl font-extrabold tracking-tight text-slate-900">
-          {t("faq.title")}
-        </h2>
+        <h2 className="text-center text-3xl font-extrabold tracking-tight text-slate-900">{t("faq.title")}</h2>
         <div className="mt-8 space-y-3">
-          <FaqItem
-            q={t("faq.q1")}
-            a={t("faq.a1")}
-          />
-          <FaqItem
-            q={t("faq.q2")}
-            a={t("faq.a2")}
-          />
-          <FaqItem
-            q={t("faq.q3")}
-            a={t("faq.a3")}
-          />
-          <FaqItem
-            q={t("faq.q4")}
-            a={t("faq.a4")}
-          />
-          <FaqItem
-            q={t("faq.q5")}
-            a={t("faq.a5")}
-          />
+          <FaqItem q={t("faq.q1")} a={t("faq.a1")} />
+          <FaqItem q={t("faq.q2")} a={t("faq.a2")} />
+          <FaqItem q={t("faq.q3")} a={t("faq.a3")} />
+          <FaqItem q={t("faq.q4")} a={t("faq.a4")} />
+          <FaqItem q={t("faq.q5")} a={t("faq.a5")} />
         </div>
       </section>
 
       <section className="mt-24 rounded-3xl bg-emerald-600 px-6 py-14 text-center text-white">
         <h2 className="text-3xl font-extrabold tracking-tight">{t("cta.title")}</h2>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-emerald-100">
-          {t("cta.sub")}
-        </p>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-emerald-100">{t("cta.sub")}</p>
         <a
           href="#extractor"
           className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-emerald-700 shadow-lg transition hover:bg-emerald-50"
@@ -241,12 +165,10 @@ export default function HomePage() {
         </a>
       </section>
 
-      <CheckoutModal
-        open={checkoutOpen}
-        onClose={() => setCheckoutOpen(false)}
-        onSuccess={handlePaymentSuccess}
-        country={country}
-        lockedCount={lockedCount}
+      <VerifyModal
+        open={verifyOpen}
+        onClose={() => setVerifyOpen(false)}
+        emailsCount={parsed ? parsed.all.length : 0}
       />
     </>
   );
@@ -268,7 +190,9 @@ function Step({
       <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
         {icon}
       </div>
-      <p className="mt-4 text-xs font-bold uppercase tracking-wider text-emerald-600">{t("how.stepLabel", { n: index })}</p>
+      <p className="mt-4 text-xs font-bold uppercase tracking-wider text-emerald-600">
+        {t("how.stepLabel", { n: index })}
+      </p>
       <h3 className="mt-1 text-lg font-bold text-slate-900">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-slate-500">{description}</p>
     </div>
