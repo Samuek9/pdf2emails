@@ -13,7 +13,7 @@ export const de: Messages = {
   "hero.sub":
     "Ziehe ein PDF hinein und wir erkennen alle enthaltenen E-Mails — bereit für den Export als CSV oder TXT. Ohne Anmeldung und ohne Hochladen auf Server.",
   "hero.cta": "Jetzt kostenlos testen",
-  "hero.note": "Kostenlos für PDFs bis 2 Seiten · Ab",
+  "hero.note": "Kostenlos für PDFs bis 2 Seiten · Ohne Anmeldung",
   "drop.title": "Ziehe dein PDF hierher oder",
   "drop.choose": "wähle eine Datei",
   "drop.sub": "PDF · bis {max} MB · 100% in deinem Browser · ohne Anmeldung",
@@ -130,7 +130,7 @@ export const de: Messages = {
   "how.step3.title": "Lade die Liste herunter",
   "how.step3.desc": "Exportiere alle E-Mails mit einem Klick als CSV oder TXT, bereit für dein CRM oder deine Kampagne.",
   "pricing.title": "Kostenlose Extraktion. Prüfung nur bei Bedarf.",
-  "pricing.sub2": "E-Mail-Extraktion 100% kostenlos. Du zahlst nur, wenn du deine Liste bereinigen und prüfen willst.",
+  "pricing.sub2": "Kostenlos für kleine PDFs. Schalte größere PDFs mit einer Einmalzahlung frei — Vorzugspreis für Lateinamerika.",
   "pricing.freeTitle": "Kostenlose Extraktion",
   "pricing.freePrice": "$0",
   "pricing.freeSub": "Unbegrenzte PDFs, ohne Anmeldung",

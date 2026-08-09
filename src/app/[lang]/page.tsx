@@ -208,11 +208,11 @@ export default function HomePage() {
           {t("pricing.title")}
         </h2>
         <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-slate-500">
-          {t("pricing.sub2", { country: getCountryName(country) })}
+          {t("pricing.sub2")}
         </p>
-        <div className="mx-auto mt-10 grid max-w-3xl gap-6 sm:grid-cols-2">
-          <div className="card relative p-6 ring-2 ring-emerald-500">
-            <span className="absolute -top-3 left-5 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-bold text-white">
+        <div className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-3">
+          <div className="card relative p-6">
+            <span className="absolute -top-3 left-5 rounded-full bg-slate-600 px-3 py-1 text-[11px] font-bold text-white">
               {t("pricing.freeTitle")}
             </span>
             <p className="text-4xl font-extrabold tracking-tight text-slate-900">{t("pricing.freePrice")}</p>
@@ -223,6 +223,23 @@ export default function HomePage() {
               <li>✓ {t("pricing.freeF3")}</li>
             </ul>
           </div>
+          <div className="card relative p-6 ring-2 ring-emerald-500">
+            <span className="absolute -top-3 left-5 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-bold text-white">
+              {t("pricing.yourPrice")}
+            </span>
+            <p className="text-4xl font-extrabold tracking-tight text-slate-900">
+              ${Number.isInteger(pricing.priceUsd) ? pricing.priceUsd : pricing.priceUsd.toFixed(2)}
+            </p>
+            <p className="mt-1 text-sm font-semibold text-slate-500">
+              {pricing.region === "latam" ? t("pricing.latam") : t("pricing.row")}
+            </p>
+            <ul className="mt-4 space-y-2 text-sm text-slate-600">
+              <li>✓ {t("pricing.f3")}</li>
+              <li>✓ {t("pricing.f1")}</li>
+              <li>✓ {t("pricing.f4")}</li>
+            </ul>
+          </div>
+
           <div className="card relative p-6">
             <span className="absolute -top-3 left-5 rounded-full bg-slate-700 px-3 py-1 text-[11px] font-bold text-white">
               {t("pricing.verifyTitle")}
@@ -234,6 +251,9 @@ export default function HomePage() {
             </p>
           </div>
         </div>
+        <p className="mx-auto mt-6 max-w-xl text-center text-xs text-slate-400">
+          {t("pricing.note", { country: getCountryName(country) })}
+        </p>
       </section>
 
       <section id="faq" className="mx-auto mt-24 max-w-3xl scroll-mt-20">

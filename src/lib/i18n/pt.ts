@@ -13,7 +13,7 @@ export const pt: Messages = {
   "hero.sub":
     "Arraste um PDF e detectamos todos os emails dentro, prontos para exportar como CSV ou TXT. Sem cadastro e sem enviar arquivos para servidores.",
   "hero.cta": "Experimentar grátis agora",
-  "hero.note": "Gratuito para PDFs de até 2 páginas · A partir de",
+  "hero.note": "Gratuito para PDFs de até 2 páginas · Sem cadastro",
   "drop.title": "Arraste seu PDF aqui ou",
   "drop.choose": "escolha um arquivo",
   "drop.sub": "PDF · até {max} MB · 100% processado no seu navegador · sem cadastro",
@@ -88,7 +88,7 @@ export const pt: Messages = {
   "how.step3.desc":
     "Exporte todos os emails para CSV ou TXT em um clique, prontos para seu CRM ou campanha.",
   "pricing.title": "Extração gratuita. Verificação só se você precisar.",
-  "pricing.sub2": "Extração de emails 100% gratuita. Você só paga se quiser limpar e verificar sua lista.",
+  "pricing.sub2": "Grátis para PDFs pequenos. Desbloqueie PDFs maiores com pagamento único, com preço preferencial para a América Latina.",
   "pricing.freeTitle": "Extração gratuita",
   "pricing.freePrice": "$0",
   "pricing.freeSub": "PDFs ilimitados, sem cadastro",

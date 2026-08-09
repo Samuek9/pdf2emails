@@ -13,7 +13,7 @@ export const en: Messages = {
   "hero.sub":
     "Drop a PDF and we detect every email inside — ready to export as CSV or TXT. No signup and no files uploaded to servers.",
   "hero.cta": "Try it free now",
-  "hero.note": "Free for PDFs up to 2 pages · From",
+  "hero.note": "Free for PDFs up to 2 pages · No signup",
   "drop.title": "Drag your PDF here or",
   "drop.choose": "choose a file",
   "drop.sub": "PDF · up to {max} MB · processed 100% in your browser · no signup",
@@ -155,7 +155,7 @@ export const en: Messages = {
   "how.step3.desc":
     "Export all emails to CSV or TXT in one click, ready for your CRM or campaign.",
   "pricing.title": "Free extraction. Verification only if you need it.",
-  "pricing.sub2": "Email extraction is 100% free. You only pay if you want to clean and verify your list.",
+  "pricing.sub2": "Free for small PDFs. Unlock larger PDFs with a one-time payment — preferential price for Latin America.",
   "pricing.freeTitle": "Free extraction",
   "pricing.freePrice": "$0",
   "pricing.freeSub": "Unlimited PDFs, no signup",
