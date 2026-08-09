@@ -51,7 +51,7 @@
 ## ⬜ Pendientes / siguiente paso
 
 - [x] **Subrutas por idioma** (`/es/`, `/en/`, `/pt/`, `/fr/`, `/de/`) con etiquetas `hreflang` y sitemap multilingüe. (La raíz `/` redirige 307 al idioma detectado.)
-- [ ] **Verificación SMTP real** (ping al servidor MX / proveedor tipo MillionVerifier/Reoon) para el upsell de pago; hoy usa MX (sintaxis+dominio).
+- [x] **Verificación SMTP real** conectada (QuickEmailVerification + Reoon + ZeroBounce + AbstractAPI), con fallback a MX.
 - [ ] Trust badges en la zona de subida (privacidad / compatibilidad / filtro inteligente).
 - [ ] Export a **Excel (.xlsx)**.
 - [ ] Términos y Condiciones + Política de Privacidad (obligatorios para pasarelas).
