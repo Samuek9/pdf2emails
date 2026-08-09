@@ -30,8 +30,12 @@ export function detectLocale(country: string): Locale {
   return "en";
 }
 
+const VALID_LOCALES: Locale[] = ["es", "en", "pt", "fr", "de"];
+
 export function getLocale(): Locale {
-  if (typeof window === "undefined") return "es";
+  if (typeof window === "undefined") return "en";
+  const seg = window.location.pathname.split("/")[1]?.toLowerCase();
+  if (seg && (VALID_LOCALES as string[]).includes(seg)) return seg as Locale;
   const cookie = document.cookie.split("; ").find((r) => r.startsWith("user_country="));
   const country = cookie ? cookie.split("=")[1] : (process.env.NEXT_PUBLIC_DEFAULT_COUNTRY ?? "US");
   return detectLocale(country);
