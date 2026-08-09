@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   ArrowRight,
   CreditCard,
@@ -17,7 +17,7 @@ import { ResultsPanel } from "@/components/ResultsPanel";
 import { StatsBar } from "@/components/StatsBar";
 import { CheckoutModal } from "@/components/CheckoutModal";
 import { VerifyModal } from "@/components/VerifyModal";
-import { initAnalytics, trackEvent } from "@/lib/analytics";
+import { trackEvent } from "@/lib/analytics";
 import { getClientCountry, getCountryName, isLatam } from "@/lib/countries";
 import { parseAllEmails } from "@/lib/emails";
 import { t } from "@/lib/i18n";
@@ -39,17 +39,16 @@ export default function HomePage() {
   const [cartSel, setCartSel] = useState<{ verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean }>({ verify: true, enrich: false, clean: false, phones: false, templates: false });
   const [cartEmail, setCartEmail] = useState("");
 
-  useEffect(() => {
-    void initAnalytics();
-    trackEvent("page_viewed", { country });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const handleParsed = useCallback((text: string, numPages: number, fileName: string) => {
     const { all, totalRaw } = parseAllEmails(text);
     try { const prev = Number(window.localStorage.getItem("pdf2emails_count") || 0); window.localStorage.setItem("pdf2emails_count", String(prev + all.length)); } catch { /* noop */ }
     setParsed({ text, numPages, fileName, all, totalRaw });
     setDownloaded(false);
+    trackEvent("extraction_completed", {
+      page_count: numPages,
+      total_emails: all.length,
+      total_raw_matches: totalRaw,
+    });
   }, []);
 
   const handleReset = useCallback(() => {
@@ -70,16 +69,18 @@ export default function HomePage() {
       const emails = parsed.all.map((e) => e.email);
       const csv = "email\n" + emails.map((e) => e).join("\n") + "\n";
       downloadBlob(`${parsed.fileName.replace(/\.pdf$/i, "") || "emails"}-correos.csv`, csv, "text/csv;charset=utf-8");
-      trackEvent("csv_downloaded", { format: "csv", totalEmails: emails.length });
+      trackEvent("results_exported", { format: "csv", total_emails: emails.length });
     }
     setVerifyOpen(false);
   }, [parsed]);
 
   const handleUnlock = useCallback(
     (option: "full" | "fullverify") => {
+      const amount = option === "fullverify" ? regionPrices.verify : regionPrices.full;
       setCheckoutOption(option);
-      setCheckoutAmount(option === "fullverify" ? regionPrices.verify : regionPrices.full);
+      setCheckoutAmount(amount);
       setCheckoutOpen(true);
+      trackEvent("checkout_opened", { option, amount_usd: amount });
     },
     [regionPrices],
   );
@@ -91,7 +92,6 @@ export default function HomePage() {
         window.localStorage.setItem("pdf2emails_unlocked", "1");
         setUnlocked(true);
       }
-      trackEvent("payment_successful", { gateway, amount: checkoutAmount, option: checkoutOption });
       if (parsed) {
         const emails = parsed.all.map((e) => e.email);
         if (checkoutOption === "cart") {
@@ -136,6 +136,7 @@ export default function HomePage() {
       setCheckoutOption("cart");
       setVerifyOpen(false);
       setCheckoutOpen(true);
+      trackEvent("checkout_opened", { option: "cart", amount_usd: amount });
     },
     [],
   );

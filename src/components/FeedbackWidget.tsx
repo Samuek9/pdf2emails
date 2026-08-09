@@ -16,7 +16,7 @@ export function FeedbackWidget() {
   const [submitted, setSubmitted] = useState<Rating | null>(null);
 
   const handleFeedback = (rating: Rating) => {
-    trackEvent("user_feedback_submitted", { rating });
+    trackEvent("feedback_submitted", { rating });
     setSubmitted(rating);
   };
 

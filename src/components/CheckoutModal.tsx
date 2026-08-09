@@ -47,20 +47,6 @@ export function CheckoutModal({
   const [error, setError] = useState<string | null>(null);
   const [paidGateway, setPaidGateway] = useState<Gateway | "demo">("demo");
   const referenceRef = useRef<string>("");
-  const viewedTrackedRef = useRef(false);
-
-  useEffect(() => {
-    if (open && !viewedTrackedRef.current) {
-      viewedTrackedRef.current = true;
-      trackEvent("checkout_viewed", {
-        gateway: pricing.primaryGateway,
-        price: pricing.displayPrice,
-        country,
-        region: pricing.region,
-        lockedCount,
-      });
-    }
-  }, [open, pricing, country, lockedCount]);
 
 
   const wompiLiveConfigured = Boolean(process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY);
@@ -101,13 +87,12 @@ export function CheckoutModal({
   function handleSuccess(gw: Gateway | "demo") {
     setPaidGateway(gw);
     setStep("success");
-    trackEvent("payment_successful", {
+    trackEvent("payment_completed", {
       gateway: gw,
-      price: pricing.displayPrice,
-      currency: "USD",
-      amountUsd: pricing.priceUsd,
+      amount_usd: amount,
       country,
       region: pricing.region,
+      is_demo: gw === "demo",
     });
   }
 
@@ -125,14 +110,13 @@ export function CheckoutModal({
 
   async function handlePay() {
     setError(null);
-    trackEvent("checkout_clicked", {
+    trackEvent("checkout_started", {
       gateway,
-      price: pricing.displayPrice,
-      currency: "USD",
-      amountUsd: pricing.priceUsd,
+      amount_usd: amount,
       country,
       region: pricing.region,
-      lockedCount,
+      locked_count: lockedCount,
+      is_demo: demoMode,
     });
 
     if (gateway === "wompi" && liveConfig.wompi) {
