@@ -8,7 +8,7 @@ export const es: Messages = {
   "nav.blog": "Blog",
   "nav.try": "Probar gratis",
   "hero.badge": "100% en tu navegador — tus PDFs nunca salen de tu equipo",
-  "hero.title1": "Extrae y limpia listas de correos de cualquier PDF en",
+  "hero.title1": "Convierte cualquier PDF en una lista de correos limpia y lista para usar en",
   "hero.titleAccent": "segundos",
   "hero.sub":
     "Arrastra un PDF (incluso escaneado, con OCR integrado) y detectamos todos los correos que contiene, listos para exportar a CSV o TXT. Sin registro y sin subir archivos a servidores.",

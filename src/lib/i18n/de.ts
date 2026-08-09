@@ -8,7 +8,7 @@ export const de: Messages = {
   "nav.blog": "Blog",
   "nav.try": "Kostenlos testen",
   "hero.badge": "100% in Ihrem Browser — Ihre PDFs verlassen nie Ihr Gerät",
-  "hero.title1": "Extrahiere alle E-Mails aus deinen PDFs in",
+  "hero.title1": "Verwandle jedes PDF in eine saubere, einsatzbereite E-Mail-Liste in",
   "hero.titleAccent": "Sekunden",
   "hero.sub":
     "Ziehe ein PDF hinein — auch gescannte (integriertes OCR) — und wir erkennen alle enthaltenen E-Mails, bereit für den Export als CSV oder TXT. Ohne Anmeldung und ohne Hochladen auf Server.",
