@@ -76,8 +76,8 @@ export const es: Messages = {
   "stats.last": "Última extracción hace {min} min",
   "result.paywallTitle": "Desbloquea los {n} correos restantes",
   "result.paywallSub": "Tu PDF tiene {pages} páginas. Desbloquea todos los correos o además límpialos y verifícalos.",
-  "result.optionFull": "Desbloquear lista completa ($3.99)",
-  "result.optionVerify": "Desbloquear + Verificar anti-spam ($6.99)",
+  "result.optionFull": "Desbloquear lista completa (${price})",
+  "result.optionVerify": "Desbloquear + Verificar anti-spam (${price})",
 
   "result.freeBadge": "Gratis: PDF pequeño",
   "sec.title": "Seguridad de tu lista",

@@ -61,7 +61,22 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               applicationCategory: "UtilitiesApplication",
               operatingSystem: "Any",
               inLanguage: "es",
-              offers: { "@type": "Offer", price: "7.99", priceCurrency: "USD" },
+              offers: { "@type": "Offer", price: "3.99", priceCurrency: "USD" },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                { "@type": "Question", name: "Are my PDFs uploaded to a server?", acceptedAnswer: { "@type": "Answer", text: "No. All processing happens locally in your browser with pdf.js. The file never leaves your device." } },
+                { "@type": "Question", name: "Can I try it for free?", acceptedAnswer: { "@type": "Answer", text: "Yes. Small PDFs are extracted 100% free, no signup. You only pay if you want to clean and verify the list." } },
+                { "@type": "Question", name: "What if the PDF is a scan?", acceptedAnswer: { "@type": "Answer", text: "Enable OCR to read scanned PDFs and extract the emails inside." } },
+                { "@type": "Question", name: "How does payment by country work?", acceptedAnswer: { "@type": "Answer", text: "By geolocation: Latin America uses dLocal Go, the rest of the world uses Wompi, with preferential prices." } }
+              ],
             }),
           }}
         />

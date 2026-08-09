@@ -75,8 +75,8 @@ export const en: Messages = {
   "stats.last": "Last extraction {min} min ago",
   "result.paywallTitle": "Unlock the remaining {n} emails",
   "result.paywallSub": "Your PDF has {pages} pages. Unlock all emails or also clean & verify them.",
-  "result.optionFull": "Unlock full list ($3.99)",
-  "result.optionVerify": "Unlock + Clean & verify ($6.99)",
+  "result.optionFull": "Unlock full list (${price})",
+  "result.optionVerify": "Unlock + Clean & verify (${price})",
 
   "result.freeBadge": "Free: small PDF",
   "sec.title": "List safety",

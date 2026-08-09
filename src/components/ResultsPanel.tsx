@@ -20,9 +20,11 @@ interface ResultsPanelProps {
   onVerify: () => void;
   onUnlock: (option: UnlockOption) => void;
   onReset: () => void;
+  fullPrice: number;
+  verifyPrice: number;
 }
 
-export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnlock, onReset }: ResultsPanelProps) {
+export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnlock, onReset, fullPrice, verifyPrice }: ResultsPanelProps) {
   const [options, setOptions] = useState<ExtractOptions>({ excludeGeneric: true, excludePersonal: false });
   const [copied, setCopied] = useState(false);
   const trackedFile = useRef<string | null>(null);
@@ -139,7 +141,7 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
         )}
 
         {showPaywall && (
-          <PaywallOverlay pages={parsed.numPages} lockedCount={lockedCount} onFull={() => onUnlock("full")} onVerify={() => onUnlock("fullverify")} />
+          <PaywallOverlay pages={parsed.numPages} lockedCount={lockedCount} fullPrice={fullPrice} verifyPrice={verifyPrice} onFull={() => onUnlock("full")} onVerify={() => onUnlock("fullverify")} />
         )}
       </div>
 
@@ -165,11 +167,15 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
 function PaywallOverlay({
   pages,
   lockedCount,
+  fullPrice,
+  verifyPrice,
   onFull,
   onVerify,
 }: {
   pages: number;
   lockedCount: number;
+  fullPrice: number;
+  verifyPrice: number;
   onFull: () => void;
   onVerify: () => void;
 }) {
@@ -183,10 +189,10 @@ function PaywallOverlay({
         <p className="mt-1 text-sm text-slate-500">{t("result.paywallSub", { pages })}</p>
         <div className="mt-4 space-y-2">
           <button onClick={onFull} className="btn-secondary w-full">
-            {t("result.optionFull")}
+            {t("result.optionFull", { price: fullPrice.toFixed(2) })}
           </button>
           <button onClick={onVerify} className="btn-primary w-full">
-            <ShieldCheck size={16} /> {t("result.optionVerify")}
+            <ShieldCheck size={16} /> {t("result.optionVerify", { price: verifyPrice.toFixed(2) })}
           </button>
         </div>
         <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-slate-400">
