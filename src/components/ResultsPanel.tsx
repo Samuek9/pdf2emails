@@ -164,7 +164,7 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
           <p className="text-sm font-bold text-slate-800">{t("result.unlocked")}</p>
           <SecurityPreview emails={result.emails} />
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <button className="btn-secondary" onClick={onVerify}>
+            <button className="btn-secondary" onClick={() => void handleDownload("csv")}>
               <Download size={16} /> {t("sec.rawBtn")}
             </button>
             <button className="btn-primary !px-6 !py-3" onClick={onVerify}>
