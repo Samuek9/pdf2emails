@@ -42,6 +42,13 @@ Try it free with your own PDF — I'd love your feedback. 🇨🇴🇪🇸🇧�
 
 **Topics sugeridos:** `Productivity`, `Sales`, `SaaS`, `Email Marketing`, `Data & Analytics`
 
+**Target market:**
+> Freelancers, SDRs, recruiters, and small marketing agencies who handle PDFs (invoices, bank statements, resume exports, reports) and need to turn the contacts inside them into clean, verified email lists — without uploading sensitive files to a server.
+
+**Target industries:** Sales, Marketing, Recruitment / Human Resources, SaaS, E-commerce, Consulting, Data & Analytics, Customer Service.
+
+**Target company size:** Self-employed / Freelancer, 1–10 employees, 11–50 employees.
+
 ---
 
 ## Launch page Q&A (Make your launch page shine)
