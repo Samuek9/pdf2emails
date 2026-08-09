@@ -50,7 +50,7 @@
 
 ## ⬜ Pendientes / siguiente paso
 
-- [ ] **Subrutas por idioma** (`/es/`, `/pt/`, `/fr/`, `/de/`) con etiquetas `hreflang` para SEO multilingüe real (hoy el idioma se detecta por IP en la misma URL).
+- [x] **Subrutas por idioma** (`/es/`, `/en/`, `/pt/`, `/fr/`, `/de/`) con etiquetas `hreflang` y sitemap multilingüe. (La raíz `/` redirige 307 al idioma detectado.)
 - [ ] **Verificación SMTP real** (ping al servidor MX / proveedor tipo MillionVerifier/Reoon) para el upsell de pago; hoy usa MX (sintaxis+dominio).
 - [ ] Trust badges en la zona de subida (privacidad / compatibilidad / filtro inteligente).
 - [ ] Export a **Excel (.xlsx)**.
