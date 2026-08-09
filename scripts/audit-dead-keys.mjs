@@ -15,7 +15,7 @@ function walk(dir) {
   return files;
 }
 
-const allSrc = [...walk("src"), "next.config.mjs"].filter((p) => !p.includes("/i18n/"));
+const allSrc = [...walk("src"), "next.config.mjs"].filter((p) => !/[\\/]i18n[\\/]/.test(p));
 const body = allSrc.map((p) => readFileSync(p, "utf8")).join("\n");
 
 const unused = defined.filter((k) => !body.includes(`"${k}"`));
