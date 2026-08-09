@@ -196,7 +196,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
             >
               <Sparkles size={13} /> {t("drop.sample")}
             </button>
-            <p className="mt-3 inline-flex items-start gap-1.5 text-left text-xs font-semibold leading-snug text-emerald-600">
+            <p className="mt-3 inline-flex items-start gap-1.5 text-left text-xs font-semibold leading-snug text-emerald-700">
               {t("drop.private")}
             </p>
           </div>
