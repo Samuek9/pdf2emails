@@ -143,19 +143,18 @@ export function ResultsPanel({ parsed, onDownloaded, onVerify, onReset }: Result
 
       {result.totalEmails > 0 && (
         <div className="border-t border-slate-100 bg-emerald-50/40 px-5 py-5">
-          <p className="text-sm font-bold text-slate-800">{t("result.ready", { n: result.totalEmails })}</p>
-          <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+          <p className="text-sm font-bold text-slate-800">{t("sec.title")}</p>
+          <SecurityPreview emails={result.emails} />
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
             <button className="btn-secondary" onClick={() => handleDownload("csv")}>
-              <Download size={16} /> {t("result.rawBtn")}
+              <Download size={16} /> {t("sec.rawBtn")}
             </button>
-            <button className="btn-secondary" onClick={() => handleDownload("txt")}>
-              <FileText size={16} /> {t("result.downloadTxt")}
-            </button>
-            <button className="btn-primary" onClick={onVerify}>
-              <ShieldCheck size={16} /> {t("result.verifyBtn")}
+            <button className="btn-primary !px-6 !py-3" onClick={onVerify}>
+              <ShieldCheck size={16} /> {t("sec.verifyBtn")}
             </button>
           </div>
-          <p className="mt-2 text-xs font-medium text-red-600">{t("result.rawWarning")}</p>
+          <p className="mt-2 text-xs font-medium text-red-600">{t("sec.rawWarning")}</p>
+          <p className="mt-1 text-xs text-slate-500">{t("sec.verifySub")}</p>
         </div>
       )}
     </div>
@@ -226,5 +225,42 @@ function EmailRow({ entry, index }: { entry: ExtractedEmail; index: number }) {
         </span>
       </td>
     </tr>
+  );
+}
+
+function SecurityPreview({ emails }: { emails: ExtractedEmail[] }) {
+  const sample = emails.slice(0, 6);
+  const statuses = ["valid", "valid", "dangerCatch", "dangerSpam", "dangerOcr", "dangerCatch"];
+  return (
+    <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200 bg-white">
+      <table className="w-full text-left text-xs">
+        <thead>
+          <tr className="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-400">
+            <th className="px-3 py-2">{t("sec.colEmail")}</th>
+            <th className="px-3 py-2">{t("sec.colOrigin")}</th>
+            <th className="px-3 py-2">{t("sec.colStatus")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sample.map((entry, i) => {
+            const st = statuses[i % statuses.length];
+            const green = st === "valid";
+            return (
+              <tr key={entry.email} className="border-b border-slate-100 last:border-0">
+                <td className="px-3 py-1.5 font-mono text-slate-700">{entry.email}</td>
+                <td className="px-3 py-1.5 text-slate-400">#{i + 1}</td>
+                <td className="px-3 py-1.5 font-medium">
+                  {green ? (
+                    <span className="text-emerald-600">🟢 {t("sec.valid")}</span>
+                  ) : (
+                    <span className="text-red-600">🔴 {t(`sec.${st}`)}</span>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

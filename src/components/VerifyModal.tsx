@@ -11,30 +11,48 @@ interface VerifyModalProps {
   emailsCount: number;
 }
 
+type Selection = { verify: boolean; enrich: boolean; clean: boolean };
+
 export function VerifyModal({ open, onClose, emailsCount }: VerifyModalProps) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [sel, setSel] = useState<Selection>({ verify: true, enrich: false, clean: false });
 
   if (!open) return null;
+
+  const total = (sel.verify ? 4.99 : 0) + (sel.enrich ? 9.99 : 0) + (sel.clean ? 2.99 : 0);
+
+  const toggle = (key: keyof Selection) => setSel((s) => ({ ...s, [key]: !s[key] }));
 
   async function submit() {
     const trimmed = email.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      setError(t("verify.emailError"));
+      setError(t("cart.emailError"));
       return;
     }
     setError(null);
     setSubmitting(true);
-    trackEvent("verify_intent", { email: trimmed, emailsCount });
+    trackEvent("upsell_intent", {
+      email: trimmed,
+      emailsCount,
+      verify: sel.verify,
+      enrich: sel.enrich,
+      clean: sel.clean,
+      totalUsd: total,
+    });
     try {
       const formId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
       if (formId) {
         const fd = new FormData();
         fd.append("email", trimmed);
         fd.append("emailsCount", String(emailsCount));
-        fd.append("_subject", "PDF2Emails - intencion de verificacion");
+        fd.append("verify", sel.verify ? "yes" : "no");
+        fd.append("enrich", sel.enrich ? "yes" : "no");
+        fd.append("clean", sel.clean ? "yes" : "no");
+        fd.append("total", total.toFixed(2));
+        fd.append("_subject", "PDF2Emails - upsell");
         await fetch(`https://formspree.io/f/${formId}`, {
           method: "POST",
           body: fd,
@@ -44,7 +62,7 @@ export function VerifyModal({ open, onClose, emailsCount }: VerifyModalProps) {
         await fetch("/api/lead", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: trimmed, emailsCount }),
+          body: JSON.stringify({ email: trimmed, emailsCount, ...sel, total }),
         });
       }
     } catch {
@@ -71,22 +89,34 @@ export function VerifyModal({ open, onClose, emailsCount }: VerifyModalProps) {
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
               <CheckCircle2 size={28} className="text-emerald-600" />
             </div>
-            <h3 className="mt-4 text-lg font-extrabold text-slate-900">
-              {t("verify.success", { email })}
-            </h3>
+            <h3 className="mt-4 text-lg font-extrabold text-slate-900">{t("cart.success", { email })}</h3>
           </div>
         ) : (
           <div>
-            <h3 className="text-xl font-extrabold text-slate-900">{t("verify.title")}</h3>
-            <p className="mt-1 text-sm text-slate-500">{t("verify.sub")}</p>
-            <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700">
-              <ShieldCheck size={14} className="text-emerald-600" />{" "}
-              {t("verify.found", { n: emailsCount })}
+            <h3 className="text-xl font-extrabold text-slate-900">{t("cart.title")}</h3>
+            <p className="mt-1 inline-flex items-center gap-2 text-xs font-semibold text-slate-500">
+              <ShieldCheck size={14} className="text-emerald-600" /> {t("verify.found", { n: emailsCount })}
             </p>
-            <p className="mt-3 text-sm font-bold text-slate-800">{t("verify.price")}</p>
-            <label className="mt-4 block text-xs font-semibold text-slate-600">
-              {t("verify.emailLabel")}
-            </label>
+
+            <div className="mt-4 space-y-2">
+              <Row label={t("cart.free")} price={t("cart.freePrice")} />
+              <Row
+                label={t("cart.verify")}
+                price={t("cart.verifyPrice")}
+                checked={sel.verify}
+                onChange={() => toggle("verify")}
+                recommended
+              />
+              <Row label={t("cart.enrich")} price={t("cart.enrichPrice")} checked={sel.enrich} onChange={() => toggle("enrich")} />
+              <Row label={t("cart.clean")} price={t("cart.cleanPrice")} checked={sel.clean} onChange={() => toggle("clean")} />
+            </div>
+
+            <div className="mt-4 flex items-center justify-between rounded-xl bg-slate-900 px-5 py-3 text-white">
+              <span className="text-sm font-semibold">{t("cart.total")}</span>
+              <span className="text-lg font-extrabold">${total.toFixed(2)}</span>
+            </div>
+
+            <label className="mt-4 block text-xs font-semibold text-slate-600">{t("cart.emailLabel")}</label>
             <input
               type="email"
               value={email}
@@ -95,17 +125,53 @@ export function VerifyModal({ open, onClose, emailsCount }: VerifyModalProps) {
               placeholder="tu@correo.com"
             />
             {error && <p className="mt-2 text-xs font-medium text-red-600">{error}</p>}
+
             <button onClick={() => void submit()} disabled={submitting} className="btn-primary mt-4 w-full">
-              {submitting ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <ShieldCheck size={16} />
-              )}{" "}
-              {t("verify.cta")}
+              {submitting ? <Loader2 size={16} className="animate-spin" /> : <ShieldCheck size={16} />}{" "}
+              {t("cart.cta")}
             </button>
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+function Row({
+  label,
+  price,
+  checked,
+  onChange,
+  recommended,
+}: {
+  label: string;
+  price: string;
+  checked?: boolean;
+  onChange?: () => void;
+  recommended?: boolean;
+}) {
+  return (
+    <label
+      className={`flex cursor-pointer select-none items-center gap-3 rounded-xl border px-4 py-2.5 text-sm transition ${
+        checked ? "border-emerald-500 bg-emerald-50/50" : "border-slate-200 bg-white"
+      }`}
+    >
+      <input
+        type="checkbox"
+        className="h-4 w-4 accent-emerald-600"
+        checked={!!checked}
+        disabled={!onChange}
+        onChange={onChange}
+      />
+      <span className="flex-1 text-slate-700">
+        {label}
+        {recommended && (
+          <span className="ml-2 rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">
+            ✓
+          </span>
+        )}
+      </span>
+      <span className="font-semibold text-slate-800">{price}</span>
+    </label>
   );
 }
