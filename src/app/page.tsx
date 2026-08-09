@@ -31,7 +31,9 @@ export default function HomePage() {
   const [unlocked, setUnlocked] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [checkoutAmount, setCheckoutAmount] = useState(3.99);
-  const [checkoutOption, setCheckoutOption] = useState<"full" | "fullverify">("full");
+  const [checkoutOption, setCheckoutOption] = useState<"full" | "fullverify" | "cart">("full");
+  const [cartSel, setCartSel] = useState<{ verify: boolean; enrich: boolean; clean: boolean }>({ verify: true, enrich: false, clean: false });
+  const [cartEmail, setCartEmail] = useState("");
 
   useEffect(() => {
     void initAnalytics();
@@ -70,25 +72,52 @@ export default function HomePage() {
 
   const handlePaymentSuccess = useCallback(
     (gateway: "wompi" | "dlocal" | "demo") => {
-      window.localStorage.setItem("pdf2emails_unlocked", "1");
-      setUnlocked(true);
       setCheckoutOpen(false);
+      if (checkoutOption === "full" || checkoutOption === "fullverify") {
+        window.localStorage.setItem("pdf2emails_unlocked", "1");
+        setUnlocked(true);
+      }
       trackEvent("payment_successful", { gateway, amount: checkoutAmount, option: checkoutOption });
-      if (checkoutOption === "fullverify" && parsed) {
+      if (parsed) {
         const emails = parsed.all.map((e) => e.email);
-        void fetch("/api/process", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ emails, options: { verify: true, clean: true, enrich: false } }),
-        })
-          .then((r) => (r.ok ? r.json() : null))
-          .then((d: { csv?: string } | null) => {
-            if (d?.csv) downloadBlob("lista-verificada.csv", d.csv, "text/csv;charset=utf-8");
+        if (checkoutOption === "cart") {
+          void fetch("/api/process", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ emails, options: { verify: cartSel.verify, clean: cartSel.clean, enrich: cartSel.enrich } }),
           })
-          .catch(() => {});
+            .then((r) => (r.ok ? r.json() : null))
+            .then((d: { csv?: string } | null) => {
+              if (d?.csv) downloadBlob("lista-procesada.csv", d.csv, "text/csv;charset=utf-8");
+            })
+            .catch(() => {});
+        } else if (checkoutOption === "fullverify") {
+          void fetch("/api/process", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ emails, options: { verify: true, clean: true, enrich: false } }),
+          })
+            .then((r) => (r.ok ? r.json() : null))
+            .then((d: { csv?: string } | null) => {
+              if (d?.csv) downloadBlob("lista-verificada.csv", d.csv, "text/csv;charset=utf-8");
+            })
+            .catch(() => {});
+        }
       }
     },
-    [checkoutAmount, checkoutOption, parsed],
+    [checkoutAmount, checkoutOption, parsed, cartSel],
+  );
+
+  const handleCartCheckout = useCallback(
+    (amount: number, sel: { verify: boolean; enrich: boolean; clean: boolean }, email: string) => {
+      setCartSel(sel);
+      setCartEmail(email);
+      setCheckoutAmount(amount);
+      setCheckoutOption("cart");
+      setVerifyOpen(false);
+      setCheckoutOpen(true);
+    },
+    [],
   );
 
   return (
@@ -222,6 +251,7 @@ export default function HomePage() {
         onClose={() => setVerifyOpen(false)}
         emailsCount={parsed ? parsed.all.length : 0}
         emails={parsed ? parsed.all.map((e) => e.email) : []}
+        onCheckout={handleCartCheckout}
       />
     </>
   );
