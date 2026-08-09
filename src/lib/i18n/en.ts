@@ -11,7 +11,7 @@ export const en: Messages = {
   "hero.title1": "Extract and clean email lists from any PDF in",
   "hero.titleAccent": "seconds",
   "hero.sub":
-    "Drop a PDF and we detect every email inside — ready to export as CSV or TXT. No signup and no files uploaded to servers.",
+    "Drop a PDF — even a scanned one (built-in OCR) — and we detect every email inside, ready to export as CSV or TXT. No signup and no files uploaded to servers.",
   "hero.cta": "Try it free now",
   "hero.note": "Free for PDFs up to 2 pages · No signup",
   "drop.title": "Drag your PDF here or",

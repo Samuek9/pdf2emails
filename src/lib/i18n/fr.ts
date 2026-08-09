@@ -11,7 +11,7 @@ export const fr: Messages = {
   "hero.title1": "Extrayez chaque email de vos PDFs en",
   "hero.titleAccent": "secondes",
   "hero.sub":
-    "Déposez un PDF et nous détectons tous les emails qu'il contient, prêts à exporter en CSV ou TXT. Sans inscription et sans envoyer de fichiers à des serveurs.",
+    "Déposez un PDF — même scanné (OCR intégré) — et nous détectons tous les emails qu'il contient, prêts à exporter en CSV ou TXT. Sans inscription et sans envoyer de fichiers à des serveurs.",
   "hero.cta": "Essayer gratuitement",
   "hero.note": "Gratuit pour les PDFs de 2 pages max · Sans inscription",
   "drop.title": "Glissez votre PDF ici ou",

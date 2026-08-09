@@ -11,7 +11,7 @@ export const es: Messages = {
   "hero.title1": "Extrae y limpia listas de correos de cualquier PDF en",
   "hero.titleAccent": "segundos",
   "hero.sub":
-    "Arrastra un PDF y detectamos todos los correos electrónicos que contiene, listos para exportar a CSV o TXT. Sin registro y sin subir archivos a servidores.",
+    "Arrastra un PDF (incluso escaneado, con OCR integrado) y detectamos todos los correos que contiene, listos para exportar a CSV o TXT. Sin registro y sin subir archivos a servidores.",
   "hero.cta": "Probar gratis ahora",
   "hero.note": "Gratis para PDFs de hasta 2 páginas · Sin registro",
   "drop.title": "Arrastra tu PDF aquí o",
