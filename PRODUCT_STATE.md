@@ -52,7 +52,7 @@
 
 - [x] **Subrutas por idioma** (`/es/`, `/en/`, `/pt/`, `/fr/`, `/de/`) con etiquetas `hreflang` y sitemap multilingüe. (La raíz `/` redirige 307 al idioma detectado.)
 - [x] **Verificación SMTP real** conectada (QuickEmailVerification + Reoon + ZeroBounce + AbstractAPI), con fallback a MX.
-- [ ] Trust badges en la zona de subida (privacidad / compatibilidad / filtro inteligente).
+- [x] Trust badges en la zona de subida (privacidad / compatibilidad / filtro inteligente).
 - [x] Export a **Excel (.xlsx)**.
 - [x] Términos y Condiciones + Política de Privacidad (obligatorios para pasarelas).
 - [x] Correo de soporte visible en el footer.
