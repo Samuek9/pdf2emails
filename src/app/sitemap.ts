@@ -16,6 +16,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog/extraer-correos-pdf-online-gratis`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/blog/how-to-scrape-emails-from-pdf`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/blog/extract-contacts-from-pdf-to-csv`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/use-cases/extract-emails-from-scanned-pdf`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/use-cases/pdf-to-csv-email-extractor`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/use-cases/extract-emails-from-bank-statement-pdf`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
   ];
 }
 

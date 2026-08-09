@@ -32,7 +32,7 @@ export default function HomePage() {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [checkoutAmount, setCheckoutAmount] = useState(3.99);
   const [checkoutOption, setCheckoutOption] = useState<"full" | "fullverify" | "cart">("full");
-  const [cartSel, setCartSel] = useState<{ verify: boolean; enrich: boolean; clean: boolean }>({ verify: true, enrich: false, clean: false });
+  const [cartSel, setCartSel] = useState<{ verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean }>({ verify: true, enrich: false, clean: false, phones: false, templates: false });
   const [cartEmail, setCartEmail] = useState("");
 
   useEffect(() => {
@@ -84,11 +84,17 @@ export default function HomePage() {
           void fetch("/api/process", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ emails, options: { verify: cartSel.verify, clean: cartSel.clean, enrich: cartSel.enrich } }),
+            body: JSON.stringify({ emails, text: parsed.text, options: { verify: cartSel.verify, clean: cartSel.clean, enrich: cartSel.enrich, phones: cartSel.phones } }),
           })
             .then((r) => (r.ok ? r.json() : null))
             .then((d: { csv?: string } | null) => {
               if (d?.csv) downloadBlob("lista-procesada.csv", d.csv, "text/csv;charset=utf-8");
+              if (cartSel.templates) {
+                void fetch("/cold-email-templates.md")
+                  .then((r) => r.text())
+                  .then((txt) => downloadBlob("cold-email-templates.md", txt, "text/markdown;charset=utf-8"))
+                  .catch(() => {});
+              }
             })
             .catch(() => {});
         } else if (checkoutOption === "fullverify") {
@@ -109,7 +115,7 @@ export default function HomePage() {
   );
 
   const handleCartCheckout = useCallback(
-    (amount: number, sel: { verify: boolean; enrich: boolean; clean: boolean }, email: string) => {
+    (amount: number, sel: { verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean }, email: string) => {
       setCartSel(sel);
       setCartEmail(email);
       setCheckoutAmount(amount);

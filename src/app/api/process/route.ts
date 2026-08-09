@@ -13,6 +13,7 @@ interface Row {
   last_name: string;
   company: string;
   title: string;
+  phone: string;
 }
 
 function csvCell(v: unknown): string {
@@ -24,7 +25,8 @@ function csvCell(v: unknown): string {
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as {
     emails?: string[];
-    options?: { verify?: boolean; clean?: boolean; enrich?: boolean };
+    text?: string;
+    options?: { verify?: boolean; clean?: boolean; enrich?: boolean; phones?: boolean };
   } | null;
 
   const emails = Array.isArray(body?.emails)
@@ -38,6 +40,7 @@ export async function POST(request: NextRequest) {
   const doVerify = options.verify !== false;
   const doClean = options.clean !== false;
   const doEnrich = options.enrich === true;
+  const doPhones = options.phones === true;
 
   const rows: Row[] = [];
 
@@ -56,6 +59,22 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  let phoneMap: Record<string, string> = {};
+  if (doPhones && body?.text) {
+    const lines = body.text.split(/\r?\n/);
+    const emailSet = new Set(emails);
+    for (const line of lines) {
+      const lineEmails = line.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) ?? [];
+      const phones = line.match(/(?:\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}/g) ?? [];
+      if (lineEmails.length && phones.length) {
+        for (const em of lineEmails) {
+          const emKey = em.toLowerCase();
+          if (emailSet.has(emKey) && !phoneMap[emKey] && phones[0]) phoneMap[emKey] = phones[0].trim();
+        }
+      }
+    }
+  }
+
   for (const email of emails) {
     const name = doClean ? nameFromEmail(email) : { first: "", last: "" };
     const comp = doEnrich && enriched[email] ? enriched[email].company : companyFromEmail(email);
@@ -67,14 +86,21 @@ export async function POST(request: NextRequest) {
       last_name: name.last,
       company: comp,
       title,
+      phone: doPhones ? (phoneMap[email] ?? "") : "",
     });
   }
 
-  const header = "email,status,first_name,last_name,company,title";
+  const header = "email,status,first_name,last_name,company,title,phone";
   const csv =
     header +
     "\n" +
-    rows.map((r) => [r.email, r.status, r.first_name, r.last_name, r.company, r.title].map(csvCell).join(",")).join("\n");
+    rows
+      .map((r) =>
+        [r.email, r.status, r.first_name, r.last_name, r.company, r.title, r.phone]
+          .map(csvCell)
+          .join(","),
+      )
+      .join("\n");
 
   const stats = {
     total: emails.length,

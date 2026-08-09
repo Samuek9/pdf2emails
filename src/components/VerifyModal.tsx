@@ -10,21 +10,21 @@ interface VerifyModalProps {
   onClose: () => void;
   emailsCount: number;
   emails: string[];
-  onCheckout: (amount: number, sel: { verify: boolean; enrich: boolean; clean: boolean }, email: string) => void;
+  onCheckout: (amount: number, sel: { verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean }, email: string) => void;
 }
 
-type Selection = { verify: boolean; enrich: boolean; clean: boolean };
+type Selection = { verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean };
 
 export function VerifyModal({ open, onClose, emailsCount, emails, onCheckout }: VerifyModalProps) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-  const [sel, setSel] = useState<Selection>({ verify: true, enrich: false, clean: false });
+  const [sel, setSel] = useState<Selection>({ verify: true, enrich: false, clean: false, phones: false, templates: false });
 
   if (!open) return null;
 
-  const total = (sel.verify ? 4.99 : 0) + (sel.enrich ? 9.99 : 0) + (sel.clean ? 2.99 : 0);
+  const total = (sel.verify ? 4.99 : 0) + (sel.enrich ? 9.99 : 0) + (sel.clean ? 2.99 : 0) + (sel.phones ? 3.99 : 0) + (sel.templates ? 4.99 : 0);
 
   const toggle = (key: keyof Selection) => setSel((s) => ({ ...s, [key]: !s[key] }));
 
@@ -117,6 +117,8 @@ export function VerifyModal({ open, onClose, emailsCount, emails, onCheckout }: 
               />
               <Row label={t("cart.enrich")} price={t("cart.enrichPrice")} checked={sel.enrich} onChange={() => toggle("enrich")} />
               <Row label={t("cart.clean")} price={t("cart.cleanPrice")} checked={sel.clean} onChange={() => toggle("clean")} />
+              <Row label={t("cart.phones")} price={t("cart.phonesPrice")} checked={sel.phones} onChange={() => toggle("phones")} />
+              <Row label={t("cart.templates")} price={t("cart.templatesPrice")} checked={sel.templates} onChange={() => toggle("templates")} />
             </div>
 
             <div className="mt-4 flex items-center justify-between rounded-xl bg-slate-900 px-5 py-3 text-white">
