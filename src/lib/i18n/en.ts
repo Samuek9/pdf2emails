@@ -109,6 +109,7 @@ export const en: Messages = {
   "cart.cta": "Complete order",
   "cart.success": "Done! We are updating our servers. We will email you at {email}.",
   "cart.emailError": "Enter a valid email.",
+  "cart.skip": "No thanks, download for free",
 
   "checkout.title": "Unlock {n} emails",
   "checkout.sub": "Full list + CSV/TXT export.",

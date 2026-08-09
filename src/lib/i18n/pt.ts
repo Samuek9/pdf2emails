@@ -145,4 +145,5 @@ export const pt: Messages = {
   "cart.cta": "Finalizar pedido",
   "cart.success": "Pronto! Estamos atualizando nossos servidores. Avisaremos você em {email}.",
   "cart.emailError": "Digite um email válido.",
+  "cart.skip": "Não, baixar grátis sem melhorias",
 };

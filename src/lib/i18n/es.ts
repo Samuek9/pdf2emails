@@ -110,6 +110,7 @@ export const es: Messages = {
   "cart.cta": "Completar pedido",
   "cart.success": "¡Listo! Estamos actualizando nuestros servidores. Te avisaremos a {email}.",
   "cart.emailError": "Ingresa un correo válido.",
+  "cart.skip": "No, descargar gratis sin mejoras",
 
   "checkout.title": "Desbloquear {n} correos",
   "checkout.sub": "Lista completa + exportación CSV/TXT.",

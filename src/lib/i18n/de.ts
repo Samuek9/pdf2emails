@@ -94,6 +94,7 @@ export const de: Messages = {
   "cart.cta": "Bestellung abschließen",
   "cart.success": "Fertig! Wir aktualisieren unsere Server. Wir schreiben dir an {email}.",
   "cart.emailError": "Bitte eine gültige E-Mail eingeben.",
+  "cart.skip": "Nein, kostenlos herunterladen",
   "sec.title": "Sicherheit deiner Liste",
   "sec.colEmail": "Extrahierte E-Mail",
   "sec.colOrigin": "Quelle",
