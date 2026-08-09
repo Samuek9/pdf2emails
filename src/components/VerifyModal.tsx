@@ -29,11 +29,24 @@ export function VerifyModal({ open, onClose, emailsCount }: VerifyModalProps) {
     setSubmitting(true);
     trackEvent("verify_intent", { email: trimmed, emailsCount });
     try {
-      await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: trimmed, emailsCount }),
-      });
+      const formId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
+      if (formId) {
+        const fd = new FormData();
+        fd.append("email", trimmed);
+        fd.append("emailsCount", String(emailsCount));
+        fd.append("_subject", "PDF2Emails - intencion de verificacion");
+        await fetch(`https://formspree.io/f/${formId}`, {
+          method: "POST",
+          body: fd,
+          headers: { Accept: "application/json" },
+        });
+      } else {
+        await fetch("/api/lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: trimmed, emailsCount }),
+        });
+      }
     } catch {
       // noop
     }

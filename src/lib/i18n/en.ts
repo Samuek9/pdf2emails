@@ -71,6 +71,8 @@ export const en: Messages = {
   "verify.cta": "Yes, clean & verify for $4.99",
   "verify.success": "Done! We are updating our verification servers. We will email you at {email}.",
   "verify.emailError": "Enter a valid email.",
+  "stats.emails": "Emails extracted: {n}",
+  "stats.last": "Last extraction {min} min ago",
 
   "checkout.title": "Unlock {n} emails",
   "checkout.sub": "Full list + CSV/TXT export.",

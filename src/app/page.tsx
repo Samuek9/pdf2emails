@@ -13,6 +13,7 @@ import {
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { PdfDropzone } from "@/components/PdfDropzone";
 import { ResultsPanel } from "@/components/ResultsPanel";
+import { StatsBar } from "@/components/StatsBar";
 import { VerifyModal } from "@/components/VerifyModal";
 import { initAnalytics, trackEvent } from "@/lib/analytics";
 import { getClientCountry, getCountryName } from "@/lib/countries";
@@ -34,6 +35,7 @@ export default function HomePage() {
 
   const handleParsed = useCallback((text: string, numPages: number, fileName: string) => {
     const { all, totalRaw } = parseAllEmails(text);
+    try { const prev = Number(window.localStorage.getItem("pdf2emails_count") || 0); window.localStorage.setItem("pdf2emails_count", String(prev + all.length)); } catch { /* noop */ }
     setParsed({ text, numPages, fileName, all, totalRaw });
     setDownloaded(false);
   }, []);
@@ -91,6 +93,8 @@ export default function HomePage() {
           />
         )}
       </section>
+
+      <StatsBar />
 
       {downloaded && parsed && (
         <div className="mx-auto mt-6 max-w-xl">

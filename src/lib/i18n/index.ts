@@ -1,5 +1,6 @@
 import { es } from "./es";
 import { en } from "./en";
+import { pt } from "./pt";
 import type { Locale, Messages } from "./types";
 
 export type { Locale, Messages } from "./types";
@@ -9,8 +10,13 @@ const SPANISH_COUNTRIES = new Set([
   "PA", "GT", "SV", "HN", "NI", "CU", "PR", "ES",
 ]);
 
+const PORTUGUESE_COUNTRIES = new Set(["BR", "PT", "AO", "MZ", "CV", "GW", "ST", "MO", "TL"]);
+
 export function detectLocale(country: string): Locale {
-  return SPANISH_COUNTRIES.has(country.toUpperCase()) ? "es" : "en";
+  const code = country.toUpperCase();
+  if (SPANISH_COUNTRIES.has(code)) return "es";
+  if (PORTUGUESE_COUNTRIES.has(code)) return "pt";
+  return "en";
 }
 
 export function getLocale(): Locale {
@@ -20,7 +26,7 @@ export function getLocale(): Locale {
   return detectLocale(country);
 }
 
-const dicts: Record<Locale, Messages> = { es, en };
+const dicts: Record<Locale, Messages> = { es, en, pt };
 
 /** Devuelve el diccionario del idioma detectado (cacheado por sesion). */
 export function getMessages(): Messages {

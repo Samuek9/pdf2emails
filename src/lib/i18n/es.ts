@@ -72,6 +72,8 @@ export const es: Messages = {
   "verify.cta": "Sí, limpiar y verificar por $4.99",
   "verify.success": "¡Listo! Estamos actualizando nuestros servidores de verificación. Te avisaremos a {email}.",
   "verify.emailError": "Ingresa un correo válido.",
+  "stats.emails": "Correos extraídos: {n}",
+  "stats.last": "Última extracción hace {min} min",
 
   "checkout.title": "Desbloquear {n} correos",
   "checkout.sub": "Lista completa + exportación CSV/TXT.",
