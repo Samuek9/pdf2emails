@@ -9,6 +9,7 @@ import { useLocalPrice } from "@/lib/fx";
 import { t } from "@/lib/i18n";
 import type { EmailCategory, ExtractOptions, ExtractedEmail, ParsedPdf, Pricing } from "@/lib/types";
 
+const FREE_PAGES = 2;
 const FREE_PREVIEW_COUNT = 5;
 
 interface ResultsPanelProps {
@@ -50,11 +51,12 @@ export function ResultsPanel({
     }
   }, [parsed, result.totalEmails]);
 
+  const effectivelyUnlocked = unlocked || parsed.numPages <= FREE_PAGES;
   const visibleEmails = result.emails.slice(0, FREE_PREVIEW_COUNT);
   const lockedEmails = result.emails.slice(FREE_PREVIEW_COUNT);
   const lockedCount = result.totalEmails - visibleEmails.length;
-  const showPaywall = !unlocked && lockedCount > 0;
-  const canDownload = unlocked || lockedCount === 0;
+  const showPaywall = !effectivelyUnlocked && lockedCount > 0;
+  const canDownload = effectivelyUnlocked || lockedCount === 0;
 
   async function handleCopySamples() {
     const samples = visibleEmails.map((e) => e.email).join("\n");
@@ -173,6 +175,8 @@ export function ResultsPanel({
             pricing={pricing}
             lockedCount={lockedCount}
             onUnlock={() => onRequestUnlock(lockedCount)}
+            pages={parsed.numPages}
+            emails={result.totalEmails}
           />
         )}
       </div>
@@ -292,10 +296,14 @@ function PaywallOverlay({
   pricing,
   lockedCount,
   onUnlock,
+  pages,
+  emails,
 }: {
   pricing: Pricing;
   lockedCount: number;
   onUnlock: () => void;
+  pages: number;
+  emails: number;
 }) {
   const local = useLocalPrice(pricing.countryCode);
   return (
@@ -308,11 +316,11 @@ function PaywallOverlay({
           {lockedCount === 1 ? t("result.lockedOne", { n: lockedCount }) : t("result.lockedMany", { n: lockedCount })}
         </h4>
         <p className="mt-1 text-sm text-slate-500">
-          {t("result.lockedSub")}
+          {t("result.valueMsg", { pages, emails, price: `$${pricing.priceUsd.toFixed(2)}` })}
         </p>
         <div className="mt-4">
           <span className="text-4xl font-extrabold tracking-tight text-slate-900">
-            {pricing.region === "latam" ? "$7.99" : "$19"}
+            {`$${pricing.priceUsd.toFixed(2)}`}
           </span>
           <span className="ml-1 text-sm font-semibold text-slate-500">USD</span>
           {pricing.region === "latam" && (

@@ -68,21 +68,21 @@ export function getClientCountry(): string {
 
 // Estimados aproximados del precio de $7.99 USD en la moneda local de cada pais LATAM.
 export const COUNTRY_LOCAL_PRICE: Record<string, { currency: string; amount: string }> = {
-  CO: { currency: "COP", amount: "32,000" },
-  MX: { currency: "MXN", amount: "155" },
-  AR: { currency: "ARS", amount: "9,500" },
-  CL: { currency: "CLP", amount: "7,600" },
-  PE: { currency: "PEN", amount: "30" },
-  EC: { currency: "USD", amount: "7.99" },
-  UY: { currency: "UYU", amount: "320" },
-  PY: { currency: "PYG", amount: "58,000" },
-  BO: { currency: "BOB", amount: "55" },
-  BR: { currency: "BRL", amount: "44" },
-  CR: { currency: "CRC", amount: "4,150" },
-  DO: { currency: "DOP", amount: "480" },
-  PA: { currency: "USD", amount: "7.99" },
-  GT: { currency: "GTQ", amount: "62" },
-  NI: { currency: "NIO", amount: "288" },
+  CO: { currency: "COP", amount: "16,000" },
+  MX: { currency: "MXN", amount: "77" },
+  AR: { currency: "ARS", amount: "4,750" },
+  CL: { currency: "CLP", amount: "3,800" },
+  PE: { currency: "PEN", amount: "15" },
+  EC: { currency: "USD", amount: "3.99" },
+  UY: { currency: "UYU", amount: "160" },
+  PY: { currency: "PYG", amount: "29,000" },
+  BO: { currency: "BOB", amount: "28" },
+  BR: { currency: "BRL", amount: "22" },
+  CR: { currency: "CRC", amount: "2,075" },
+  DO: { currency: "DOP", amount: "240" },
+  PA: { currency: "USD", amount: "3.99" },
+  GT: { currency: "GTQ", amount: "31" },
+  NI: { currency: "NIO", amount: "144" },
 };
 
 export function getLocalPrice(

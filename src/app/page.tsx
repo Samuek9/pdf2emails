@@ -164,7 +164,7 @@ export default function HomePage() {
               <>
                 <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">{t("pricing.latam")}</p>
                 <p className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">
-                  $7.99 <span className="text-lg font-semibold text-slate-400">USD</span>
+                  {`$${pricing.priceUsd.toFixed(2)}`} <span className="text-lg font-semibold text-slate-400">USD</span>
                 </p>
                 {local && <p className="mt-1 text-sm font-semibold text-slate-500">≈ {local.amount} {local.currency}</p>}
                 <ul className="mt-4 space-y-2 text-sm text-slate-600">
@@ -179,7 +179,7 @@ export default function HomePage() {
               <>
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{t("pricing.row")}</p>
                 <p className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">
-                  $19 <span className="text-lg font-semibold text-slate-400">USD</span>
+                  {`$${pricing.priceUsd.toFixed(2)}`} <span className="text-lg font-semibold text-slate-400">USD</span>
                 </p>
                 <p className="mt-1 text-sm font-semibold text-slate-500">Pago único · sin suscripción</p>
                 <ul className="mt-4 space-y-2 text-sm text-slate-600">

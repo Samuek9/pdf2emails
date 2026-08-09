@@ -228,7 +228,7 @@ export function CheckoutModal({
                   {t("checkout.total")}
                 </p>
                 <p className="mt-1 text-3xl font-extrabold">
-                  {pricing.region === "latam" ? "$7.99" : "$19"}
+                  {`$${pricing.priceUsd.toFixed(2)}`}
                   <span className="text-base font-semibold text-slate-300"> USD</span>
                 </p>
               </div>
@@ -264,7 +264,7 @@ export function CheckoutModal({
               </div>
             ) : (
               <button className="btn-primary mt-5 w-full" onClick={() => void handlePay()}>
-                <Lock size={16} /> {t("checkout.pay", { price: pricing.region === "latam" ? "$7.99 USD" : "$19 USD" })}
+                <Lock size={16} /> {t("checkout.pay", { price: pricing.displayPrice })}
               </button>
             )}
 
