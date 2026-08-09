@@ -44,6 +44,10 @@ export function CheckoutModal({
   const referenceRef = useRef<string>("");
 
   const wompiLiveConfigured = Boolean(process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY);
+  const [liveConfig, setLiveConfig] = useState<{ wompi: boolean; dlocal: boolean }>({
+    wompi: wompiLiveConfigured,
+    dlocal: false,
+  });
 
   useEffect(() => {
     if (open) {
@@ -53,6 +57,24 @@ export function CheckoutModal({
       referenceRef.current = `pdf2emails-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     }
   }, [open, pricing.primaryGateway]);
+
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    fetch("/api/payments/config")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((cfg: { wompi?: boolean; dlocal?: boolean } | null) => {
+        if (!cancelled && cfg) {
+          setLiveConfig({ wompi: !!cfg.wompi, dlocal: !!cfg.dlocal });
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
+
+  const demoMode = !(liveConfig.wompi || liveConfig.dlocal);
 
   if (!open) return null;
 
@@ -93,7 +115,7 @@ export function CheckoutModal({
       lockedCount,
     });
 
-    if (gateway === "wompi" && wompiLiveConfigured) {
+    if (gateway === "wompi" && liveConfig.wompi) {
       setStep("processing");
       try {
         await loadWompiScript();
@@ -132,6 +154,36 @@ export function CheckoutModal({
       return;
     }
 
+    // Flujo real con dLocal Go (payment link / redirect).
+    if (gateway === "dlocal" && liveConfig.dlocal) {
+      setStep("processing");
+      try {
+        const res = await fetch("/api/dlocal/create-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: pricing.priceUsd,
+            currency: "USD",
+            country: pricing.countryCode,
+            description: "PDF2Emails - desbloqueo de lista completa",
+            orderId: referenceRef.current,
+          }),
+        });
+        if (!res.ok) throw new Error("dLocal Go no configurado");
+        const intent = (await res.json()) as { redirectUrl: string };
+        // Redirigimos al checkout de dLocal Go; al volver (success_url=/ ?paid=1)
+        // la landing detecta el pago y desbloquea.
+        window.location.href = intent.redirectUrl;
+      } catch {
+        setStep("method");
+        setError(
+          "No se pudo iniciar el pago con dLocal Go. Configura las keys en el servidor o usa modo demo.",
+        );
+      }
+      return;
+    }
+
+    // Modo demo: simula el pago.
     setStep("processing");
     await new Promise((r) => setTimeout(r, 900));
     handleSuccess(gateway === "wompi" ? "wompi" : "demo");
@@ -229,10 +281,10 @@ export function CheckoutModal({
               </p>
             )}
 
-            {!wompiLiveConfigured && (
+            {demoMode && (
               <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-700">
                 <strong>Modo demo:</strong> no hay credenciales de pago configuradas, así que el pago
-                se simula para que pruebes el flujo completo. Conecta Wompi/dLocal en las variables de
+                se simula para que pruebes el flujo completo. Conecta Wompi o dLocal Go en las variables de
                 entorno para cobros reales.
               </p>
             )}

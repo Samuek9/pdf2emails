@@ -80,7 +80,19 @@ El middleware lo guarda en la cookie `user_country`.
 - **Wompi real**: define `NEXT_PUBLIC_WOMPI_PUBLIC_KEY`, `WOMPI_PRIVATE_KEY` y `WOMPI_INTEGRITY_KEY`
   en el servidor. El frontend usa el widget `checkout.wompi.co/widget.js` y las rutas
   `/api/wompi/create-intent` y `/api/wompi/verify` crean/verifican la transaccion.
-- **dLocal Go**: integracion marcada para el siguiente paso (mismo patrón: servidor → crear link/pago).
+- **dLocal Go real** (PSE, Pix, OXXO, tarjetas locales): define `DLOCAL_API_KEY`, `DLOCAL_SECRET_KEY`
+  y `DLOCAL_ENV` (`sbx` o `live`). El cliente crea un payment link en `/api/dlocal/create-payment` y
+  redirige al checkout de dLocal Go (`redirect_url`). Al volver a `/ ?paid=1` la landing desbloquea.
+  El webhook `/api/dlocal/webhook` confirma los cambios de estado (el siguiente paso es persistirlo
+  en una base de datos para el desbloqueo verificado por servidor).
+- La config de que pasarelas estan vivas se expone en `/api/payments/config`; el modo demo solo se
+  muestra cuando ninguna esta configurada.
+
+> **Keys de dLocal Go**: se obtienen en **https://dashboard.dlocalgo.com** (live) o
+> **https://dashboard-sbx.dlocalgo.com** (sandbox, crea una cuenta de prueba) →
+> **Integrations → API Integration** → "API Key" y "Secret Key". La Secret Key **nunca** se expone
+> al cliente. Para probar en sandbox puedes usar las tarjetas de prueba `4111 1111 1111 1111`
+> (aprobada) y `5555 5555 5555 4444` (rechazada).
 
 ## Tracking del embudo (PostHog opcional)
 
