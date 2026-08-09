@@ -113,7 +113,7 @@ export const es: Messages = {
   "cart.templates": "Pack de Plantillas de Cold Email B2B",
   "cart.templatesPrice": "+ $4.99",
   "cart.total": "Total a pagar",
-  "cart.emailLabel": "¿A qué correo te enviamos tu lista procesada?",
+  "cart.emailLabel": "Correo electrónico (solo para el recibo de pago)",
   "cart.cta": "Completar pedido",
   "cart.success": "¡Listo! Estamos actualizando nuestros servidores. Te avisaremos a {email}.",
   "cart.emailError": "Ingresa un correo válido.",

@@ -148,7 +148,7 @@ export const pt: Messages = {
   "cart.templates": "Pack de Modelos de Cold Email B2B",
   "cart.templatesPrice": "+ $4.99",
   "cart.total": "Total a pagar",
-  "cart.emailLabel": "Para qual email enviamos sua lista processada?",
+  "cart.emailLabel": "E-mail (somente para enviar o recibo de pagamento)",
   "cart.cta": "Finalizar pedido",
   "cart.success": "Pronto! Estamos atualizando nossos servidores. Avisaremos você em {email}.",
   "cart.emailError": "Digite um email válido.",

@@ -97,7 +97,7 @@ export const fr: Messages = {
   "cart.templates": "Pack de Modèles de Cold Email B2B",
   "cart.templatesPrice": "+ $4.99",
   "cart.total": "Total à payer",
-  "cart.emailLabel": "Où envoyons-nous votre liste traitée ?",
+  "cart.emailLabel": "Email (uniquement pour envoyer votre reçu de paiement)",
   "cart.cta": "Finaliser la commande",
   "cart.success": "C'est fait ! Nous mettons à jour nos serveurs. Nous vous écrirons à {email}.",
   "cart.emailError": "Saisissez un email valide.",

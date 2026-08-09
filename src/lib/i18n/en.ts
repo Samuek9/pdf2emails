@@ -112,7 +112,7 @@ export const en: Messages = {
   "cart.templates": "B2B Cold Email Templates Pack",
   "cart.templatesPrice": "+ $4.99",
   "cart.total": "Total to pay",
-  "cart.emailLabel": "Where should we send your processed list?",
+  "cart.emailLabel": "Email (only to send your payment receipt)",
   "cart.cta": "Complete order",
   "cart.success": "Done! We are updating our servers. We will email you at {email}.",
   "cart.emailError": "Enter a valid email.",

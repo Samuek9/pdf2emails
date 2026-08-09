@@ -65,16 +65,33 @@ export default function HomePage() {
     }
   }, []);
 
+  // Restaura la sesion extraida si venimos de vuelta de dLocal (la RAM se perdio).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = sessionStorage.getItem("pdf2emails_session");
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (data && Array.isArray(data.all)) setParsed(data);
+      }
+    } catch { /* noop */ }
+  }, []);
+
   const handleParsed = useCallback((text: string, numPages: number, fileName: string) => {
     const { all, totalRaw } = parseAllEmails(text);
     try { const prev = Number(window.localStorage.getItem("pdf2emails_count") || 0); window.localStorage.setItem("pdf2emails_count", String(prev + all.length)); } catch { /* noop */ }
-    setParsed({ text, numPages, fileName, all, totalRaw });
+    const data = { text, numPages, fileName, all, totalRaw };
+    setParsed(data);
+    // Persistir la sesion extraida para sobrevivir al redirect de dLocal (la
+    // pagina se recarga y la RAM se pierde). sessionStorage persiste por pestana.
+    try { sessionStorage.setItem("pdf2emails_session", JSON.stringify(data)); } catch { /* overflow: se ignora */ }
     setDownloaded(false);
   }, []);
 
   const handleReset = useCallback(() => {
     setParsed(null);
     setDownloaded(false);
+    try { sessionStorage.removeItem("pdf2emails_session"); } catch { /* noop */ }
   }, []);
 
   const handleDownloaded = useCallback(() => {

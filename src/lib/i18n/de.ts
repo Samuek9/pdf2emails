@@ -97,7 +97,7 @@ export const de: Messages = {
   "cart.templates": "B2B-Cold-Email-Vorlagen-Paket",
   "cart.templatesPrice": "+ $4.99",
   "cart.total": "Gesamtbetrag",
-  "cart.emailLabel": "Wohin sollen wir deine verarbeitete Liste senden?",
+  "cart.emailLabel": "E-Mail (nur zum Senden Ihrer Zahlungsquittung)",
   "cart.cta": "Bestellung abschließen",
   "cart.success": "Fertig! Wir aktualisieren unsere Server. Wir schreiben dir an {email}.",
   "cart.emailError": "Bitte eine gültige E-Mail eingeben.",
