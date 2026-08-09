@@ -7,16 +7,17 @@ import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { PdfDropzone } from "@/components/PdfDropzone";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { initAnalytics, trackEvent } from "@/lib/analytics";
-import { getClientCountry, getCountryName, getLocalPrice } from "@/lib/countries";
+import { getClientCountry, getCountryName } from "@/lib/countries";
 import { parseAllEmails } from "@/lib/emails";
 import { getPricing } from "@/lib/pricing";
+import { useLocalPrice } from "@/lib/fx";
 import { t } from "@/lib/i18n";
 import type { Gateway, ParsedPdf } from "@/lib/types";
 
 export default function HomePage() {
   const country = useMemo(() => getClientCountry(), []);
   const pricing = useMemo(() => getPricing(country), [country]);
-  const local = useMemo(() => getLocalPrice(country), [country]);
+  const local = useLocalPrice(country);
 
   const [parsed, setParsed] = useState<ParsedPdf | null>(null);
   const [unlocked, setUnlocked] = useState(false);

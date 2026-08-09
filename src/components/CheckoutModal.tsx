@@ -5,7 +5,7 @@ import { ArrowRight, Check, CheckCircle2, CreditCard, Landmark, Loader2, Lock, S
 import { trackEvent } from "@/lib/analytics";
 import { t } from "@/lib/i18n";
 import { getPricing } from "@/lib/pricing";
-import { getLocalPrice } from "@/lib/countries";
+import { useLocalPrice } from "@/lib/fx";
 import type { Gateway } from "@/lib/types";
 
 interface CheckoutModalProps {
@@ -39,7 +39,7 @@ export function CheckoutModal({
   lockedCount,
 }: CheckoutModalProps) {
   const pricing = useMemo(() => getPricing(country), [country]);
-  const local = getLocalPrice(country);
+  const local = useLocalPrice(country);
   const [step, setStep] = useState<Step>("method");
   const [gateway, setGateway] = useState<Gateway>(pricing.primaryGateway);
   const [error, setError] = useState<string | null>(null);

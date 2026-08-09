@@ -33,6 +33,30 @@ const posts = [
     title: "What is an email scraper and how to use it for sales",
     desc: "Extract emails from documents for prospecting and cold email, legally and easily.",
   },
+  {
+    href: "/blog/extraer-emails-pdf-sin-software",
+    lang: "ES",
+    title: "Cómo extraer emails de un PDF sin instalar software",
+    desc: "Extrae correos de un PDF gratis y sin instalar nada, todo en tu navegador.",
+  },
+  {
+    href: "/blog/extraer-correos-pdf-online-gratis",
+    lang: "ES",
+    title: "Extraer correos de un PDF online gratis",
+    desc: "Saca todos los correos de un PDF online, sin subir archivos y sin registro.",
+  },
+  {
+    href: "/blog/how-to-scrape-emails-from-pdf",
+    lang: "EN",
+    title: "How to scrape emails from a PDF (easy guide)",
+    desc: "Quick, free guide to scrape emails from a PDF without uploading files.",
+  },
+  {
+    href: "/blog/extract-contacts-from-pdf-to-csv",
+    lang: "EN",
+    title: "How to extract contacts from a PDF to CSV",
+    desc: "Turn the emails in a PDF into a clean CSV file for your CRM or spreadsheet.",
+  },
 ];
 
 export default function BlogIndex() {
