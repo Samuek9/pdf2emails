@@ -25,8 +25,14 @@ import { t } from "@/lib/i18n";
 import type { ParsedPdf } from "@/lib/types";
 
 export default function HomePage() {
-  const country = useMemo(() => getClientCountry(), []);
+  // Pais como estado con default estable (US) en server y primer render del
+  // cliente para evitar hydration mismatch. Se resuelve el real tras el montaje.
+  const [country, setCountry] = useState<string>("US");
   const pricing = useMemo(() => getPricing(country), [country]);
+
+  useEffect(() => {
+    setCountry(getClientCountry());
+  }, []);
   const [parsed, setParsed] = useState<ParsedPdf | null>(null);
   const [verifyOpen, setVerifyOpen] = useState(false);
   const [downloaded, setDownloaded] = useState(false);

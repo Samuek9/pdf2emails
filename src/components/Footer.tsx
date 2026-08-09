@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Mail } from "lucide-react";
 import { LATAM_COUNTRIES, ROW_COUNTRIES } from "@/lib/countries";
 import { t } from "@/lib/i18n";
@@ -8,11 +8,14 @@ import { t } from "@/lib/i18n";
 const ALL_COUNTRIES = [...LATAM_COUNTRIES, ...ROW_COUNTRIES];
 
 export function Footer() {
-  const [country, setCountry] = useState(() => {
-    if (typeof window === "undefined") return "US";
+  // Estado estable en server y primer render (evita hydration mismatch).
+  // El pais real (cookie) se lee despues del montaje.
+  const [country, setCountry] = useState("US");
+
+  useEffect(() => {
     const cookie = document.cookie.split("; ").find((r) => r.startsWith("user_country="));
-    return cookie ? cookie.split("=")[1] : "US";
-  });
+    setCountry(cookie ? cookie.split("=")[1] : "US");
+  }, []);
 
   function handleCountryChange(code: string) {
     setCountry(code);

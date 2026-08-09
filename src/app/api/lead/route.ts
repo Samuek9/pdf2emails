@@ -32,6 +32,10 @@ export async function POST(request: NextRequest) {
   const resendKey = process.env.RESEND_API_KEY;
   const leadTo = process.env.LEAD_TO_EMAIL || "info@pdf2emails.com";
   if (resendKey) {
+    // Escapamos el email para evitar inyeccion de HTML en la notificacion.
+    const safeEmail = email.replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ?? c,
+    );
     fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -42,7 +46,7 @@ export async function POST(request: NextRequest) {
         from: process.env.LEAD_FROM_EMAIL || "info@pdf2emails.com",
         to: [leadTo],
         subject: "Nuevo lead en PDF2Emails",
-        html: `<p>Nuevo lead capturado en PDF2Emails.</p><p><strong>Email:</strong> ${email}</p><p><strong>Emails extraidos:</strong> ${body?.emailsCount ?? 0}</p>`,
+        html: `<p>Nuevo lead capturado en PDF2Emails.</p><p><strong>Email:</strong> ${safeEmail}</p><p><strong>Emails extraidos:</strong> ${body?.emailsCount ?? 0}</p>`,
       }),
     }).catch(() => {});
   }
