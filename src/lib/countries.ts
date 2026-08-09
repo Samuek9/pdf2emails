@@ -67,26 +67,27 @@ export function getClientCountry(): string {
 }
 
 // Estimados aproximados del precio de $7.99 USD en la moneda local de cada pais LATAM.
-export const COUNTRY_LOCAL_PRICE: Record<string, { currency: string; amount: string }> = {
-  CO: { currency: "COP", amount: "16,000" },
-  MX: { currency: "MXN", amount: "77" },
-  AR: { currency: "ARS", amount: "4,750" },
-  CL: { currency: "CLP", amount: "3,800" },
-  PE: { currency: "PEN", amount: "15" },
-  EC: { currency: "USD", amount: "3.99" },
-  UY: { currency: "UYU", amount: "160" },
-  PY: { currency: "PYG", amount: "29,000" },
-  BO: { currency: "BOB", amount: "28" },
-  BR: { currency: "BRL", amount: "22" },
-  CR: { currency: "CRC", amount: "2,075" },
-  DO: { currency: "DOP", amount: "240" },
-  PA: { currency: "USD", amount: "3.99" },
-  GT: { currency: "GTQ", amount: "31" },
-  NI: { currency: "NIO", amount: "144" },
+// Tipos de cambio aproximados USD -> moneda local (se actualizan en vivo via /api/fx).
+export const COUNTRY_LOCAL_PRICE: Record<string, { currency: string; rate: number }> = {
+  CO: { currency: "COP", rate: 4000 },
+  MX: { currency: "MXN", rate: 19.3 },
+  AR: { currency: "ARS", rate: 1200 },
+  CL: { currency: "CLP", rate: 950 },
+  PE: { currency: "PEN", rate: 3.7 },
+  EC: { currency: "USD", rate: 1 },
+  UY: { currency: "UYU", rate: 40 },
+  PY: { currency: "PYG", rate: 7300 },
+  BO: { currency: "BOB", rate: 6.9 },
+  BR: { currency: "BRL", rate: 5.5 },
+  CR: { currency: "CRC", rate: 520 },
+  DO: { currency: "DOP", rate: 60 },
+  PA: { currency: "USD", rate: 1 },
+  GT: { currency: "GTQ", rate: 7.8 },
+  NI: { currency: "NIO", rate: 36 },
 };
 
 export function getLocalPrice(
   countryCode: string,
-): { currency: string; amount: string } | null {
+): { currency: string; rate: number } | null {
   return COUNTRY_LOCAL_PRICE[countryCode.toUpperCase()] ?? null;
 }

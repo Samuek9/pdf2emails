@@ -14,11 +14,14 @@ function formatLocal(v: number): string {
 }
 
 /**
- * Devuelve el estimado del precio ($7.99 USD) en la moneda local del pais.
- * Usa la tasa de cambio en vivo (via /api/fx) y, si aun no cargo o falla,
- * cae al valor estatico de COUNTRY_LOCAL_PRICE.
+ * Devuelve el estimado del monto (en USD) convertido a la moneda local del pais.
+ * Usa la tasa en vivo (via /api/fx) y, si aun no cargo o falla, cae a la tasa
+ * estatica de COUNTRY_LOCAL_PRICE.
  */
-export function useLocalPrice(countryCode: string): { currency: string; amount: string } | null {
+export function useLocalPrice(
+  countryCode: string,
+  amountUsd: number = PRICE_USD,
+): { currency: string; amount: string } | null {
   const [rates, setRates] = useState<Record<string, number> | null>(cachedRates);
 
   useEffect(() => {
@@ -37,9 +40,7 @@ export function useLocalPrice(countryCode: string): { currency: string; amount: 
   const base = COUNTRY_LOCAL_PRICE[countryCode.toUpperCase()];
   if (!base) return null;
 
-  const rate = rates?.[base.currency];
-  if (typeof rate === "number") {
-    return { currency: base.currency, amount: formatLocal(PRICE_USD * rate) };
-  }
-  return { currency: base.currency, amount: base.amount };
+  const rate = rates?.[base.currency] ?? base.rate;
+  return { currency: base.currency, amount: formatLocal(amountUsd * rate) };
 }
+

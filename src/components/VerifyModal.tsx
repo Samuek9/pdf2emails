@@ -11,11 +11,12 @@ interface VerifyModalProps {
   emailsCount: number;
   emails: string[];
   onCheckout: (amount: number, sel: { verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean }, email: string) => void;
+  onFreeDownload: () => void;
 }
 
 type Selection = { verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean };
 
-export function VerifyModal({ open, onClose, emailsCount, emails, onCheckout }: VerifyModalProps) {
+export function VerifyModal({ open, onClose, emailsCount, emails, onCheckout, onFreeDownload }: VerifyModalProps) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -139,6 +140,9 @@ export function VerifyModal({ open, onClose, emailsCount, emails, onCheckout }: 
             <button onClick={() => void submit()} disabled={submitting} className="btn-primary mt-4 w-full">
               {submitting ? <Loader2 size={16} className="animate-spin" /> : <ShieldCheck size={16} />}{" "}
               {t("cart.cta")}
+            </button>
+            <button type="button" onClick={onFreeDownload} className="mt-3 w-full text-center text-xs font-medium text-slate-400 underline underline-offset-2 hover:text-slate-600">
+              {t("cart.skip")}
             </button>
           </div>
         )}

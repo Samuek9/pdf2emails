@@ -65,6 +65,16 @@ export default function HomePage() {
     setVerifyOpen(true);
   }, []);
 
+  const handleFreeDownload = useCallback(() => {
+    if (parsed) {
+      const emails = parsed.all.map((e) => e.email);
+      const csv = "email\n" + emails.map((e) => e).join("\n") + "\n";
+      downloadBlob(`${parsed.fileName.replace(/\.pdf$/i, "") || "emails"}-correos.csv`, csv, "text/csv;charset=utf-8");
+      trackEvent("csv_downloaded", { format: "csv", totalEmails: emails.length });
+    }
+    setVerifyOpen(false);
+  }, [parsed]);
+
   const handleUnlock = useCallback(
     (option: "full" | "fullverify") => {
       setCheckoutOption(option);
@@ -264,6 +274,7 @@ export default function HomePage() {
         emailsCount={parsed ? parsed.all.length : 0}
         emails={parsed ? parsed.all.map((e) => e.email) : []}
         onCheckout={handleCartCheckout}
+        onFreeDownload={handleFreeDownload}
       />
     </>
   );

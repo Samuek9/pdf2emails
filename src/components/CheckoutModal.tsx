@@ -41,7 +41,7 @@ export function CheckoutModal({
   amount,
 }: CheckoutModalProps) {
   const pricing = useMemo(() => getPricing(country), [country]);
-  const local = useLocalPrice(country);
+  const local = useLocalPrice(country, amount);
   const [step, setStep] = useState<Step>("method");
   const [gateway, setGateway] = useState<Gateway>(pricing.primaryGateway);
   const [error, setError] = useState<string | null>(null);
