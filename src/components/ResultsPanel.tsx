@@ -31,6 +31,15 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
 
   const result = useMemo(() => applyFilters(parsed.all, parsed.totalRaw, options), [parsed, options]);
 
+  // Conteos "brutos" (antes de filtros) para que las tarjetas sumen al total
+  // encontrado y coincidan con el conteo del checkout (consistencia de numeros).
+  const grossCounts = useMemo(() => {
+    const counts = { corporate: 0, generic: 0, personal: 0, unknown: 0 };
+    for (const e of parsed.all) counts[e.category] = (counts[e.category] ?? 0) + 1;
+    return counts;
+  }, [parsed]);
+  const grossTotal = grossCounts.corporate + grossCounts.generic + grossCounts.personal + grossCounts.unknown;
+
   useEffect(() => {
     if (parsed && trackedFile.current !== parsed.fileName) {
       trackedFile.current = parsed.fileName;
@@ -95,10 +104,10 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
       </div>
 
       <div className="grid grid-cols-2 gap-3 px-5 py-5 sm:grid-cols-4">
-        <MetricCard label={t("result.metricFound")} value={result.totalEmails} highlight />
-        <MetricCard label={t("result.metricCorporate")} value={result.corporateCount} />
-        <MetricCard label={t("result.metricGeneric")} value={result.genericCount + result.excludedGeneric} sub={options.excludeGeneric ? t("result.excludedFilter") : undefined} />
-        <MetricCard label={t("result.metricPersonal")} value={result.personalCount + result.excludedPersonal} sub={options.excludePersonal ? t("result.excludedFilter") : undefined} />
+        <MetricCard label={t("result.metricFound")} value={grossTotal} highlight />
+        <MetricCard label={t("result.metricCorporate")} value={grossCounts.corporate} />
+        <MetricCard label={t("result.metricGeneric")} value={grossCounts.generic} sub={options.excludeGeneric ? t("result.excludedFilter") : undefined} />
+        <MetricCard label={t("result.metricPersonal")} value={grossCounts.personal} sub={options.excludePersonal ? t("result.excludedFilter") : undefined} />
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3">

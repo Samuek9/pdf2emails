@@ -27,10 +27,7 @@ declare global {
   }
 }
 
-const GATEWAY_META: Record<Gateway, { name: string; subtitle: string; icon: "card" | "bank" }> = {
-  wompi: { name: "Wompi", subtitle: "Visa · Mastercard · Amex (internacional)", icon: "card" },
-  dlocal: { name: "dLocal Go", subtitle: "PSE · Pix · OXXO · tarjetas locales", icon: "bank" },
-};
+// Los nombres amigables del metodo de pago se renderizan via gwMeta localizado.
 
 export function CheckoutModal({
   open,
@@ -42,6 +39,11 @@ export function CheckoutModal({
 }: CheckoutModalProps) {
   const pricing = useMemo(() => getPricing(country), [country]);
   const local = useLocalPrice(country, amount);
+  // Etiqueta de metodo de pago amigable (sin jargon de pasarela: Wompi/dLocal).
+  const gwMeta =
+    pricing.region === "latam"
+      ? { name: t("checkout.payLocalName"), subtitle: t("checkout.payLocalSub"), icon: "bank" as const }
+      : { name: t("checkout.payCardName"), subtitle: t("checkout.payCardSub"), icon: "card" as const };
   const [step, setStep] = useState<Step>("method");
   const [gateway, setGateway] = useState<Gateway>(pricing.primaryGateway);
   const [error, setError] = useState<string | null>(null);
@@ -262,14 +264,14 @@ export function CheckoutModal({
             </p>
             <div className="mt-2 flex items-center gap-3 rounded-xl border border-emerald-500 bg-emerald-50/50 px-4 py-3 ring-1 ring-emerald-500">
               <span className="text-emerald-700">
-                {GATEWAY_META[pricing.primaryGateway].icon === "card" ? <CreditCard size={18} /> : <Landmark size={18} />}
+                {gwMeta.icon === "card" ? <CreditCard size={18} /> : <Landmark size={18} />}
               </span>
               <span>
                 <span className="block text-sm font-semibold text-slate-800">
-                  {GATEWAY_META[pricing.primaryGateway].name}
+                  {gwMeta.name}
                 </span>
                 <span className="block text-xs text-slate-500">
-                  {GATEWAY_META[pricing.primaryGateway].subtitle}
+                  {gwMeta.subtitle}
                 </span>
               </span>
               <Check size={18} className="ml-auto text-emerald-600" />
