@@ -187,7 +187,7 @@ export const en: Messages = {
   "faq.q4": "What if the PDF has a password or is a scan?",
   "faq.a4": "For scans, enable OCR. If the PDF is password-protected, remove the password and try again.",
   "faq.q5": "How does payment by country work?",
-  "faq.a5": "By geolocation: in Latin America the price is $3.99 USD with dLocal Go (PSE, Pix, OXXO). Rest of the world $9.99 USD with Wompi.",
+  "faq.a5": "By geolocation: in Latin America $7.99 USD with dLocal Go (PSE, Pix, OXXO). Rest of the world $19 USD with Wompi.",
   "cta.title": "Ready to get the emails out of that PDF?",
   "cta.sub": "Free to try. No signup. Pay only if you need the full list.",
   "cta.btn": "Upload my PDF",

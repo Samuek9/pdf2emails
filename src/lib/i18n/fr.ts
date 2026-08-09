@@ -150,7 +150,7 @@ export const fr: Messages = {
   "faq.q4": "Et si le PDF a un mot de passe ou est scanné ?",
   "faq.a4": "Pour les scans, activez l'OCR. Si le PDF est protégé, supprimez le mot de passe.",
   "faq.q5": "Comment fonctionne le paiement par pays ?",
-  "faq.a5": "Par géolocalisation : en Amérique latine $3.99 USD avec dLocal Go. Reste du monde $9.99 USD avec Wompi.",
+  "faq.a5": "Par géolocalisation : en Amérique latine $7.99 USD avec dLocal Go. Reste du monde $19 USD avec Wompi.",
   "cta.title": "Prêt à sortir les emails de ce PDF ?",
   "cta.sub": "Gratuit à tester. Sans inscription. Payez seulement si vous avez besoin de la liste complète.",
   "cta.btn": "Envoyer mon PDF",

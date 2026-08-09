@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { COUNTRY_LOCAL_PRICE } from "./countries";
 
-const PRICE_USD = 3.99;
+const PRICE_USD = 7.99;
 
 let cachedRates: Record<string, number> | null = null;
 
