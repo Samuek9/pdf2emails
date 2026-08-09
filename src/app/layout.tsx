@@ -24,11 +24,12 @@ export const metadata: Metadata = {
   ],
   icons: { icon: "/favicon.svg" },
   openGraph: {
-    title: "PDF2Emails — Extrae correos de cualquier PDF",
-    description: "Primeros 5 correos gratis. Desbloquea la lista completa y descarga CSV/TXT.",
+    title: "PDF2Emails — Extrae correos de cualquier PDF en segundos",
+    description: "Sube un PDF y extrae todos los correos electronicos. Filtra genéricos y personales, exporta a CSV o TXT. Primeros 5 correos gratis, sin registro.",
     type: "website",
     url: SITE_URL,
     siteName: "PDF2Emails",
+    images: [{ url: `${SITE_URL}/og-image.svg`, width: 1200, height: 630, alt: "PDF2Emails - Extrae correos de tus PDFs" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -48,6 +49,22 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </div>
         <Analytics />
         <SpeedInsights />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "PDF2Emails",
+              url: SITE_URL,
+              description: "Extrae correos electronicos de PDFs en el navegador. Filtra genéricos y personales, exporta a CSV o TXT.",
+              applicationCategory: "UtilitiesApplication",
+              operatingSystem: "Any",
+              inLanguage: "es",
+              offers: { "@type": "Offer", price: "7.99", priceCurrency: "USD" },
+            }),
+          }}
+        />
       </body>
     </html>
   );

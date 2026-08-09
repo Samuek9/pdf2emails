@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { FileUp, Loader2 } from "lucide-react";
+import { FileUp, Loader2, Sparkles } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { extractTextFromFile } from "@/lib/pdf";
 
@@ -48,6 +48,18 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
     },
     [onParsed],
   );
+
+  async function loadSample() {
+    try {
+      const res = await fetch("/sample-emails.pdf");
+      if (!res.ok) throw new Error("no sample");
+      const blob = await res.blob();
+      const file = new File([blob], "sample-emails.pdf", { type: "application/pdf" });
+      await handleFile(file);
+    } catch {
+      setError("No se pudo cargar el PDF de ejemplo.");
+    }
+  }
 
   return (
     <div
@@ -103,6 +115,16 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
             <p className="mt-1 text-xs text-slate-400">
               PDF · hasta {MAX_SIZE_MB} MB · se procesa 100% en tu navegador · sin registro
             </p>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                void loadSample();
+              }}
+              className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 underline underline-offset-2 transition hover:text-emerald-700"
+            >
+              <Sparkles size={13} /> Probar con un PDF de ejemplo
+            </button>
           </div>
         </div>
       )}

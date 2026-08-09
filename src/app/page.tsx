@@ -152,47 +152,43 @@ export default function HomePage() {
           Los primeros 5 correos son gratis, sin registro. Desbloquea la lista completa desde{" "}
           {pricing.displayPrice}, con precio preferencial para Latinoamérica (PPP).
         </p>
-        <div className="mx-auto mt-10 grid max-w-3xl gap-6 sm:grid-cols-2">
-          <div className={`card relative p-6 ${pricing.region === "latam" ? "ring-2 ring-emerald-500" : ""}`}>
-            {pricing.region === "latam" && (
-              <span className="absolute -top-3 left-5 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-bold text-white">
-                Tu plan actual
-              </span>
+        <div className="mx-auto mt-10 max-w-md">
+          <div className="card relative p-6 ring-2 ring-emerald-500">
+            <span className="absolute -top-3 left-5 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-bold text-white">
+              Tu precio
+            </span>
+            {pricing.region === "latam" ? (
+              <>
+                <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">Latinoamérica · dLocal Go</p>
+                <p className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">
+                  $7.99 <span className="text-lg font-semibold text-slate-400">USD</span>
+                </p>
+                <p className="mt-1 text-sm font-semibold text-slate-500">≈ $32,000 COP</p>
+                <ul className="mt-4 space-y-2 text-sm text-slate-600">
+                  <li>✓ Precio preferencial (PPP)</li>
+                  <li>✓ PSE · Pix · OXXO · tarjetas locales</li>
+                </ul>
+                <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+                  <Landmark size={14} /> dLocal Go
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Resto del mundo · Wompi</p>
+                <p className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">
+                  $19 <span className="text-lg font-semibold text-slate-400">USD</span>
+                </p>
+                <p className="mt-1 text-sm font-semibold text-slate-500">Pago único · sin suscripción</p>
+                <ul className="mt-4 space-y-2 text-sm text-slate-600">
+                  <li>✓ Visa · Mastercard · Amex internacional</li>
+                  <li>✓ Precio estándar global</li>
+                  <li>✓ Pago único por PDF</li>
+                </ul>
+                <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+                  <CreditCard size={14} /> Wompi
+                </p>
+              </>
             )}
-            <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">Latinoamérica</p>
-            <p className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">
-              $7.99 <span className="text-lg font-semibold text-slate-400">USD</span>
-            </p>
-            <p className="mt-1 text-sm font-semibold text-slate-500">≈ $32,000 COP</p>
-            <ul className="mt-4 space-y-2 text-sm text-slate-600">
-              <li>✓ Precio preferencial (PPP)</li>
-              <li>✓ PSE · Pix · OXXO · tarjetas locales</li>
-              <li>✓ Tarjetas internacionales vía Wompi</li>
-            </ul>
-            <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-              <Landmark size={14} /> dLocal Go
-            </p>
-          </div>
-
-          <div className={`card relative p-6 ${pricing.region !== "latam" ? "ring-2 ring-emerald-500" : ""}`}>
-            {pricing.region !== "latam" && (
-              <span className="absolute -top-3 left-5 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-bold text-white">
-                Tu plan actual
-              </span>
-            )}
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Resto del mundo</p>
-            <p className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">
-              $19 <span className="text-lg font-semibold text-slate-400">USD</span>
-            </p>
-            <p className="mt-1 text-sm font-semibold text-slate-500">Pago único · sin suscripción</p>
-            <ul className="mt-4 space-y-2 text-sm text-slate-600">
-              <li>✓ Visa · Mastercard · Amex internacional</li>
-              <li>✓ Precio estándar global</li>
-              <li>✓ Pago único por PDF</li>
-            </ul>
-            <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-              <CreditCard size={14} /> Wompi
-            </p>
           </div>
         </div>
         <p className="mt-5 text-center text-xs text-slate-400">

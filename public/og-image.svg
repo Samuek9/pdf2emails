@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="g" cx="20%" cy="10%" r="80%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#0f172a"/>
+  <rect width="1200" height="630" fill="url(#g)"/>
+  <rect x="70" y="70" width="80" height="80" rx="18" fill="#059669"/>
+  <rect x="100" y="92" width="40" height="36" rx="6" fill="#ffffff"/>
+  <path d="M106 98 l14 10 14-10" fill="none" stroke="#059669" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="170" y="128" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="#ffffff">PDF2Emails</text>
+  <text x="70" y="360" font-family="Arial, sans-serif" font-size="62" font-weight="bold" fill="#ffffff">Extrae cada correo de tus PDFs</text>
+  <text x="70" y="430" font-family="Arial, sans-serif" font-size="34" fill="#94a3b8">Sube un PDF, encuentra los correos y exportalos a CSV o TXT.</text>
+  <text x="70" y="520" font-family="Arial, sans-serif" font-size="30" fill="#34d399">Primeros 5 correos gratis · pdf2emails.com</text>
+</svg>
