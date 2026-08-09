@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Copy, Download, FileText, Lock, RefreshCw, ShieldCheck } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
-import { downloadBlob, toCsv, toTxt } from "@/lib/csv";
+import { downloadBlob, downloadXlsx, toCsv, toTxt } from "@/lib/csv";
 import { applyFilters } from "@/lib/emails";
 import { t } from "@/lib/i18n";
 import type { EmailCategory, ExtractOptions, ExtractedEmail, ParsedPdf } from "@/lib/types";
@@ -64,6 +64,11 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
     }
     trackEvent("csv_downloaded", { format, totalEmails: emails.length });
     onDownloaded(format);
+  }
+
+  async function handleExcel() {
+    await downloadXlsx(result.emails.map((e) => e.email));
+    trackEvent("excel_downloaded", { totalEmails: result.totalEmails });
   }
 
   const visible = result.emails.slice(0, PREVIEW);
@@ -155,6 +160,9 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
             </button>
             <button className="btn-primary !px-6 !py-3" onClick={onVerify}>
               <ShieldCheck size={16} /> {t("result.verifyBtn")}
+            </button>
+            <button className="btn-secondary" onClick={() => void handleExcel()}>
+              <FileText size={16} /> Excel
             </button>
           </div>
           <p className="mt-2 text-xs font-medium text-red-600">{t("sec.rawWarning")}</p>

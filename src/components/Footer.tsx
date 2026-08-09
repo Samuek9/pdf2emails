@@ -44,6 +44,15 @@ export function Footer() {
           </select>
         </div>
       </div>
+      <div className="border-t border-slate-100 px-4 py-4">
+        <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-2 text-xs text-slate-400 sm:flex-row">
+          <div className="flex gap-4">
+            <a href="/terms" className="transition hover:text-slate-600">Terms</a>
+            <a href="/privacy" className="transition hover:text-slate-600">Privacy</a>
+          </div>
+          <a href="mailto:soporte@pdf2emails.com" className="transition hover:text-slate-600">soporte@pdf2emails.com</a>
+        </div>
+      </div>
     </footer>
   );
 }
