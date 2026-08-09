@@ -25,5 +25,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/use-cases/extract-emails-from-bank-statement-pdf`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/use-cases/extract-emails-from-linkedin-export-pdf`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/use-cases/extract-emails-from-scanned-pdf-ocr`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/blog/pdf2emails-vs-manual-copy-paste`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/blog/top-free-pdf-email-extractors`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/es/use-cases/extraer-correos-de-pdf-escaneado`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/es/blog/extraer-correos-de-un-pdf-facturas`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
   ];
 }

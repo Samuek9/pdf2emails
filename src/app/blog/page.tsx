@@ -57,6 +57,18 @@ const posts = [
     title: "How to extract contacts from a PDF to CSV",
     desc: "Turn the emails in a PDF into a clean CSV file for your CRM or spreadsheet.",
   },
+  {
+    href: "/blog/pdf2emails-vs-manual-copy-paste",
+    lang: "EN",
+    title: "PDF2Emails vs manual copy-paste: extract 500 emails in 10 seconds",
+    desc: "Compare the old way of copy-pasting PDF contacts vs a free, private browser tool.",
+  },
+  {
+    href: "/blog/top-free-pdf-email-extractors",
+    lang: "EN",
+    title: "Top free tools to extract contact details from a PDF (2026)",
+    desc: "The honest shortlist of free PDF email extractors — and which one keeps your file private.",
+  },
 ];
 
 export default function BlogIndex() {
