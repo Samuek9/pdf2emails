@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { FileUp, Loader2, ScanSearch, Sparkles } from "lucide-react";
+import { FileUp, Filter, Loader2, ScanSearch, ShieldCheck, Sparkles } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { extractTextFromFile, extractTextWithOcr } from "@/lib/pdf";
 import { parseAllEmails } from "@/lib/emails";
@@ -100,6 +100,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
   }
 
   return (
+    <>
     <div
       role="button"
       tabIndex={0}
@@ -205,5 +206,24 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
         <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{error}</p>
       )}
     </div>
+    <div className="mt-3 grid grid-cols-1 gap-2 text-center sm:grid-cols-3">
+      {[
+        { icon: ShieldCheck, label: t("badge.private.label"), desc: t("badge.private.desc") },
+        { icon: ScanSearch, label: t("badge.compat.label"), desc: t("badge.compat.desc") },
+        { icon: Filter, label: t("badge.filter.label"), desc: t("badge.filter.desc") },
+      ].map((b) => (
+        <div
+          key={b.label}
+          className="flex items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-white/70 px-3 py-2.5"
+        >
+          <b.icon size={17} className="shrink-0 text-emerald-600" />
+          <div className="text-left">
+            <p className="text-xs font-bold text-slate-700">{b.label}</p>
+            <p className="text-[11px] leading-tight text-slate-400">{b.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+    </>
   );
 }
