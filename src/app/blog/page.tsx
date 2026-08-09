@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BlogExtractor } from "@/components/BlogExtractor";
 
 export const metadata: Metadata = {
   title: "Blog — Guías de PDF2Emails para extraer correos de PDFs",
@@ -78,6 +79,9 @@ export default function BlogIndex() {
       <p className="mt-2 text-sm text-slate-500">
         Guías para extraer correos de PDFs y mejorar tu prospección.
       </p>
+      <div className="mt-6">
+        <BlogExtractor />
+      </div>
       <div className="mt-8 space-y-4">
         {posts.map((p) => (
           <Link
