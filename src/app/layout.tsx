@@ -16,15 +16,23 @@ const TITLES: Record<string, string> = {
   de: "PDF2Emails — Extrahiere E-Mails aus PDFs in Sekunden",
 };
 
+const DESCRIPTIONS: Record<string, string> = {
+  es: "Extrae todos los correos de un PDF en tu navegador. Limpia, filtra y exporta a CSV. 100% privado, sin subir archivos. Gratis para PDFs pequeños.",
+  en: "Extract every email from a PDF in your browser. Clean, filter and export to CSV. 100% private, no uploads. Free for small PDFs.",
+  pt: "Extraia todos os emails de um PDF no seu navegador. Limpe, filtre e exporte para CSV. 100% privado, sem uploads. Grátis para PDFs pequenos.",
+  fr: "Extrayez tous les emails d'un PDF dans votre navigateur. Nettoyez, filtrez et exportez en CSV. 100% privé, sans envoi. Gratuit pour les petits PDFs.",
+  de: "Extrahiere alle E-Mails aus einem PDF in deinem Browser. Bereinige, filtere und exportiere als CSV. 100% privat, keine Uploads. Kostenlos für kleine PDFs.",
+};
+
 export async function generateMetadata(): Promise<Metadata> {
   const c = await cookies();
   const lang = c.get("user_locale")?.value || "en";
   const title = TITLES[lang] ?? TITLES.en;
+  const desc = DESCRIPTIONS[lang] ?? DESCRIPTIONS.en;
   return {
     metadataBase: new URL(SITE_URL),
     title: { default: title, template: "%s | PDF2Emails" },
-    description:
-      "Extract every email from a PDF in your browser. Clean, filter and export to CSV. 100% private, no uploads. Free for small PDFs.",
+    description: desc,
     keywords: [
       "extract emails from pdf",
       "pdf email extractor",
@@ -35,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
     icons: { icon: "/favicon.svg" },
     openGraph: {
       title,
-      description: "100% private: extract emails from PDFs in your browser. Free for small PDFs.",
+      description: desc,
       type: "website",
       url: `${SITE_URL}/${lang}`,
       siteName: "PDF2Emails",
@@ -44,7 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       title,
-      description: "Extract emails from PDFs, 100% private, in your browser.",
+      description: desc,
     },
     alternates: {
       canonical: `${SITE_URL}/${lang}`,

@@ -70,7 +70,7 @@ export const es: Messages = {
   "result.copyAll": "Copiar lista",
   "result.rawBtn": "Descargar CSV (gratis)",
   "result.rawWarning": "Riesgo alto de rebote. Usar bajo tu propio riesgo.",
-  "result.verifyBtn": "Limpiar y verificar por $4.99",
+  "result.verifyBtn": "Limpiar y verificar",
   "verify.title": "Limpiar y verificar tu lista",
   "verify.sub": "Eliminamos trampas de spam, correos muertos y errores de sintaxis para proteger tu dominio de bloqueos de spam.",
   "verify.found": "Detectamos {n} correos en tu PDF.",
@@ -131,7 +131,7 @@ export const es: Messages = {
   "checkout.approvedSub": "Los {n} correos están desbloqueados. Descarga tu CSV o TXT ahora.",
   "checkout.view": "Ver correos y descargar",
   "checkout.demo":
-    "<strong>Modo demo:</strong> no hay credenciales de pago configuradas, así que el pago se simula para que pruebes el flujo completo. Conecta Wompi o dLocal Go en las variables de entorno para cobros reales.",
+    "Modo demo: no hay credenciales de pago configuradas, así que el pago se simula para que pruebes el flujo completo. Conecta Wompi o dLocal Go en las variables de entorno para cobros reales.",
   "checkout.secure": "Pago cifrado · Soporte a factura",
   "checkout.errWompi": "El pago no fue aprobado o fue cancelado. Intenta de nuevo.",
   "checkout.errWompiStart":

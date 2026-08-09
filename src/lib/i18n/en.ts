@@ -69,7 +69,7 @@ export const en: Messages = {
   "result.copyAll": "Copy list",
   "result.rawBtn": "Download CSV (free)",
   "result.rawWarning": "High bounce risk. Use at your own risk.",
-  "result.verifyBtn": "Clean & verify for $4.99",
+  "result.verifyBtn": "Clean & verify",
   "verify.title": "Clean & verify your list",
   "verify.sub": "We remove spam traps, dead emails and syntax errors to protect your domain from spam blocks.",
   "verify.found": "We detected {n} emails in your PDF.",
@@ -130,7 +130,7 @@ export const en: Messages = {
   "checkout.approvedSub": "{n} emails are unlocked. Download your CSV or TXT now.",
   "checkout.view": "View emails and download",
   "checkout.demo":
-    "<strong>Demo mode:</strong> no payment credentials are configured, so the payment is simulated for you to test the full flow. Connect Wompi or dLocal Go in the environment variables for real charges.",
+    "Demo mode: no payment credentials are configured, so the payment is simulated for you to test the full flow. Connect Wompi or dLocal Go in the environment variables for real charges.",
   "checkout.secure": "Secure payment · Invoice support",
   "checkout.errWompi": "The payment was not approved or was cancelled. Try again.",
   "checkout.errWompiStart":

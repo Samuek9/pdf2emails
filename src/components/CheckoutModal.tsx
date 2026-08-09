@@ -293,9 +293,7 @@ export function CheckoutModal({
 
             {demoMode && (
               <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-700">
-                <strong>Modo demo:</strong> no hay credenciales de pago configuradas, así que el pago
-                se simula para que pruebes el flujo completo. Conecta Wompi o dLocal Go en las variables de
-                entorno para cobros reales.
+                {t("checkout.demo")}
               </p>
             )}
 
