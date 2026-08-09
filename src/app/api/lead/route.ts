@@ -27,5 +27,25 @@ export async function POST(request: NextRequest) {
     }).catch(() => {});
   }
 
+  // Notificacion por email (Resend). Solo envia si esta configurado:
+  // RESEND_API_KEY + LEAD_TO_EMAIL. Por defecto va a info@pdf2emails.com.
+  const resendKey = process.env.RESEND_API_KEY;
+  const leadTo = process.env.LEAD_TO_EMAIL || "info@pdf2emails.com";
+  if (resendKey) {
+    fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resendKey}`,
+      },
+      body: JSON.stringify({
+        from: process.env.LEAD_FROM_EMAIL || "info@pdf2emails.com",
+        to: [leadTo],
+        subject: "Nuevo lead en PDF2Emails",
+        html: `<p>Nuevo lead capturado en PDF2Emails.</p><p><strong>Email:</strong> ${email}</p><p><strong>Emails extraidos:</strong> ${body?.emailsCount ?? 0}</p>`,
+      }),
+    }).catch(() => {});
+  }
+
   return NextResponse.json({ ok: true });
 }

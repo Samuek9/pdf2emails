@@ -7,8 +7,14 @@ let pdfjsPromise: Promise<PdfJsModule> | null = null;
 async function loadPdfJs(): Promise<PdfJsModule> {
   if (!pdfjsPromise) {
     pdfjsPromise = import("pdfjs-dist").then((pdfjs) => {
-      // El worker de pdf.js se sirve desde unpkg para garantizar la misma version.
-      pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+      // El worker se sirve desde el MISMO ORIGEN (webpack lo empaqueta a
+      // /_next/static). Asi se respeta la CSP de Vercel (worker-src 'self')
+      // y se elimina la dependencia de terceros (unpkg) que penalizaba el
+      // rendimiento y podia romper la extraccion.
+      pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+        "pdfjs-dist/build/pdf.worker.min.mjs",
+        import.meta.url,
+      ).toString();
       return pdfjs;
     });
   }

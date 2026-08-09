@@ -18,17 +18,15 @@ import { StatsBar } from "@/components/StatsBar";
 import { CheckoutModal } from "@/components/CheckoutModal";
 import { VerifyModal } from "@/components/VerifyModal";
 import { initAnalytics, trackEvent } from "@/lib/analytics";
-import { getClientCountry, getCountryName, isLatam } from "@/lib/countries";
+import { getClientCountry, getCountryName } from "@/lib/countries";
+import { getPricing } from "@/lib/pricing";
 import { parseAllEmails } from "@/lib/emails";
 import { t } from "@/lib/i18n";
 import type { ParsedPdf } from "@/lib/types";
 
 export default function HomePage() {
   const country = useMemo(() => getClientCountry(), []);
-  const regionPrices = useMemo(() => {
-    const latam = isLatam(country);
-    return { full: latam ? 3.99 : 9.99, verify: latam ? 6.99 : 12.99 };
-  }, [country]);
+  const pricing = useMemo(() => getPricing(country), [country]);
   const [parsed, setParsed] = useState<ParsedPdf | null>(null);
   const [verifyOpen, setVerifyOpen] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
@@ -78,10 +76,10 @@ export default function HomePage() {
   const handleUnlock = useCallback(
     (option: "full" | "fullverify") => {
       setCheckoutOption(option);
-      setCheckoutAmount(option === "fullverify" ? regionPrices.verify : regionPrices.full);
+      setCheckoutAmount(option === "fullverify" ? pricing.verifyPriceUsd : pricing.priceUsd);
       setCheckoutOpen(true);
     },
-    [regionPrices],
+    [pricing],
   );
 
   const handlePaymentSuccess = useCallback(
@@ -179,8 +177,8 @@ export default function HomePage() {
             onVerify={handleVerify}
             onUnlock={handleUnlock}
             onReset={handleReset}
-            fullPrice={regionPrices.full}
-            verifyPrice={regionPrices.verify}
+            fullPrice={pricing.priceUsd}
+            verifyPrice={pricing.verifyPriceUsd}
           />
         )}
       </section>

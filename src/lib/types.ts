@@ -36,6 +36,7 @@ export interface Pricing {
   countryCode: string;
   displayPrice: string;
   priceUsd: number;
+  verifyPriceUsd: number;
   priceCop: number;
   primaryGateway: Gateway;
   secondaryGateway: Gateway;

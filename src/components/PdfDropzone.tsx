@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { FileUp, Loader2, ScanSearch, Sparkles } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { extractTextFromFile, extractTextWithOcr } from "@/lib/pdf";
+import { parseAllEmails } from "@/lib/emails";
 import { t, ocrLang } from "@/lib/i18n";
 
 const MAX_SIZE_MB = 15;
@@ -25,7 +26,10 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
     async (file: File) => {
       setError(null);
       setNeedsOcr(false);
-      if (!file.name.toLowerCase().endsWith(".pdf")) {
+      const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+      const isPdf = ext === "pdf";
+      const isText = ext === "txt" || ext === "csv";
+      if (!isPdf && !isText) {
         setError(t("drop.error.type"));
         return;
       }
@@ -36,6 +40,18 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
       setIsLoading(true);
       lastFileRef.current = file;
       try {
+        if (isText) {
+          // .txt/.csv: se leen como texto y se extraen los emails directamente.
+          const text = await file.text();
+          const { all } = parseAllEmails(text);
+          trackEvent("pdf_uploaded", { fileName: file.name, format: ext, fileSizeBytes: file.size });
+          if (all.length === 0) {
+            setError(t("drop.error.parse"));
+            return;
+          }
+          onParsed(text, 1, file.name);
+          return;
+        }
         const { text, numPages } = await extractTextFromFile(file);
         if (numPages > 30) { setError(t("drop.error.pages")); return; }
         trackEvent("pdf_uploaded", { fileName: file.name, numPages, fileSizeBytes: file.size });
@@ -113,7 +129,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
       <input
         ref={inputRef}
         type="file"
-        accept="application/pdf,.pdf"
+        accept=".pdf,.txt,.csv,application/pdf,text/plain,text/csv"
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
