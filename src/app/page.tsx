@@ -173,6 +173,7 @@ export default function HomePage() {
         open={verifyOpen}
         onClose={() => setVerifyOpen(false)}
         emailsCount={parsed ? parsed.all.length : 0}
+        emails={parsed ? parsed.all.map((e) => e.email) : []}
       />
     </>
   );

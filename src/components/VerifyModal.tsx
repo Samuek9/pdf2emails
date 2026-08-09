@@ -3,17 +3,19 @@
 import { useState } from "react";
 import { CheckCircle2, Loader2, ShieldCheck, X } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
+import { downloadBlob } from "@/lib/csv";
 import { t } from "@/lib/i18n";
 
 interface VerifyModalProps {
   open: boolean;
   onClose: () => void;
   emailsCount: number;
+  emails: string[];
 }
 
 type Selection = { verify: boolean; enrich: boolean; clean: boolean };
 
-export function VerifyModal({ open, onClose, emailsCount }: VerifyModalProps) {
+export function VerifyModal({ open, onClose, emailsCount, emails }: VerifyModalProps) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -68,6 +70,25 @@ export function VerifyModal({ open, onClose, emailsCount }: VerifyModalProps) {
     } catch {
       // noop
     }
+
+    // Procesamiento real (verificar / limpiar / enriquecer) y entrega del CSV.
+    try {
+      const res = await fetch("/api/process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          emails,
+          options: { verify: sel.verify, clean: sel.clean, enrich: sel.enrich },
+        }),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as { csv?: string };
+        if (data?.csv) downloadBlob("lista-procesada.csv", data.csv, "text/csv;charset=utf-8");
+      }
+    } catch {
+      // noop
+    }
+
     setSubmitting(false);
     setDone(true);
   }
