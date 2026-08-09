@@ -1,5 +1,7 @@
 # PDF2Emails — Extrae correos de cualquier PDF
 
+> Repositorio: https://github.com/Samuek9/pdf2emails · Dominio: https://pdf2emails.com
+
 Micro-SaaS **client-side**: arrastra un PDF y extrae todos los correos electrónicos en tu navegador
 con `pdfjs-dist`, los filtra (genéricos y personales) y los exporta a CSV/TXT. Los primeros 5
 correos son gratis; la lista completa se desbloquea con un pago único por **paridad de precios (PPP)**
