@@ -20,6 +20,7 @@ import { VerifyModal } from "@/components/VerifyModal";
 import { initAnalytics, trackEvent } from "@/lib/analytics";
 import { getClientCountry, getCountryName } from "@/lib/countries";
 import { getPricing } from "@/lib/pricing";
+import { useLocalPrice } from "@/lib/fx";
 import { parseAllEmails } from "@/lib/emails";
 import { t } from "@/lib/i18n";
 import type { ParsedPdf } from "@/lib/types";
@@ -29,6 +30,7 @@ export default function HomePage() {
   // cliente para evitar hydration mismatch. Se resuelve el real tras el montaje.
   const [country, setCountry] = useState<string>("US");
   const pricing = useMemo(() => getPricing(country), [country]);
+  const localPrice = useLocalPrice(country, pricing.priceUsd);
 
   useEffect(() => {
     setCountry(getClientCountry());
@@ -272,6 +274,11 @@ export default function HomePage() {
             <p className="mt-1 text-sm font-semibold text-slate-500">
               {pricing.region === "latam" ? t("pricing.latam") : t("pricing.row")}
             </p>
+            {pricing.region === "latam" && localPrice && (
+              <p className="mt-2 inline-flex items-center rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">
+                ≈ {localPrice.amount} {localPrice.currency}
+              </p>
+            )}
             <ul className="mt-4 space-y-2 text-sm text-slate-600">
               <li>✓ {t("pricing.f3")}</li>
               <li>✓ {t("pricing.f1")}</li>
