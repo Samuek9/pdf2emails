@@ -18,7 +18,7 @@ export default function Page() {
       <div className="mt-6 space-y-4 text-slate-700">
         <p>
           Los PDFs escaneados son imágenes sin texto seleccionable: la mayoría de herramientas fallan.{" "}
-          <Link href="/es" className="font-semibold text-emerald-600 hover:underline">PDF2Emails</Link>{" "}
+          <Link href="/es" className="font-semibold text-emerald-700 hover:underline">PDF2Emails</Link>{" "}
           detecta los escaneos y ejecuta <strong>OCR en tu navegador</strong> para leer el texto y extraer
           cada correo.
         </p>

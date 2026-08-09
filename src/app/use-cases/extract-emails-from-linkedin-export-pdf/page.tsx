@@ -18,7 +18,7 @@ export default function Page() {
       <div className="mt-6 space-y-4 text-slate-700">
         <p>
           Recruiters and sales pros often get LinkedIn contact lists as PDFs. With{" "}
-          <Link href="/" className="font-semibold text-emerald-600 hover:underline">PDF2Emails</Link>,
+          <Link href="/" className="font-semibold text-emerald-700 hover:underline">PDF2Emails</Link>,
           extract every email in seconds — and because it runs <strong>100% in your browser</strong>,
           your export never leaves your device.
         </p>

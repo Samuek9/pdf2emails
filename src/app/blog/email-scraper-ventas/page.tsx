@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function Post() {
   return (
     <article className="mx-auto max-w-3xl">
-      <Link href="/" className="text-sm font-semibold text-emerald-600 hover:underline">
+      <Link href="/" className="text-sm font-semibold text-emerald-700 hover:underline">
         ← Volver a PDF2Emails
       </Link>
       <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
@@ -41,7 +41,7 @@ export default function Post() {
         <h2 className="text-xl font-bold text-slate-900">Hazlo en segundos con PDF2Emails</h2>
         <p>
           Arrastra tu PDF en{" "}
-          <Link href="/" className="font-semibold text-emerald-600 hover:underline">PDF2Emails</Link>{" "}
+          <Link href="/" className="font-semibold text-emerald-700 hover:underline">PDF2Emails</Link>{" "}
           y obtén la lista de correos lista para CSV. Filtra genéricos y personales, y descarga la
           lista completa para empezar a prospectar hoy mismo.
         </p>

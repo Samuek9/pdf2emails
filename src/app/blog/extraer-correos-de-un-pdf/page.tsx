@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function Post() {
   return (
     <article className="mx-auto max-w-3xl">
-      <Link href="/" className="text-sm font-semibold text-emerald-600 hover:underline">
+      <Link href="/" className="text-sm font-semibold text-emerald-700 hover:underline">
         ← Volver a PDF2Emails
       </Link>
       <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
@@ -35,7 +35,7 @@ export default function Post() {
         <h2 className="text-xl font-bold text-slate-900">La forma más fácil: una herramienta online</h2>
         <p>
           No necesitas instalar nada. Con{" "}
-          <Link href="/" className="font-semibold text-emerald-600 hover:underline">PDF2Emails</Link>{" "}
+          <Link href="/" className="font-semibold text-emerald-700 hover:underline">PDF2Emails</Link>{" "}
           solo arrastras tu PDF y la herramienta detecta <strong>todos los correos</strong> en
           segundos. Puedes filtrar los genéricos (info@, support@…) y los personales (@gmail.com,
           @hotmail.com) para quedarte con los corporativos, y exportar la lista a{" "}

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function Post() {
   return (
     <article className="mx-auto max-w-3xl">
-      <Link href="/blog" className="text-sm font-semibold text-emerald-600 hover:underline">
+      <Link href="/blog" className="text-sm font-semibold text-emerald-700 hover:underline">
         ← Back to Blog
       </Link>
       <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
@@ -22,7 +22,7 @@ export default function Post() {
         <p>
           Got a PDF full of contacts and need them in a spreadsheet? Convert the emails inside it to a
           clean <strong>CSV</strong> with{" "}
-          <Link href="/" className="font-semibold text-emerald-600 hover:underline">PDF2Emails</Link> —
+          <Link href="/" className="font-semibold text-emerald-700 hover:underline">PDF2Emails</Link> —
           free, fast, and everything runs in your browser.
         </p>
         <h2 className="text-xl font-bold text-slate-900">Why CSV?</h2>

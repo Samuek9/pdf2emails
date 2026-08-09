@@ -253,7 +253,7 @@ export default function HomePage() {
             <p className="text-4xl font-extrabold tracking-tight text-slate-900">{t("pricing.verifyPrice")}</p>
             <p className="mt-1 text-sm font-semibold text-slate-500">{t("pricing.verifySub")}</p>
             <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-              <ShieldCheck size={14} className="text-emerald-600" /> {t("verify.price")}
+              <ShieldCheck size={14} className="text-emerald-700" /> {t("verify.price")}
             </p>
           </div>
         </div>

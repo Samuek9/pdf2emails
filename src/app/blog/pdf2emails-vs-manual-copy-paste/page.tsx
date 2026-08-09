@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function Post() {
   return (
     <article className="mx-auto max-w-3xl">
-      <Link href="/blog" className="text-sm font-semibold text-emerald-600 hover:underline">
+      <Link href="/blog" className="text-sm font-semibold text-emerald-700 hover:underline">
         ← Back to Blog
       </Link>
       <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
@@ -33,16 +33,16 @@ export default function Post() {
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b"><td className="px-4 py-2">Extract 500 emails</td><td className="px-4 py-2">1–2 hours</td><td className="px-4 py-2 text-emerald-600">10 seconds</td></tr>
-              <tr className="border-b"><td className="px-4 py-2">Filter generic/personal</td><td className="px-4 py-2">Manual delete</td><td className="px-4 py-2 text-emerald-600">One click</td></tr>
-              <tr className="border-b"><td className="px-4 py-2">Export to CSV</td><td className="px-4 py-2">Retype</td><td className="px-4 py-2 text-emerald-600">One click</td></tr>
-              <tr><td className="px-4 py-2">File privacy</td><td className="px-4 py-2">—</td><td className="px-4 py-2 text-emerald-600">Never leaves your device</td></tr>
+              <tr className="border-b"><td className="px-4 py-2">Extract 500 emails</td><td className="px-4 py-2">1–2 hours</td><td className="px-4 py-2 text-emerald-700">10 seconds</td></tr>
+              <tr className="border-b"><td className="px-4 py-2">Filter generic/personal</td><td className="px-4 py-2">Manual delete</td><td className="px-4 py-2 text-emerald-700">One click</td></tr>
+              <tr className="border-b"><td className="px-4 py-2">Export to CSV</td><td className="px-4 py-2">Retype</td><td className="px-4 py-2 text-emerald-700">One click</td></tr>
+              <tr><td className="px-4 py-2">File privacy</td><td className="px-4 py-2">—</td><td className="px-4 py-2 text-emerald-700">Never leaves your device</td></tr>
             </tbody>
           </table>
         </div>
         <p>
           Try it free:{" "}
-          <Link href="/" className="font-semibold text-emerald-600 hover:underline">PDF2Emails</Link>{" "}
+          <Link href="/" className="font-semibold text-emerald-700 hover:underline">PDF2Emails</Link>{" "}
           extracts, filters, cleans and exports in your browser — no uploads, no signup.
         </p>
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">

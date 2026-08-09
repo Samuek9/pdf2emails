@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function Post() {
   return (
     <article className="mx-auto max-w-3xl">
-      <Link href="/blog" className="text-sm font-semibold text-emerald-600 hover:underline">
+      <Link href="/blog" className="text-sm font-semibold text-emerald-700 hover:underline">
         ← Back to Blog
       </Link>
       <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
@@ -40,7 +40,7 @@ export default function Post() {
         <h2 className="text-xl font-bold text-slate-900">Do it in seconds with PDF2Emails</h2>
         <p>
           Drop your PDF in{" "}
-          <Link href="/" className="font-semibold text-emerald-600 hover:underline">PDF2Emails</Link>{" "}
+          <Link href="/" className="font-semibold text-emerald-700 hover:underline">PDF2Emails</Link>{" "}
           and get an email list ready for CSV. Filter generic and personal emails, and download the
           full list to start prospecting today.
         </p>

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function Post() {
   return (
     <article className="mx-auto max-w-3xl">
-      <Link href="/blog" className="text-sm font-semibold text-emerald-600 hover:underline">
+      <Link href="/blog" className="text-sm font-semibold text-emerald-700 hover:underline">
         ← Back to Blog
       </Link>
       <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
@@ -21,7 +21,7 @@ export default function Post() {
       <div className="mt-8 space-y-4 text-slate-700">
         <p>
           Scraping emails from a PDF is easy when you have the right tool. With{" "}
-          <Link href="/" className="font-semibold text-emerald-600 hover:underline">PDF2Emails</Link>,
+          <Link href="/" className="font-semibold text-emerald-700 hover:underline">PDF2Emails</Link>,
           drop your PDF and get every email in seconds — <strong>no server uploads</strong>.
         </p>
         <h2 className="text-xl font-bold text-slate-900">Steps</h2>

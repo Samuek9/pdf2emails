@@ -18,7 +18,7 @@ export default function Page() {
       <div className="mt-6 space-y-4 text-slate-700">
         <p>
           Need the contacts from a PDF as a spreadsheet?{" "}
-          <Link href="/" className="font-semibold text-emerald-600 hover:underline">PDF2Emails</Link>{" "}
+          <Link href="/" className="font-semibold text-emerald-700 hover:underline">PDF2Emails</Link>{" "}
           converts every email in a PDF to a clean <strong>CSV</strong> in seconds — ready for Excel,
           Google Sheets or your CRM.
         </p>

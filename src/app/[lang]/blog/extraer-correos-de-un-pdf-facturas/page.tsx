@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function Post() {
   return (
     <article className="mx-auto max-w-3xl">
-      <Link href="/blog" className="text-sm font-semibold text-emerald-600 hover:underline">
+      <Link href="/blog" className="text-sm font-semibold text-emerald-700 hover:underline">
         ← Volver al Blog
       </Link>
       <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
@@ -25,7 +25,7 @@ export default function Post() {
         </p>
         <p>
           Con{" "}
-          <Link href="/es" className="font-semibold text-emerald-600 hover:underline">PDF2Emails</Link>{" "}
+          <Link href="/es" className="font-semibold text-emerald-700 hover:underline">PDF2Emails</Link>{" "}
           subes las facturas, extraes todos los correos en segundos y los exportas a{" "}
           <strong>CSV o Excel</strong> para tu contabilidad — todo dentro de tu navegador, sin enviar
           documentos sensibles a ningún servidor.

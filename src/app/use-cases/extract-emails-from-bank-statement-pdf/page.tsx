@@ -18,7 +18,7 @@ export default function Page() {
       <div className="mt-6 space-y-4 text-slate-700">
         <p>
           Bank statements and invoice PDFs are full of contact emails. With{" "}
-          <Link href="/" className="font-semibold text-emerald-600 hover:underline">PDF2Emails</Link>,
+          <Link href="/" className="font-semibold text-emerald-700 hover:underline">PDF2Emails</Link>,
           extract them all in seconds — and because it runs <strong>100% in your browser</strong>, your
           financial documents never leave your device.
         </p>
