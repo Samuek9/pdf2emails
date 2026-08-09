@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyMany } from "@/lib/verify";
+import { verifyManyReal } from "@/lib/emailVerifier";
 import { companyFromEmail, nameFromEmail, enrichViaOpenAI } from "@/lib/enrich";
 
 export const runtime = "nodejs";
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
   const rows: Row[] = [];
 
   let statuses: Record<string, string> = {};
-  if (doVerify) statuses = await verifyMany(emails);
+  if (doVerify) statuses = await verifyManyReal(emails);
 
   let enriched: Record<string, { title: string; company: string }> = {};
   if (doEnrich) {
@@ -133,6 +133,8 @@ export async function POST(request: NextRequest) {
     total: emails.length,
     valid: Object.values(statuses).filter((s) => s === "valid").length,
     invalid: Object.values(statuses).filter((s) => s === "invalid").length,
+    catchall: Object.values(statuses).filter((s) => s === "catchall").length,
+    unknown: Object.values(statuses).filter((s) => s === "unknown").length,
   };
 
   return NextResponse.json({ ok: true, csv, stats });
