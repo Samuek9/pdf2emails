@@ -86,7 +86,7 @@ export const fr: Messages = {
   "cart.title": "Complétez votre export",
   "cart.free": "Extraction du PDF",
   "cart.freePrice": "GRATUIT",
-  "cart.verify": "Vérification anti-spam (Recommandé)",
+  "cart.verify": "Vérification anti-spam",
   "cart.verifyPrice": "+ $4.99",
   "cart.enrich": "Enrichir avec Noms et Postes",
   "cart.enrichPrice": "+ $9.99",
@@ -188,4 +188,8 @@ export const fr: Messages = {
   "checkout.payCardSub": "Visa · Mastercard · Amex",
   "checkout.payLocalName": "Paiement local",
   "checkout.payLocalSub": "Pix · Nequi · PSE · OXXO",
+  "cart.pkgVerifyDesc": "Vérifie que les emails ne rebondissent pas et nettoie les noms",
+  "cart.pkgProTitle": "Pro Enrichi",
+  "cart.pkgProDesc": "Vérifie, enrichit avec les postes et extrait téléphones et modèles",
+  "cart.recommended": "Recommandé",
 };

@@ -23,18 +23,20 @@ export function VerifyModal({ open, onClose, emailsCount, emails, country, onChe
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-  const [sel, setSel] = useState<Selection>({ verify: true, enrich: false, clean: false, phones: false, templates: false });
-  const [bundle, setBundle] = useState(false);
+  const [pkg, setPkg] = useState<"verify" | "pro">("verify");
   const latam = isLatam(country);
   const prices = { verify: latam ? 2.49 : 4.99, enrich: latam ? 4.99 : 9.99, clean: latam ? 1.49 : 2.99, phones: latam ? 1.99 : 3.99, templates: 4.99 };
   const bundlePrice = latam ? 11.99 : 19.99;
-  const selectBundle = () => { setSel({ verify: true, enrich: true, clean: true, phones: true, templates: true }); setBundle(true); };;
+  const sel: Selection =
+    pkg === "pro"
+      ? { verify: true, enrich: true, clean: true, phones: true, templates: true }
+      : { verify: true, enrich: false, clean: true, phones: false, templates: false };
 
   if (!open) return null;
 
-  const total = bundle ? bundlePrice : (sel.verify ? prices.verify : 0) + (sel.enrich ? prices.enrich : 0) + (sel.clean ? prices.clean : 0) + (sel.phones ? prices.phones : 0) + (sel.templates ? prices.templates : 0);
+  const total = pkg === "pro" ? bundlePrice : prices.verify + prices.clean;
 
-  const toggle = (key: keyof Selection) => { setBundle(false); setSel((s) => ({ ...s, [key]: !s[key] })); };
+  // El paquete seleccionado determina sel y total (2 opciones claras, sin micropagos).
 
   async function submit() {
     const trimmed = email.trim();
@@ -114,22 +116,22 @@ export function VerifyModal({ open, onClose, emailsCount, emails, country, onChe
               <ShieldCheck size={14} className="text-emerald-600" /> {t("verify.found", { n: emailsCount })}
             </p>
 
-            <button type="button" onClick={selectBundle} className="mb-3 w-full rounded-xl bg-emerald-700 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-700/20 hover:bg-emerald-700">
-              ⚡ {t("cart.bundle")} — ${bundlePrice.toFixed(2)}
-            </button>
-            <div className="mt-4 space-y-2">
-              <Row label={t("cart.free")} price={t("cart.freePrice")} />
-              <Row
-                label={t("cart.verify")}
-                price={`+ $${prices.verify.toFixed(2)}`}
-                checked={sel.verify}
-                onChange={() => toggle("verify")}
+                        <div className="mt-2 space-y-2">
+              <PackageCard
+                title={t("cart.verify")}
+                desc={t("cart.pkgVerifyDesc")}
+                price={`${(prices.verify + prices.clean).toFixed(2)}`}
+                selected={pkg === "verify"}
+                onClick={() => setPkg("verify")}
+              />
+              <PackageCard
+                title={t("cart.pkgProTitle")}
+                desc={t("cart.pkgProDesc")}
+                price={`${bundlePrice.toFixed(2)}`}
+                selected={pkg === "pro"}
+                onClick={() => setPkg("pro")}
                 recommended
               />
-              <Row label={t("cart.enrich")} price={`+ $${prices.enrich.toFixed(2)}`} checked={sel.enrich} onChange={() => toggle("enrich")} />
-              <Row label={t("cart.clean")} price={`+ $${prices.clean.toFixed(2)}`} checked={sel.clean} onChange={() => toggle("clean")} />
-              <Row label={t("cart.phones")} price={`+ $${prices.phones.toFixed(2)}`} checked={sel.phones} onChange={() => toggle("phones")} />
-              <Row label={t("cart.templates")} price={`+ $${prices.templates.toFixed(2)}`} checked={sel.templates} onChange={() => toggle("templates")} />
             </div>
 
             <div className="mt-4 flex items-center justify-between rounded-xl bg-slate-900 px-5 py-3 text-white">
@@ -161,41 +163,39 @@ export function VerifyModal({ open, onClose, emailsCount, emails, country, onChe
   );
 }
 
-function Row({
-  label,
+function PackageCard({
+  title,
+  desc,
   price,
-  checked,
-  onChange,
+  selected,
+  onClick,
   recommended,
 }: {
-  label: string;
+  title: string;
+  desc: string;
   price: string;
-  checked?: boolean;
-  onChange?: () => void;
+  selected: boolean;
+  onClick: () => void;
   recommended?: boolean;
 }) {
   return (
-    <label
-      className={`flex cursor-pointer select-none items-center gap-3 rounded-xl border px-4 py-2.5 text-sm transition ${
-        checked ? "border-emerald-500 bg-emerald-50/50" : "border-slate-200 bg-white"
+    <button
+      type="button"
+      onClick={onClick}
+      className={`relative w-full rounded-xl border-2 px-4 py-3 text-left transition ${
+        selected ? "border-emerald-500 bg-emerald-50/60" : "border-slate-200 bg-white hover:border-emerald-300"
       }`}
     >
-      <input
-        type="checkbox"
-        className="h-4 w-4 accent-emerald-600"
-        checked={!!checked}
-        disabled={!onChange}
-        onChange={onChange}
-      />
-      <span className="flex-1 text-slate-700">
-        {label}
-        {recommended && (
-          <span className="ml-2 rounded-full bg-emerald-700 px-2 py-0.5 text-[10px] font-bold text-white">
-            ✓
-          </span>
-        )}
+      {recommended && (
+        <span className="absolute -top-2 right-3 rounded-full bg-emerald-700 px-2 py-0.5 text-[10px] font-bold text-white">
+          ★ {t("cart.recommended")}
+        </span>
+      )}
+      <span className="flex items-center justify-between gap-2">
+        <span className="font-bold text-slate-800">{title}</span>
+        <span className="font-extrabold text-emerald-700">{price}</span>
       </span>
-      <span className="font-semibold text-slate-800">{price}</span>
-    </label>
+      <span className="mt-0.5 block text-xs text-slate-500">{desc}</span>
+    </button>
   );
 }

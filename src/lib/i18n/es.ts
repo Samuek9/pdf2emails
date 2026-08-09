@@ -102,7 +102,7 @@ export const es: Messages = {
   "cart.title": "Completa tu exportación",
   "cart.free": "Extracción del PDF",
   "cart.freePrice": "GRATIS",
-  "cart.verify": "Verificación anti-spam (Recomendado)",
+  "cart.verify": "Verificación anti-spam",
   "cart.verifyPrice": "+ $4.99",
   "cart.enrich": "Enriquecer con Nombres y Cargos",
   "cart.enrichPrice": "+ $9.99",
@@ -198,4 +198,8 @@ export const es: Messages = {
   "checkout.payCardSub": "Visa · Mastercard · Amex",
   "checkout.payLocalName": "Pagos locales",
   "checkout.payLocalSub": "Pix · Nequi · PSE · OXXO",
+  "cart.pkgVerifyDesc": "Verifica que no reboten y limpia los nombres",
+  "cart.pkgProTitle": "Pro Enriquecido",
+  "cart.pkgProDesc": "Verifica, enriquece con cargos y extrae teléfonos y plantillas",
+  "cart.recommended": "Recomendado",
 };

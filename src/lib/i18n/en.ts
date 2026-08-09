@@ -101,7 +101,7 @@ export const en: Messages = {
   "cart.title": "Complete your export",
   "cart.free": "PDF extraction",
   "cart.freePrice": "FREE",
-  "cart.verify": "Anti-spam verification (Recommended)",
+  "cart.verify": "Anti-spam verification",
   "cart.verifyPrice": "+ $4.99",
   "cart.enrich": "Enrich with Names & Titles",
   "cart.enrichPrice": "+ $9.99",
@@ -197,4 +197,8 @@ export const en: Messages = {
   "checkout.payCardSub": "Visa · Mastercard · Amex",
   "checkout.payLocalName": "Local payment",
   "checkout.payLocalSub": "Pix · Nequi · PSE · OXXO",
+  "cart.pkgVerifyDesc": "SMTP-verifies addresses and cleans names so your list doesn't bounce",
+  "cart.pkgProTitle": "Pro Enriched",
+  "cart.pkgProDesc": "Verify, enrich with job titles and companies, and extract phones + templates",
+  "cart.recommended": "Recommended",
 };
