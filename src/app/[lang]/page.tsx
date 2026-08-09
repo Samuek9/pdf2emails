@@ -49,6 +49,22 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Desbloqueo de pago: detecta el retorno de dLocal (?paid=1) y restaura la
+  // persistencia de localStorage. Se hace tras el montaje para no romper hydration.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const justPaid = params.get("paid") === "1";
+    const prevUnlocked = window.localStorage.getItem("pdf2emails_unlocked") === "1";
+    if (justPaid || prevUnlocked) {
+      window.localStorage.setItem("pdf2emails_unlocked", "1");
+      setUnlocked(true);
+    }
+    if (justPaid) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, []);
+
   const handleParsed = useCallback((text: string, numPages: number, fileName: string) => {
     const { all, totalRaw } = parseAllEmails(text);
     try { const prev = Number(window.localStorage.getItem("pdf2emails_count") || 0); window.localStorage.setItem("pdf2emails_count", String(prev + all.length)); } catch { /* noop */ }
