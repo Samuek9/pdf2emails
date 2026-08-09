@@ -27,7 +27,7 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://unpkg.com",
+              "script-src 'self' 'unsafe-inline' https://unpkg.com https://us-assets.i.posthog.com https://*.i.posthog.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",

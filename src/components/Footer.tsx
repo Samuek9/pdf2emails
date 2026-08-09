@@ -26,7 +26,7 @@ export function Footer() {
         <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
           <Mail size={16} className="text-emerald-600" />
           {t("brand")}
-          <span className="font-normal text-slate-400">{t("footer.tag", { year: new Date().getFullYear() })}</span>
+          <span className="font-normal text-slate-500">{t("footer.tag", { year: new Date().getFullYear() })}</span>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500">
           <label htmlFor="country-demo" className="font-medium">{t("footer.country")}</label>
@@ -45,7 +45,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-slate-100 px-4 py-4">
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-2 text-xs text-slate-400 sm:flex-row">
+        <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-2 text-xs text-slate-500 sm:flex-row">
           <div className="flex gap-4">
             <a href="/terms" className="transition hover:text-slate-600">Terms</a>
             <a href="/privacy" className="transition hover:text-slate-600">Privacy</a>

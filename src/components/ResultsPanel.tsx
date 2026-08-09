@@ -83,7 +83,7 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
           </div>
           <div>
             <p className="text-sm font-bold text-slate-800">{parsed.fileName}</p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               {t("result.filePages", { pages: parsed.numPages, emails: result.totalEmails })}
               {isFree && <span className="ml-2 font-semibold text-emerald-600">{t("result.freeBadge")}</span>}
             </p>
@@ -118,12 +118,12 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
         {result.totalEmails === 0 ? (
           <div className="px-5 py-14 text-center">
             <p className="text-sm font-semibold text-slate-700">{t("result.emptyTitle")}</p>
-            <p className="mt-1 text-xs text-slate-400">{t("result.emptySub")}</p>
+            <p className="mt-1 text-xs text-slate-500">{t("result.emptySub")}</p>
           </div>
         ) : (
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <tr className="border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 <th className="px-5 py-3">{t("result.thIndex")}</th>
                 <th className="px-5 py-3">{t("result.thEmail")}</th>
                 <th className="px-5 py-3">{t("result.thType")}</th>
@@ -203,7 +203,7 @@ function PaywallOverlay({
             <ShieldCheck size={16} /> {t("result.optionVerify", { price: verifyPrice.toFixed(2) })}
           </button>
         </div>
-        <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-slate-400">
+        <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-slate-500">
           <ShieldCheck size={14} /> {t("result.securePay")}
         </p>
       </div>
@@ -214,9 +214,9 @@ function PaywallOverlay({
 function MetricCard({ label, value, sub, highlight }: { label: string; value: number; sub?: string; highlight?: boolean }) {
   return (
     <div className={`rounded-xl border px-4 py-3 ${highlight ? "border-emerald-200 bg-emerald-50/70" : "border-slate-100 bg-slate-50/60"}`}>
-      <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{label}</p>
+      <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{label}</p>
       <p className="mt-1 text-2xl font-extrabold text-slate-900">{value}</p>
-      {sub && <p className="text-[11px] text-slate-400">{sub}</p>}
+      {sub && <p className="text-[11px] text-slate-500">{sub}</p>}
     </div>
   );
 }
@@ -240,7 +240,7 @@ const CATEGORY_KEYS: Record<EmailCategory, string> = {
 function EmailRow({ entry, index, blurred }: { entry: ExtractedEmail; index: number; blurred?: boolean }) {
   return (
     <tr className={`border-b border-slate-50 last:border-0 ${blurred ? "opacity-70" : ""}`}>
-      <td className="px-5 py-2.5 text-xs text-slate-400">{index}</td>
+      <td className="px-5 py-2.5 text-xs text-slate-500">{index}</td>
       <td className={`px-5 py-2.5 font-mono text-sm text-slate-700 ${blurred ? "blur-sm select-none" : ""}`}>{entry.email}</td>
       <td className="px-5 py-2.5">
         <span className="chip border-slate-200 bg-slate-50 text-slate-600">{t(CATEGORY_KEYS[entry.category])}</span>
@@ -256,7 +256,7 @@ function SecurityPreview({ emails }: { emails: ExtractedEmail[] }) {
     <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200 bg-white">
       <table className="w-full text-left text-xs">
         <thead>
-          <tr className="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-400">
+          <tr className="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500">
             <th className="px-3 py-2">{t("sec.colEmail")}</th>
             <th className="px-3 py-2">{t("sec.colOrigin")}</th>
             <th className="px-3 py-2">{t("sec.colStatus")}</th>
@@ -269,7 +269,7 @@ function SecurityPreview({ emails }: { emails: ExtractedEmail[] }) {
             return (
               <tr key={entry.email} className="border-b border-slate-100 last:border-0">
                 <td className="px-3 py-1.5 font-mono text-slate-700">{entry.email}</td>
-                <td className="px-3 py-1.5 text-slate-400">#{i + 1}</td>
+                <td className="px-3 py-1.5 text-slate-500">#{i + 1}</td>
                 <td className="px-3 py-1.5 font-medium">
                   {green ? <span className="text-emerald-600">🟢 {t("sec.valid")}</span> : <span className="text-red-600">🔴 {t(`sec.${st}`)}</span>}
                 </td>

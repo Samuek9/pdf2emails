@@ -159,7 +159,7 @@ export default function HomePage() {
               {t("hero.cta")}
               <ArrowRight size={18} />
             </a>
-            <span className="text-xs text-slate-400">{t("hero.note")}</span>
+            <span className="text-xs text-slate-500">{t("hero.note")}</span>
           </div>
         </div>
       </section>
@@ -251,7 +251,7 @@ export default function HomePage() {
             </p>
           </div>
         </div>
-        <p className="mx-auto mt-6 max-w-xl text-center text-xs text-slate-400">
+        <p className="mx-auto mt-6 max-w-xl text-center text-xs text-slate-500">
           {t("pricing.note", { country: getCountryName(country) })}
         </p>
       </section>
@@ -269,7 +269,7 @@ export default function HomePage() {
 
       <section className="mt-24 rounded-3xl bg-emerald-600 px-6 py-14 text-center text-white">
         <h2 className="text-3xl font-extrabold tracking-tight">{t("cta.title")}</h2>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-emerald-100">{t("cta.sub")}</p>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-white/90">{t("cta.sub")}</p>
         <a
           href="#extractor"
           className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-emerald-700 shadow-lg transition hover:bg-emerald-50"
@@ -315,7 +315,7 @@ function Step({
       <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
         {icon}
       </div>
-      <p className="mt-4 text-xs font-bold uppercase tracking-wider text-emerald-600">
+      <p className="mt-4 text-xs font-bold uppercase tracking-wider text-emerald-700">
         {t("how.stepLabel", { n: index })}
       </p>
       <h3 className="mt-1 text-lg font-bold text-slate-900">{title}</h3>

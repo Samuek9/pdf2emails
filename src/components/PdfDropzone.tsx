@@ -183,7 +183,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
           <div>
             <p className="text-base font-semibold text-slate-800">
               {t("drop.title")}{" "}
-              <span className="text-emerald-600 underline underline-offset-2">{t("drop.choose")}</span>
+              <span className="text-emerald-700 underline underline-offset-2">{t("drop.choose")}</span>
             </p>
             <p className="mt-1 text-xs text-slate-500">{t("drop.sub", { max: MAX_SIZE_MB })}</p>
             <button
@@ -192,7 +192,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
                 e.stopPropagation();
                 void loadSample();
               }}
-              className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 underline underline-offset-2 transition hover:text-emerald-700"
+              className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 underline underline-offset-2 transition hover:text-emerald-800"
             >
               <Sparkles size={13} /> {t("drop.sample")}
             </button>
@@ -219,7 +219,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
           <b.icon size={17} className="shrink-0 text-emerald-600" />
           <div className="text-left">
             <p className="text-xs font-bold text-slate-700">{b.label}</p>
-            <p className="text-[11px] leading-tight text-slate-400">{b.desc}</p>
+            <p className="text-[11px] leading-tight text-slate-500">{b.desc}</p>
           </div>
         </div>
       ))}
