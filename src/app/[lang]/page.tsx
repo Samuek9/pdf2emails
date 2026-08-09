@@ -244,6 +244,24 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section id="testimonios" className="mt-24">
+        <h2 className="text-center text-3xl font-extrabold tracking-tight text-slate-900">{t("testi.title")}</h2>
+        <div className="mt-8 grid gap-6 sm:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <figure key={i} className="card flex flex-col p-6">
+              <div className="text-amber-400" aria-label="5 stars">★★★★★</div>
+              <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-slate-700">
+                “{t(`testi.${i}.quote`)}”
+              </blockquote>
+              <figcaption className="mt-4 text-sm">
+                <span className="block font-bold text-slate-800">{t(`testi.${i}.name`)}</span>
+                <span className="block text-xs text-slate-500">{t(`testi.${i}.role`)}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
       <section id="precios" className="mt-24 scroll-mt-20">
         <h2 className="text-center text-3xl font-extrabold tracking-tight text-slate-900">
           {t("pricing.title")}
