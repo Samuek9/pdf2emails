@@ -11,9 +11,11 @@ import {
   UploadCloud,
 } from "lucide-react";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
+import { downloadBlob } from "@/lib/csv";
 import { PdfDropzone } from "@/components/PdfDropzone";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { StatsBar } from "@/components/StatsBar";
+import { CheckoutModal } from "@/components/CheckoutModal";
 import { VerifyModal } from "@/components/VerifyModal";
 import { initAnalytics, trackEvent } from "@/lib/analytics";
 import { getClientCountry, getCountryName } from "@/lib/countries";
@@ -26,6 +28,10 @@ export default function HomePage() {
   const [parsed, setParsed] = useState<ParsedPdf | null>(null);
   const [verifyOpen, setVerifyOpen] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
+  const [unlocked, setUnlocked] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [checkoutAmount, setCheckoutAmount] = useState(3.99);
+  const [checkoutOption, setCheckoutOption] = useState<"full" | "fullverify">("full");
 
   useEffect(() => {
     void initAnalytics();
@@ -52,6 +58,38 @@ export default function HomePage() {
   const handleVerify = useCallback(() => {
     setVerifyOpen(true);
   }, []);
+
+  const handleUnlock = useCallback(
+    (option: "full" | "fullverify") => {
+      setCheckoutOption(option);
+      setCheckoutAmount(option === "fullverify" ? 6.99 : 3.99);
+      setCheckoutOpen(true);
+    },
+    [],
+  );
+
+  const handlePaymentSuccess = useCallback(
+    (gateway: "wompi" | "dlocal" | "demo") => {
+      window.localStorage.setItem("pdf2emails_unlocked", "1");
+      setUnlocked(true);
+      setCheckoutOpen(false);
+      trackEvent("payment_successful", { gateway, amount: checkoutAmount, option: checkoutOption });
+      if (checkoutOption === "fullverify" && parsed) {
+        const emails = parsed.all.map((e) => e.email);
+        void fetch("/api/process", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ emails, options: { verify: true, clean: true, enrich: false } }),
+        })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d: { csv?: string } | null) => {
+            if (d?.csv) downloadBlob("lista-verificada.csv", d.csv, "text/csv;charset=utf-8");
+          })
+          .catch(() => {});
+      }
+    },
+    [checkoutAmount, checkoutOption, parsed],
+  );
 
   return (
     <>
@@ -87,8 +125,10 @@ export default function HomePage() {
         ) : (
           <ResultsPanel
             parsed={parsed}
+            unlocked={unlocked}
             onDownloaded={handleDownloaded}
             onVerify={handleVerify}
+            onUnlock={handleUnlock}
             onReset={handleReset}
           />
         )}
@@ -169,6 +209,14 @@ export default function HomePage() {
         </a>
       </section>
 
+      <CheckoutModal
+        open={checkoutOpen}
+        onClose={() => setCheckoutOpen(false)}
+        onSuccess={handlePaymentSuccess}
+        country={country}
+        lockedCount={parsed ? Math.max(0, parsed.all.length - 10) : 0}
+        amount={checkoutAmount}
+      />
       <VerifyModal
         open={verifyOpen}
         onClose={() => setVerifyOpen(false)}

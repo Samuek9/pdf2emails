@@ -14,6 +14,7 @@ interface CheckoutModalProps {
   onSuccess: (gateway: Gateway | "demo") => void;
   country: string;
   lockedCount: number;
+  amount: number;
 }
 
 type Step = "method" | "processing" | "success";
@@ -37,6 +38,7 @@ export function CheckoutModal({
   onSuccess,
   country,
   lockedCount,
+  amount,
 }: CheckoutModalProps) {
   const pricing = useMemo(() => getPricing(country), [country]);
   const local = useLocalPrice(country);
@@ -126,7 +128,7 @@ export function CheckoutModal({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            amountInCents: Math.round(pricing.priceUsd * 100),
+            amountInCents: Math.round(amount * 100),
             currency: "USD",
             reference: referenceRef.current,
           }),
@@ -136,7 +138,7 @@ export function CheckoutModal({
 
         const widget = new window.WidgetCheckout!({
           currency: "USD",
-          amountInCents: Math.round(pricing.priceUsd * 100),
+          amountInCents: Math.round(amount * 100),
           reference: referenceRef.current,
           publicKey: process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY,
           signature: intent.signature,
@@ -165,7 +167,7 @@ export function CheckoutModal({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            amount: pricing.priceUsd,
+            amount: amount,
             currency: "USD",
             country: pricing.countryCode,
             description: "PDF2Emails - desbloqueo de lista completa",
@@ -228,7 +230,7 @@ export function CheckoutModal({
                   {t("checkout.total")}
                 </p>
                 <p className="mt-1 text-3xl font-extrabold">
-                  {`$${pricing.priceUsd.toFixed(2)}`}
+                  {`$${amount.toFixed(2)}`}
                   <span className="text-base font-semibold text-slate-300"> USD</span>
                 </p>
               </div>
@@ -264,7 +266,7 @@ export function CheckoutModal({
               </div>
             ) : (
               <button className="btn-primary mt-5 w-full" onClick={() => void handlePay()}>
-                <Lock size={16} /> {t("checkout.pay", { price: pricing.displayPrice })}
+                <Lock size={16} /> {t("checkout.pay", { price: `$${amount.toFixed(2)}` })}
               </button>
             )}
 
