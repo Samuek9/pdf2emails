@@ -44,13 +44,14 @@ export function VerifyModal({ open, onClose, emailsCount, emails, country, onChe
     }
     setError(null);
     setSubmitting(true);
-    trackEvent("upsell_intent", {
-      email: trimmed,
-      emailsCount,
+    trackEvent("upsell_submitted", {
+      emails_count: emailsCount,
       verify: sel.verify,
       enrich: sel.enrich,
       clean: sel.clean,
-      totalUsd: total,
+      phones: sel.phones,
+      templates: sel.templates,
+      total_usd: total,
     });
     try {
       const formId = process.env.NEXT_PUBLIC_FORMSPREE_ID;

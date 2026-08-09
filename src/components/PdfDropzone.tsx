@@ -38,7 +38,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
       try {
         const { text, numPages } = await extractTextFromFile(file);
         if (numPages > 30) { setError(t("drop.error.pages")); return; }
-        trackEvent("pdf_uploaded", { fileName: file.name, numPages, fileSizeBytes: file.size });
+        trackEvent("pdf_uploaded", { page_count: numPages, file_size_bytes: file.size });
         if (text.trim().length === 0) {
           // Parece escaneado (sin capa de texto): ofrecemos OCR.
           setNeedsOcr(true);
@@ -47,7 +47,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
         }
       } catch {
         setError(t("drop.error.parse"));
-        trackEvent("pdf_parse_error", { fileName: file.name });
+        trackEvent("pdf_parse_failed");
       } finally {
         setIsLoading(false);
       }
@@ -74,7 +74,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
     try {
       const { text, numPages } = await extractTextWithOcr(lastFileRef.current, ocrLang());
       if (numPages > 30) { setError(t("drop.error.pages")); return; }
-      trackEvent("ocr_completed", { fileName: lastFileRef.current.name, numPages });
+      trackEvent("ocr_completed", { page_count: numPages });
       onParsed(text, numPages, lastFileRef.current.name);
     } catch {
       setError(t("drop.error.parse"));

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Check, Copy, Download, FileText, Lock, RefreshCw, ShieldCheck } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { downloadBlob, downloadXlsx, toCsv, toTxt } from "@/lib/csv";
@@ -27,16 +27,8 @@ interface ResultsPanelProps {
 export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnlock, onReset, fullPrice, verifyPrice }: ResultsPanelProps) {
   const [options, setOptions] = useState<ExtractOptions>({ excludeGeneric: true, excludePersonal: false });
   const [copied, setCopied] = useState(false);
-  const trackedFile = useRef<string | null>(null);
 
   const result = useMemo(() => applyFilters(parsed.all, parsed.totalRaw, options), [parsed, options]);
-
-  useEffect(() => {
-    if (parsed && trackedFile.current !== parsed.fileName) {
-      trackedFile.current = parsed.fileName;
-      trackEvent("preview_rendered", { totalEmailsFound: result.totalEmails, numPages: parsed.numPages });
-    }
-  }, [parsed, result.totalEmails]);
 
   const isFree = parsed.numPages <= FREE_PAGES || result.totalEmails <= PREVIEW;
   const effectivelyUnlocked = unlocked || isFree;
@@ -62,13 +54,13 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
     } else {
       downloadBlob(`${base}-correos.txt`, toTxt(emails), "text/plain;charset=utf-8");
     }
-    trackEvent("csv_downloaded", { format, totalEmails: emails.length });
+    trackEvent("results_exported", { format, total_emails: emails.length });
     onDownloaded(format);
   }
 
   async function handleExcel() {
     await downloadXlsx(result.emails.map((e) => e.email));
-    trackEvent("excel_downloaded", { totalEmails: result.totalEmails });
+    trackEvent("results_exported", { format: "xlsx", total_emails: result.totalEmails });
   }
 
   const visible = result.emails.slice(0, PREVIEW);
