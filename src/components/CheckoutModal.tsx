@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, Check, CheckCircle2, CreditCard, Landmark, Loader2, Lock, ShieldCheck, X } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
+import { t } from "@/lib/i18n";
 import { getPricing } from "@/lib/pricing";
 import type { Gateway } from "@/lib/types";
 
@@ -144,12 +145,12 @@ export function CheckoutModal({
             handleSuccess("wompi");
           } else {
             setStep("method");
-            setError("El pago no fue aprobado o fue cancelado. Intenta de nuevo.");
+            setError(t("checkout.errWompi"));
           }
         });
       } catch {
         setStep("method");
-        setError("No se pudo iniciar el pago con Wompi. Usa el modo demo para probar el flujo.");
+        setError(t("checkout.errWompiStart"));
       }
       return;
     }
@@ -177,7 +178,7 @@ export function CheckoutModal({
       } catch {
         setStep("method");
         setError(
-          "No se pudo iniciar el pago con dLocal Go. Configura las keys en el servidor o usa modo demo.",
+          t("checkout.errDlocal"),
         );
       }
       return;
@@ -206,23 +207,23 @@ export function CheckoutModal({
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
               <CheckCircle2 size={32} className="text-emerald-600" />
             </div>
-            <h3 className="mt-4 text-xl font-extrabold text-slate-900">¡Pago aprobado!</h3>
+            <h3 className="mt-4 text-xl font-extrabold text-slate-900">{t("checkout.approved")}</h3>
             <p className="mt-2 text-sm text-slate-500">
-              Los {lockedCount} correos están desbloqueados. Descarga tu CSV o TXT ahora.
+              {t("checkout.approvedSub", { n: lockedCount })}
             </p>
             <button className="btn-primary mt-6 w-full" onClick={() => onSuccess(paidGateway)}>
-              Ver correos y descargar <ArrowRight size={16} />
+              {t("checkout.view")} <ArrowRight size={16} />
             </button>
           </div>
         ) : (
           <div className="p-6 sm:p-8">
-            <h3 className="text-xl font-extrabold text-slate-900">Desbloquear {lockedCount} correos</h3>
-            <p className="mt-1 text-sm text-slate-500">Lista completa + exportación CSV/TXT.</p>
+            <h3 className="text-xl font-extrabold text-slate-900">{t("checkout.title", { n: lockedCount })}</h3>
+            <p className="mt-1 text-sm text-slate-500">{t("checkout.sub")}</p>
 
             <div className="mt-5 flex items-end justify-between rounded-xl bg-slate-900 px-5 py-4 text-white">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
-                  Total a pagar
+                  {t("checkout.total")}
                 </p>
                 <p className="mt-1 text-3xl font-extrabold">
                   {pricing.region === "latam" ? "$7.99" : "$19"}
@@ -231,14 +232,14 @@ export function CheckoutModal({
               </div>
               {pricing.region === "latam" && (
                 <div className="text-right">
-                  <p className="text-xs font-medium text-emerald-400">Precio LATAM (PPP)</p>
+                  <p className="text-xs font-medium text-emerald-400">{t("checkout.latamPpp")}</p>
                   <p className="text-sm font-bold">≈ $32,000 COP</p>
                 </div>
               )}
             </div>
 
             <p className="mt-5 text-xs font-bold uppercase tracking-wider text-slate-500">
-              Método de pago
+              {t("checkout.payMethod")}
             </p>
             <div className="mt-2 flex items-center gap-3 rounded-xl border border-emerald-500 bg-emerald-50/50 px-4 py-3 ring-1 ring-emerald-500">
               <span className="text-emerald-700">
@@ -257,11 +258,11 @@ export function CheckoutModal({
 
             {step === "processing" ? (
               <div className="btn-primary mt-5 w-full cursor-not-allowed opacity-70">
-                <Loader2 size={18} className="animate-spin" /> Procesando pago…
+                <Loader2 size={18} className="animate-spin" /> {t("checkout.processing")}
               </div>
             ) : (
               <button className="btn-primary mt-5 w-full" onClick={() => void handlePay()}>
-                <Lock size={16} /> Pagar {pricing.region === "latam" ? "$7.99 USD" : "$19 USD"}
+                <Lock size={16} /> {t("checkout.pay", { price: pricing.region === "latam" ? "$7.99 USD" : "$19 USD" })}
               </button>
             )}
 
@@ -280,7 +281,7 @@ export function CheckoutModal({
             )}
 
             <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-slate-400">
-              <ShieldCheck size={14} /> Pago cifrado · Soporte a factura
+              <ShieldCheck size={14} /> {t("checkout.secure")}
             </p>
           </div>
         )}

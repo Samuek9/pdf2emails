@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { FileUp, Loader2, Sparkles } from "lucide-react";
+import { FileUp, Loader2, ScanSearch, Sparkles } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
-import { extractTextFromFile } from "@/lib/pdf";
+import { extractTextFromFile, extractTextWithOcr } from "@/lib/pdf";
+import { t, ocrLang } from "@/lib/i18n";
 
 const MAX_SIZE_MB = 30;
 
@@ -13,34 +14,38 @@ interface PdfDropzoneProps {
 
 export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const lastFileRef = useRef<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [ocrRunning, setOcrRunning] = useState(false);
+  const [needsOcr, setNeedsOcr] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleFile = useCallback(
     async (file: File) => {
       setError(null);
+      setNeedsOcr(false);
       if (!file.name.toLowerCase().endsWith(".pdf")) {
-        setError("Solo se aceptan archivos PDF.");
+        setError(t("drop.error.type"));
         return;
       }
       if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-        setError(`El archivo supera el límite de ${MAX_SIZE_MB} MB.`);
+        setError(t("drop.error.size", { max: MAX_SIZE_MB }));
         return;
       }
       setIsLoading(true);
+      lastFileRef.current = file;
       try {
         const { text, numPages } = await extractTextFromFile(file);
-        trackEvent("pdf_uploaded", {
-          fileName: file.name,
-          numPages,
-          fileSizeBytes: file.size,
-        });
-        onParsed(text, numPages, file.name);
+        trackEvent("pdf_uploaded", { fileName: file.name, numPages, fileSizeBytes: file.size });
+        if (text.trim().length === 0) {
+          // Parece escaneado (sin capa de texto): ofrecemos OCR.
+          setNeedsOcr(true);
+        } else {
+          onParsed(text, numPages, file.name);
+        }
       } catch {
-        setError(
-          "No pudimos leer el PDF. Asegúrate de que no esté protegido con contraseña ni dañado.",
-        );
+        setError(t("drop.error.parse"));
         trackEvent("pdf_parse_error", { fileName: file.name });
       } finally {
         setIsLoading(false);
@@ -57,7 +62,22 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
       const file = new File([blob], "sample-emails.pdf", { type: "application/pdf" });
       await handleFile(file);
     } catch {
-      setError("No se pudo cargar el PDF de ejemplo.");
+      setError(t("drop.sampleError"));
+    }
+  }
+
+  async function runOcr() {
+    if (!lastFileRef.current) return;
+    setError(null);
+    setOcrRunning(true);
+    try {
+      const { text, numPages } = await extractTextWithOcr(lastFileRef.current, ocrLang());
+      trackEvent("ocr_completed", { fileName: lastFileRef.current.name, numPages });
+      onParsed(text, numPages, lastFileRef.current.name);
+    } catch {
+      setError(t("drop.error.parse"));
+    } finally {
+      setOcrRunning(false);
     }
   }
 
@@ -76,7 +96,9 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
         const file = e.dataTransfer.files?.[0];
         if (file) void handleFile(file);
       }}
-      onClick={() => inputRef.current?.click()}
+      onClick={() => {
+        if (!isLoading && !ocrRunning) inputRef.current?.click();
+      }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") inputRef.current?.click();
       }}
@@ -100,7 +122,39 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
       {isLoading ? (
         <div className="flex flex-col items-center gap-3 py-8">
           <Loader2 size={36} className="animate-spin text-emerald-600" />
-          <p className="text-sm font-medium text-slate-600">Leyendo PDF…</p>
+          <p className="text-sm font-medium text-slate-600">{t("drop.loading")}</p>
+        </div>
+      ) : ocrRunning ? (
+        <div className="flex flex-col items-center gap-3 py-8">
+          <Loader2 size={36} className="animate-spin text-amber-600" />
+          <p className="text-sm font-medium text-slate-600">{t("drop.ocrRunning")}</p>
+        </div>
+      ) : needsOcr ? (
+        <div className="flex flex-col items-center gap-3 py-8 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
+            <ScanSearch size={26} />
+          </div>
+          <p className="text-base font-semibold text-slate-800">{t("drop.ocr")}</p>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              void runOcr();
+            }}
+            className="btn-primary"
+          >
+            <ScanSearch size={16} /> {t("drop.ocr")}
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setNeedsOcr(false);
+            }}
+            className="text-xs text-slate-400 underline underline-offset-2 hover:text-slate-600"
+          >
+            {t("drop.title")}
+          </button>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-3 py-8 text-center">
@@ -109,12 +163,10 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
           </div>
           <div>
             <p className="text-base font-semibold text-slate-800">
-              Arrastra tu PDF aquí o{" "}
-              <span className="text-emerald-600 underline underline-offset-2">elige un archivo</span>
+              {t("drop.title")}{" "}
+              <span className="text-emerald-600 underline underline-offset-2">{t("drop.choose")}</span>
             </p>
-            <p className="mt-1 text-xs text-slate-400">
-              PDF · hasta {MAX_SIZE_MB} MB · se procesa 100% en tu navegador · sin registro
-            </p>
+            <p className="mt-1 text-xs text-slate-400">{t("drop.sub", { max: MAX_SIZE_MB })}</p>
             <button
               type="button"
               onClick={(e) => {
@@ -123,7 +175,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
               }}
               className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 underline underline-offset-2 transition hover:text-emerald-700"
             >
-              <Sparkles size={13} /> Probar con un PDF de ejemplo
+              <Sparkles size={13} /> {t("drop.sample")}
             </button>
           </div>
         </div>

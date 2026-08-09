@@ -48,3 +48,40 @@ export async function extractTextFromFile(file: File): Promise<PdfParseResult> {
   await pdf.destroy();
   return { text, numPages };
 }
+
+/**
+ * OCR para PDFs escaneados (sin capa de texto). Renderiza cada pagina a imagen
+ * y la procesa con tesseract.js. Tesseract se carga bajo demanda (lazy import).
+ */
+export async function extractTextWithOcr(file: File, lang: string): Promise<PdfParseResult> {
+  const arrayBuffer = await file.arrayBuffer();
+  const loadingTask = getDocument({ data: new Uint8Array(arrayBuffer) });
+  const pdf = await loadingTask.promise;
+  const numPages = pdf.numPages;
+
+  const { createWorker } = await import("tesseract.js");
+  const worker = await createWorker(lang);
+
+  let text = "";
+  for (let i = 1; i <= numPages; i++) {
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({ scale: 2 });
+    const canvas = document.createElement("canvas");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      page.cleanup();
+      continue;
+    }
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    const { data } = await worker.recognize(canvas);
+    text += data.text + "\n";
+    page.cleanup();
+  }
+
+  await worker.terminate();
+  await pdf.destroy();
+  return { text, numPages };
+}
+

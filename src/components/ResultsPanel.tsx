@@ -5,6 +5,7 @@ import { Check, Copy, Download, FileText, Lock, RefreshCw, ShieldCheck } from "l
 import { trackEvent } from "@/lib/analytics";
 import { downloadBlob, toCsv, toTxt } from "@/lib/csv";
 import { applyFilters } from "@/lib/emails";
+import { t } from "@/lib/i18n";
 import type { EmailCategory, ExtractOptions, ExtractedEmail, ParsedPdf, Pricing } from "@/lib/types";
 
 const FREE_PREVIEW_COUNT = 5;
@@ -88,39 +89,39 @@ export function ResultsPanel({
           <div>
             <p className="text-sm font-bold text-slate-800">{parsed.fileName}</p>
             <p className="text-xs text-slate-400">
-              {parsed.numPages} páginas · {result.totalEmails} correos
+              {t("result.filePages", { pages: parsed.numPages, emails: result.totalEmails })}
             </p>
           </div>
         </div>
         <button onClick={onReset} className="btn-secondary !py-2 text-xs">
-          <RefreshCw size={14} /> Otro PDF
+          <RefreshCw size={14} /> {t("result.reset")}
         </button>
       </div>
 
       <div className="grid grid-cols-2 gap-3 px-5 py-5 sm:grid-cols-4">
-        <MetricCard label="Correos encontrados" value={result.totalEmails} highlight />
-        <MetricCard label="Corporativos" value={result.corporateCount} />
+        <MetricCard label={t("result.metricFound")} value={result.totalEmails} highlight />
+        <MetricCard label={t("result.metricCorporate")} value={result.corporateCount} />
         <MetricCard
-          label="Genéricos"
+          label={t("result.metricGeneric")}
           value={result.genericCount + result.excludedGeneric}
-          sub={options.excludeGeneric ? "excluidos por filtro" : undefined}
+          sub={options.excludeGeneric ? t("result.excludedFilter") : undefined}
         />
         <MetricCard
-          label="Personales"
+          label={t("result.metricPersonal")}
           value={result.personalCount + result.excludedPersonal}
-          sub={options.excludePersonal ? "excluidos por filtro" : undefined}
+          sub={options.excludePersonal ? t("result.excludedFilter") : undefined}
         />
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3">
         <div className="flex flex-wrap gap-2">
           <FilterChip
-            label="Omitir genéricos (info@, support@…)"
+            label={t("result.filterGeneric")}
             checked={options.excludeGeneric}
             onChange={(v) => setOptions((o) => ({ ...o, excludeGeneric: v }))}
           />
           <FilterChip
-            label="Omitir personales (@gmail.com…)"
+            label={t("result.filterPersonal")}
             checked={options.excludePersonal}
             onChange={(v) => setOptions((o) => ({ ...o, excludePersonal: v }))}
           />
@@ -128,7 +129,7 @@ export function ResultsPanel({
         {visibleEmails.length > 0 && (
           <button onClick={() => void handleCopySamples()} className="btn-secondary !py-2 text-xs">
             {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
-            {copied ? "¡Copiado!" : "Copiar 5 muestras"}
+            {copied ? t("result.copied") : t("result.copySamples")}
           </button>
         )}
       </div>
@@ -136,9 +137,9 @@ export function ResultsPanel({
       <div className="relative border-t border-slate-100">
         {result.totalEmails === 0 ? (
           <div className="px-5 py-14 text-center">
-            <p className="text-sm font-semibold text-slate-700">No encontramos correos en este PDF.</p>
+            <p className="text-sm font-semibold text-slate-700">{t("result.emptyTitle")}</p>
             <p className="mt-1 text-xs text-slate-400">
-              Verifica que el PDF tenga texto seleccionable (no sea solo una imagen escaneada).
+              {t("result.emptySub")}
             </p>
           </div>
         ) : (
@@ -146,8 +147,8 @@ export function ResultsPanel({
             <thead>
               <tr className="border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 <th className="px-5 py-3">#</th>
-                <th className="px-5 py-3">Correo</th>
-                <th className="px-5 py-3">Tipo</th>
+                <th className="px-5 py-3">{t("result.thEmail")}</th>
+                <th className="px-5 py-3">{t("result.thType")}</th>
               </tr>
             </thead>
             <tbody>
@@ -179,16 +180,16 @@ export function ResultsPanel({
         <div className="flex flex-col gap-3 border-t border-slate-100 bg-emerald-50/40 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-bold text-slate-800">
-              {unlocked ? "Lista completa desbloqueada ✓" : "Todos los correos (menos de 5)"}
+              {unlocked ? t("result.unlocked") : t("result.allFree")}
             </p>
-            <p className="text-xs text-slate-500">{result.totalEmails} correos listos para descargar</p>
+            <p className="text-xs text-slate-500">{t("result.ready", { n: result.totalEmails })}</p>
           </div>
           <div className="flex gap-2">
             <button className="btn-primary" onClick={() => handleDownload("csv")}>
-              <Download size={16} /> Descargar CSV
+              <Download size={16} /> {t("result.downloadCsv")}
             </button>
             <button className="btn-secondary" onClick={() => handleDownload("txt")}>
-              <FileText size={16} /> TXT
+              <FileText size={16} /> {t("result.downloadTxt")}
             </button>
           </div>
         </div>
@@ -251,11 +252,11 @@ const CATEGORY_STYLES: Record<EmailCategory, string> = {
   unknown: "border-slate-200 bg-slate-50 text-slate-600",
 };
 
-const CATEGORY_LABELS: Record<EmailCategory, string> = {
-  corporate: "Corporativo",
-  generic: "Genérico",
-  personal: "Personal",
-  unknown: "Otro",
+const CATEGORY_KEYS: Record<EmailCategory, string> = {
+  corporate: "result.catCorporate",
+  generic: "result.catGeneric",
+  personal: "result.catPersonal",
+  unknown: "result.catOther",
 };
 
 function EmailRow({
@@ -279,7 +280,7 @@ function EmailRow({
       </td>
       <td className="px-5 py-2.5">
         <span className={`chip ${CATEGORY_STYLES[entry.category]}`}>
-          {CATEGORY_LABELS[entry.category]}
+          {t(CATEGORY_KEYS[entry.category])}
         </span>
       </td>
     </tr>
@@ -302,10 +303,10 @@ function PaywallOverlay({
           <Lock size={22} className="text-emerald-700" />
         </div>
         <h4 className="mt-3 text-lg font-extrabold text-slate-900">
-          {lockedCount} correo{lockedCount === 1 ? "" : "s"} bloqueado{lockedCount === 1 ? "" : "s"}
+          {lockedCount === 1 ? t("result.lockedOne", { n: lockedCount }) : t("result.lockedMany", { n: lockedCount })}
         </h4>
         <p className="mt-1 text-sm text-slate-500">
-          Desbloquea la lista completa y descarga el CSV o TXT en un clic.
+          {t("result.lockedSub")}
         </p>
         <div className="mt-4">
           <span className="text-4xl font-extrabold tracking-tight text-slate-900">
@@ -314,15 +315,15 @@ function PaywallOverlay({
           <span className="ml-1 text-sm font-semibold text-slate-500">USD</span>
           {pricing.region === "latam" && (
             <p className="mt-1 text-xs font-bold text-emerald-600">
-              Precio preferencial LATAM · ≈ $32,000 COP
+              {t("result.latamPrice", { price: "32,000" })}
             </p>
           )}
         </div>
         <button onClick={onUnlock} className="btn-primary mt-5 w-full">
-          Desbloquear y descargar
+          {t("result.unlockBtn")}
         </button>
         <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-slate-400">
-          <ShieldCheck size={14} /> Pago seguro vía Wompi o dLocal Go
+          <ShieldCheck size={14} /> {t("result.securePay")}
         </p>
       </div>
     </div>

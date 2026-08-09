@@ -10,6 +10,7 @@ import { initAnalytics, trackEvent } from "@/lib/analytics";
 import { getClientCountry, getCountryName } from "@/lib/countries";
 import { parseAllEmails } from "@/lib/emails";
 import { getPricing } from "@/lib/pricing";
+import { t } from "@/lib/i18n";
 import type { Gateway, ParsedPdf } from "@/lib/types";
 
 export default function HomePage() {
@@ -71,22 +72,22 @@ export default function HomePage() {
         <div className="relative px-6 py-16 text-center sm:px-12 sm:py-20">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-emerald-200">
             <ShieldCheck size={14} />
-            100% en tu navegador — tus PDFs nunca salen de tu equipo
+            {t("hero.badge")}
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">
-            Extrae cada correo de tus PDFs en <span className="text-emerald-400">segundos</span>
+            {t("hero.title1")} <span className="text-emerald-400">{t("hero.titleAccent")}</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
-            Arrastra un PDF y detectamos todos los correos electrónicos que contiene, listos para
-            exportar a CSV o TXT. Sin registro y sin subir archivos a servidores.
+            {t("hero.sub")}
+
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a href="#extractor" className="btn-primary !px-8 !py-3.5 !text-base">
-              Probar gratis ahora
+              {t("hero.cta")}
               <ArrowRight size={18} />
             </a>
             <span className="text-xs text-slate-400">
-              Primeros 5 correos gratis · Desde {pricing.displayPrice}
+              {t("hero.note")} {pricing.displayPrice}
             </span>
           </div>
         </div>
@@ -117,56 +118,56 @@ export default function HomePage() {
 
       <section id="como-funciona" className="mt-24 scroll-mt-20">
         <h2 className="text-center text-3xl font-extrabold tracking-tight text-slate-900">
-          Así de simple
+          {t("how.title")}
         </h2>
         <p className="mx-auto mt-2 max-w-xl text-center text-sm text-slate-500">
-          De PDF a lista de correos en menos de un minuto.
+          {t("how.sub")}
         </p>
         <div className="mt-10 grid gap-6 sm:grid-cols-3">
           <Step
             index={1}
             icon={<UploadCloud size={22} />}
-            title="Sube tu PDF"
-            description="Arrastra el archivo. Todo se procesa localmente con pdf.js en tu navegador, nunca se sube a un servidor."
+            title={t("how.step1.title")}
+            description={t("how.step1.desc")}
           />
           <Step
             index={2}
             icon={<ScanSearch size={22} />}
-            title="Revisa los correos"
-            description="Los primeros 5 correos son gratis. Filtra genéricos (info@, support@) y personales (@gmail.com) con un clic."
+            title={t("how.step2.title")}
+            description={t("how.step2.desc")}
           />
           <Step
             index={3}
             icon={<Download size={22} />}
-            title="Descarga la lista"
-            description="Exporta todos los correos a CSV o TXT en un clic, listos para tu CRM o campaña."
+            title={t("how.step3.title")}
+            description={t("how.step3.desc")}
           />
         </div>
       </section>
 
       <section id="precios" className="mt-24 scroll-mt-20">
         <h2 className="text-center text-3xl font-extrabold tracking-tight text-slate-900">
-          Precio simple. Pagas solo si encuentras valor.
+          {t("pricing.title")}
         </h2>
         <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-slate-500">
-          Los primeros 5 correos son gratis, sin registro. Desbloquea la lista completa desde{" "}
-          {pricing.displayPrice}, con precio preferencial para Latinoamérica (PPP).
+          {t("pricing.sub", { price: pricing.displayPrice })}
+          
         </p>
         <div className="mx-auto mt-10 max-w-md">
           <div className="card relative p-6 ring-2 ring-emerald-500">
             <span className="absolute -top-3 left-5 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-bold text-white">
-              Tu precio
+              {t("pricing.yourPrice")}
             </span>
             {pricing.region === "latam" ? (
               <>
-                <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">Latinoamérica · dLocal Go</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">{t("pricing.latam")}</p>
                 <p className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">
                   $7.99 <span className="text-lg font-semibold text-slate-400">USD</span>
                 </p>
                 <p className="mt-1 text-sm font-semibold text-slate-500">≈ $32,000 COP</p>
                 <ul className="mt-4 space-y-2 text-sm text-slate-600">
-                  <li>✓ Precio preferencial (PPP)</li>
-                  <li>✓ PSE · Pix · OXXO · tarjetas locales</li>
+                  <li>✓ {t("pricing.f1")}</li>
+                  <li>✓ {t("pricing.f2")}</li>
                 </ul>
                 <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
                   <Landmark size={14} /> dLocal Go
@@ -174,15 +175,15 @@ export default function HomePage() {
               </>
             ) : (
               <>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Resto del mundo · Wompi</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{t("pricing.row")}</p>
                 <p className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">
                   $19 <span className="text-lg font-semibold text-slate-400">USD</span>
                 </p>
                 <p className="mt-1 text-sm font-semibold text-slate-500">Pago único · sin suscripción</p>
                 <ul className="mt-4 space-y-2 text-sm text-slate-600">
-                  <li>✓ Visa · Mastercard · Amex internacional</li>
+                  <li>✓ {t("pricing.f4")}</li>
                   <li>✓ Precio estándar global</li>
-                  <li>✓ Pago único por PDF</li>
+                  <li>✓ {t("pricing.f5")}</li>
                 </ul>
                 <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-slate-600">
                   <CreditCard size={14} /> Wompi
@@ -192,49 +193,49 @@ export default function HomePage() {
           </div>
         </div>
         <p className="mt-5 text-center text-xs text-slate-400">
-          Precio calculado para <strong>{getCountryName(country)}</strong> según tu ubicación. Puedes
-          cambiarlo en el pie de página (demo).
+          {t("pricing.note", { country: getCountryName(country) })}
+
         </p>
       </section>
 
       <section id="faq" className="mx-auto mt-24 max-w-3xl scroll-mt-20">
         <h2 className="text-center text-3xl font-extrabold tracking-tight text-slate-900">
-          Preguntas frecuentes
+          {t("faq.title")}
         </h2>
         <div className="mt-8 space-y-3">
           <FaqItem
-            q="¿Mis PDFs se suben a un servidor?"
-            a="No. Todo el procesamiento ocurre localmente en tu navegador con pdf.js. El archivo nunca abandona tu equipo, lo que también protege la privacidad de los datos."
+            q={t("faq.q1")}
+            a={t("faq.a1")}
           />
           <FaqItem
-            q="¿Qué tipos de correos detecta?"
-            a="Cualquier dirección con formato de email. Puedes excluir genéricos (info@, support@, admin@…) y personales (@gmail.com, @hotmail.com, @yahoo.com…) con dos casillas."
+            q={t("faq.q2")}
+            a={t("faq.a2")}
           />
           <FaqItem
-            q="¿Puedo probarlo gratis?"
-            a="Sí. Los primeros 5 correos encontrados se muestran gratis, sin registro. Solo pagas si necesitas la lista completa y la exportación a CSV/TXT."
+            q={t("faq.q3")}
+            a={t("faq.a3")}
           />
           <FaqItem
-            q="¿Qué pasa si el PDF tiene contraseña o es un escaneo?"
-            a="No podremos extraer el texto de un PDF protegido o de imágenes escaneadas (sin capa OCR). Elimina la contraseña e inténtalo de nuevo."
+            q={t("faq.q4")}
+            a={t("faq.a4")}
           />
           <FaqItem
-            q="¿Cómo funciona el pago por país?"
-            a="Por geolocalización: en Latinoamérica (CO, MX, AR, CL, PE…) el precio es $7.99 USD (~$32,000 COP) con dLocal Go (PSE, Pix, OXXO). En el resto del mundo es $19 USD con Wompi (tarjeta internacional)."
+            q={t("faq.q5")}
+            a={t("faq.a5")}
           />
         </div>
       </section>
 
       <section className="mt-24 rounded-3xl bg-emerald-600 px-6 py-14 text-center text-white">
-        <h2 className="text-3xl font-extrabold tracking-tight">¿Listo para sacar los correos de ese PDF?</h2>
+        <h2 className="text-3xl font-extrabold tracking-tight">{t("cta.title")}</h2>
         <p className="mx-auto mt-2 max-w-xl text-sm text-emerald-100">
-          Gratis para probar. Sin registro. Pago solo si necesitas la lista completa.
+          {t("cta.sub")}
         </p>
         <a
           href="#extractor"
           className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-emerald-700 shadow-lg transition hover:bg-emerald-50"
         >
-          Subir mi PDF <ArrowRight size={18} />
+          {t("cta.btn")} <ArrowRight size={18} />
         </a>
       </section>
 
@@ -265,7 +266,7 @@ function Step({
       <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
         {icon}
       </div>
-      <p className="mt-4 text-xs font-bold uppercase tracking-wider text-emerald-600">Paso {index}</p>
+      <p className="mt-4 text-xs font-bold uppercase tracking-wider text-emerald-600">{t("how.stepLabel", { n: index })}</p>
       <h3 className="mt-1 text-lg font-bold text-slate-900">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-slate-500">{description}</p>
     </div>

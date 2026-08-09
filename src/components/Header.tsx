@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Mail } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 export function Header() {
   return (
@@ -9,16 +12,14 @@ export function Header() {
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
             <Mail size={18} />
           </span>
-          <span className="text-lg font-extrabold tracking-tight text-slate-900">PDF2Emails</span>
+          <span className="text-lg font-extrabold tracking-tight text-slate-900">{t("brand")}</span>
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-semibold text-slate-600 sm:flex">
-          <a href="#como-funciona" className="transition hover:text-slate-900">Cómo funciona</a>
-          <a href="#precios" className="transition hover:text-slate-900">Precios</a>
-          <a href="#faq" className="transition hover:text-slate-900">FAQ</a>
+          <a href="#como-funciona" className="transition hover:text-slate-900">{t("nav.how")}</a>
+          <a href="#precios" className="transition hover:text-slate-900">{t("nav.pricing")}</a>
+          <a href="#faq" className="transition hover:text-slate-900">{t("nav.faq")}</a>
         </nav>
-        <a href="#extractor" className="btn-primary !px-4 !py-2">
-          Probar gratis
-        </a>
+        <a href="#extractor" className="btn-primary !px-4 !py-2">{t("nav.try")}</a>
       </div>
     </header>
   );
