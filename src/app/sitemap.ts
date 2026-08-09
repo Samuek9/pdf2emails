@@ -23,5 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/use-cases/extract-emails-from-scanned-pdf`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/use-cases/pdf-to-csv-email-extractor`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/use-cases/extract-emails-from-bank-statement-pdf`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/use-cases/extract-emails-from-linkedin-export-pdf`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/use-cases/extract-emails-from-scanned-pdf-ocr`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
   ];
 }
