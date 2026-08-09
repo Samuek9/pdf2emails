@@ -19,9 +19,9 @@
 
 ### Monetización
 - **Híbrido**: gratis para PDFs ≤3 páginas o ≤10 correos; paywall para grandes.
-- Paywall (precios por región):
-  - LATAM (15 países dLocal): desbloquear **$3.99** · desbloquear+verificar **$6.99**.
-  - Global (Wompi): **$9.99** · **$12.99**.
+- Paywall (precios por región, fuente: `src/lib/pricing.ts`):
+  - LATAM (15 países dLocal): desbloquear **$7.99** · desbloquear+verificar **$12.99**.
+  - Global (Wompi): **$19** · **$29**.
 - **Carrito de upsells (modelo aerolínea)** — precios regionalizados (PPP):
   - Verificación anti-spam: **$2.49 LATAM / $4.99 global**
   - Enriquecer nombres/cargos: **$4.99 / $9.99**
