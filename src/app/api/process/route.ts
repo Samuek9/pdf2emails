@@ -6,6 +6,28 @@ export const runtime = "nodejs";
 
 const MAX_EMAILS = 2000;
 
+// Rate limiter simple en memoria (por instancia). Protege el presupuesto de OpenAI
+// contra spam de peticiones. No es perfecto (resets por instancia serverless),
+// pero es una salvaguarda razonable.
+const recent: Record<string, { count: number; at: number }> = {};
+const WINDOW_MS = 60 * 60 * 1000; // 1 hora
+const MAX_PER_HOUR = 20;
+
+function clientIp(request: NextRequest): string {
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+}
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = recent[ip];
+  if (!entry || now - entry.at > WINDOW_MS) {
+    recent[ip] = { count: 1, at: now };
+    return false;
+  }
+  entry.count++;
+  return entry.count > MAX_PER_HOUR;
+}
+
 interface Row {
   email: string;
   status: string;
@@ -23,6 +45,11 @@ function csvCell(v: unknown): string {
 }
 
 export async function POST(request: NextRequest) {
+  const ip = clientIp(request);
+  if (isRateLimited(ip)) {
+    return NextResponse.json({ error: "Too many requests. Try again later." }, { status: 429 });
+  }
+
   const body = (await request.json().catch(() => null)) as {
     emails?: string[];
     text?: string;

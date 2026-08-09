@@ -8,7 +8,7 @@ export const es: Messages = {
   "nav.blog": "Blog",
   "nav.try": "Probar gratis",
   "hero.badge": "100% en tu navegador — tus PDFs nunca salen de tu equipo",
-  "hero.title1": "Extrae cada correo de tus PDFs en",
+  "hero.title1": "Extrae y limpia listas de correos de cualquier PDF en",
   "hero.titleAccent": "segundos",
   "hero.sub":
     "Arrastra un PDF y detectamos todos los correos electrónicos que contiene, listos para exportar a CSV o TXT. Sin registro y sin subir archivos a servidores.",
@@ -111,6 +111,7 @@ export const es: Messages = {
   "cart.success": "¡Listo! Estamos actualizando nuestros servidores. Te avisaremos a {email}.",
   "cart.emailError": "Ingresa un correo válido.",
   "cart.skip": "No, descargar gratis sin mejoras",
+  "cart.bundle": "Desbloquear TODO + mejoras con IA (Ahorra 40%)",
 
   "checkout.title": "Desbloquear {n} correos",
   "checkout.sub": "Lista completa + exportación CSV/TXT.",

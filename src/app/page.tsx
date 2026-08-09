@@ -273,6 +273,7 @@ export default function HomePage() {
         onClose={() => setVerifyOpen(false)}
         emailsCount={parsed ? parsed.all.length : 0}
         emails={parsed ? parsed.all.map((e) => e.email) : []}
+        country={country}
         onCheckout={handleCartCheckout}
         onFreeDownload={handleFreeDownload}
       />

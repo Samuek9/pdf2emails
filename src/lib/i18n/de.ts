@@ -95,6 +95,7 @@ export const de: Messages = {
   "cart.success": "Fertig! Wir aktualisieren unsere Server. Wir schreiben dir an {email}.",
   "cart.emailError": "Bitte eine gültige E-Mail eingeben.",
   "cart.skip": "Nein, kostenlos herunterladen",
+  "cart.bundle": "ALLES freischalten + KI-Upgrades (40% sparen)",
   "sec.title": "Sicherheit deiner Liste",
   "sec.colEmail": "Extrahierte E-Mail",
   "sec.colOrigin": "Quelle",

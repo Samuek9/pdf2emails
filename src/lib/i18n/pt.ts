@@ -146,4 +146,5 @@ export const pt: Messages = {
   "cart.success": "Pronto! Estamos atualizando nossos servidores. Avisaremos você em {email}.",
   "cart.emailError": "Digite um email válido.",
   "cart.skip": "Não, baixar grátis sem melhorias",
+  "cart.bundle": "Desbloquear TUDO + melhorias com IA (Economize 40%)",
 };

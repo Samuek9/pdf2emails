@@ -95,6 +95,7 @@ export const fr: Messages = {
   "cart.success": "C'est fait ! Nous mettons à jour nos serveurs. Nous vous écrirons à {email}.",
   "cart.emailError": "Saisissez un email valide.",
   "cart.skip": "Non, télécharger gratuitement",
+  "cart.bundle": "Débloquer TOUT + améliorations IA (Économisez 40%)",
   "sec.title": "Sécurité de votre liste",
   "sec.colEmail": "Email extrait",
   "sec.colOrigin": "Source",

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, Loader2, ShieldCheck, X } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
+import { isLatam } from "@/lib/countries";
 import { t } from "@/lib/i18n";
 
 interface VerifyModalProps {
@@ -10,24 +11,30 @@ interface VerifyModalProps {
   onClose: () => void;
   emailsCount: number;
   emails: string[];
+  country: string;
   onCheckout: (amount: number, sel: { verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean }, email: string) => void;
   onFreeDownload: () => void;
 }
 
 type Selection = { verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean };
 
-export function VerifyModal({ open, onClose, emailsCount, emails, onCheckout, onFreeDownload }: VerifyModalProps) {
+export function VerifyModal({ open, onClose, emailsCount, emails, country, onCheckout, onFreeDownload }: VerifyModalProps) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [sel, setSel] = useState<Selection>({ verify: true, enrich: false, clean: false, phones: false, templates: false });
+  const [bundle, setBundle] = useState(false);
+  const latam = isLatam(country);
+  const prices = { verify: latam ? 2.49 : 4.99, enrich: latam ? 4.99 : 9.99, clean: latam ? 1.49 : 2.99, phones: latam ? 1.99 : 3.99, templates: 4.99 };
+  const bundlePrice = latam ? 11.99 : 19.99;
+  const selectBundle = () => { setSel({ verify: true, enrich: true, clean: true, phones: true, templates: true }); setBundle(true); };;
 
   if (!open) return null;
 
-  const total = (sel.verify ? 4.99 : 0) + (sel.enrich ? 9.99 : 0) + (sel.clean ? 2.99 : 0) + (sel.phones ? 3.99 : 0) + (sel.templates ? 4.99 : 0);
+  const total = bundle ? bundlePrice : (sel.verify ? prices.verify : 0) + (sel.enrich ? prices.enrich : 0) + (sel.clean ? prices.clean : 0) + (sel.phones ? prices.phones : 0) + (sel.templates ? prices.templates : 0);
 
-  const toggle = (key: keyof Selection) => setSel((s) => ({ ...s, [key]: !s[key] }));
+  const toggle = (key: keyof Selection) => { setBundle(false); setSel((s) => ({ ...s, [key]: !s[key] })); };
 
   async function submit() {
     const trimmed = email.trim();
@@ -107,19 +114,22 @@ export function VerifyModal({ open, onClose, emailsCount, emails, onCheckout, on
               <ShieldCheck size={14} className="text-emerald-600" /> {t("verify.found", { n: emailsCount })}
             </p>
 
+            <button type="button" onClick={selectBundle} className="mb-3 w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-700">
+              ⚡ {t("cart.bundle")} — ${bundlePrice.toFixed(2)}
+            </button>
             <div className="mt-4 space-y-2">
               <Row label={t("cart.free")} price={t("cart.freePrice")} />
               <Row
                 label={t("cart.verify")}
-                price={t("cart.verifyPrice")}
+                price={`+ $${prices.verify.toFixed(2)}`}
                 checked={sel.verify}
                 onChange={() => toggle("verify")}
                 recommended
               />
-              <Row label={t("cart.enrich")} price={t("cart.enrichPrice")} checked={sel.enrich} onChange={() => toggle("enrich")} />
-              <Row label={t("cart.clean")} price={t("cart.cleanPrice")} checked={sel.clean} onChange={() => toggle("clean")} />
-              <Row label={t("cart.phones")} price={t("cart.phonesPrice")} checked={sel.phones} onChange={() => toggle("phones")} />
-              <Row label={t("cart.templates")} price={t("cart.templatesPrice")} checked={sel.templates} onChange={() => toggle("templates")} />
+              <Row label={t("cart.enrich")} price={`+ $${prices.enrich.toFixed(2)}`} checked={sel.enrich} onChange={() => toggle("enrich")} />
+              <Row label={t("cart.clean")} price={`+ $${prices.clean.toFixed(2)}`} checked={sel.clean} onChange={() => toggle("clean")} />
+              <Row label={t("cart.phones")} price={`+ $${prices.phones.toFixed(2)}`} checked={sel.phones} onChange={() => toggle("phones")} />
+              <Row label={t("cart.templates")} price={`+ $${prices.templates.toFixed(2)}`} checked={sel.templates} onChange={() => toggle("templates")} />
             </div>
 
             <div className="mt-4 flex items-center justify-between rounded-xl bg-slate-900 px-5 py-3 text-white">
