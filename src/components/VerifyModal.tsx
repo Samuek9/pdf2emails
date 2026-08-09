@@ -114,7 +114,7 @@ export function VerifyModal({ open, onClose, emailsCount, emails, country, onChe
               <ShieldCheck size={14} className="text-emerald-600" /> {t("verify.found", { n: emailsCount })}
             </p>
 
-            <button type="button" onClick={selectBundle} className="mb-3 w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-700">
+            <button type="button" onClick={selectBundle} className="mb-3 w-full rounded-xl bg-emerald-700 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-700/20 hover:bg-emerald-700">
               ⚡ {t("cart.bundle")} — ${bundlePrice.toFixed(2)}
             </button>
             <div className="mt-4 space-y-2">
@@ -190,7 +190,7 @@ function Row({
       <span className="flex-1 text-slate-700">
         {label}
         {recommended && (
-          <span className="ml-2 rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">
+          <span className="ml-2 rounded-full bg-emerald-700 px-2 py-0.5 text-[10px] font-bold text-white">
             ✓
           </span>
         )}

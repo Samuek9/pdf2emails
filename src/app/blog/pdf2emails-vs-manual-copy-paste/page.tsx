@@ -46,7 +46,7 @@ export default function Post() {
           extracts, filters, cleans and exports in your browser — no uploads, no signup.
         </p>
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
-          <Link href="/" className="inline-flex items-center rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-700">
+          <Link href="/" className="inline-flex items-center rounded-xl bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-700/20 hover:bg-emerald-700">
             Extract emails from a PDF →
           </Link>
         </div>

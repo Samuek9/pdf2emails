@@ -50,7 +50,7 @@ export default function Post() {
           <p className="mt-1 text-sm text-slate-500">Primeros 5 correos gratis, sin registro.</p>
           <Link
             href="/"
-            className="mt-4 inline-flex items-center rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-700"
+            className="mt-4 inline-flex items-center rounded-xl bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-700/20 hover:bg-emerald-700"
           >
             Probar PDF2Emails →
           </Link>

@@ -9,7 +9,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-white shadow-sm">
             <Mail size={18} />
           </span>
           <span className="text-lg font-extrabold tracking-tight text-slate-900">{t("brand")}</span>

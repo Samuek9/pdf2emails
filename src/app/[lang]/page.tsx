@@ -230,7 +230,7 @@ export default function HomePage() {
             </ul>
           </div>
           <div className="card relative p-6 ring-2 ring-emerald-500">
-            <span className="absolute -top-3 left-5 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-bold text-white">
+            <span className="absolute -top-3 left-5 rounded-full bg-emerald-700 px-3 py-1 text-[11px] font-bold text-white">
               {t("pricing.yourPrice")}
             </span>
             <p className="text-4xl font-extrabold tracking-tight text-slate-900">
@@ -273,7 +273,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mt-24 rounded-3xl bg-emerald-600 px-6 py-14 text-center text-white">
+      <section className="mt-24 rounded-3xl bg-emerald-700 px-6 py-14 text-center text-white">
         <h2 className="text-3xl font-extrabold tracking-tight">{t("cta.title")}</h2>
         <p className="mx-auto mt-2 max-w-xl text-sm text-white/90">{t("cta.sub")}</p>
         <a
