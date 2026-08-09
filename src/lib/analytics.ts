@@ -22,6 +22,14 @@ export async function initAnalytics(): Promise<void> {
       api_host: POSTHOG_HOST,
       capture_pageview: false,
       autocapture: false,
+      // Session replay: permite ver literalmente qué hace cada usuario.
+      session_recording: {
+        maskAllInputs: true,
+        maskInputOptions: { password: true, email: true },
+      },
+      // Captura país/región y dispositivo automáticamente en cada evento.
+      ip: true,
+      opt_out_capturing_by_default: false,
     });
     posthogClient = posthog;
   } catch (error) {

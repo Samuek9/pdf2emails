@@ -47,6 +47,21 @@ export function CheckoutModal({
   const [error, setError] = useState<string | null>(null);
   const [paidGateway, setPaidGateway] = useState<Gateway | "demo">("demo");
   const referenceRef = useRef<string>("");
+  const viewedTrackedRef = useRef(false);
+
+  useEffect(() => {
+    if (open && !viewedTrackedRef.current) {
+      viewedTrackedRef.current = true;
+      trackEvent("checkout_viewed", {
+        gateway: pricing.primaryGateway,
+        price: pricing.displayPrice,
+        country,
+        region: pricing.region,
+        lockedCount,
+      });
+    }
+  }, [open, pricing, country, lockedCount]);
+
 
   const wompiLiveConfigured = Boolean(process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY);
   const [liveConfig, setLiveConfig] = useState<{ wompi: boolean; dlocal: boolean }>({
