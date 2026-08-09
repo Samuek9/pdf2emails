@@ -84,7 +84,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               applicationCategory: "UtilitiesApplication",
               operatingSystem: "Any",
               inLanguage: lang,
-              offers: { "@type": "Offer", price: "3.99", priceCurrency: "USD" },
+              offers: { "@type": "Offer", price: "19", priceCurrency: "USD" },
             }),
           }}
         />

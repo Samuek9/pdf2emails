@@ -23,7 +23,7 @@ export const es: Messages = {
   "drop.error.parse":
     "No pudimos leer el PDF. Asegúrate de que no esté protegido con contraseña ni dañado.",
   "drop.sample": "Probar con un PDF de ejemplo",
-  "drop.error.pages": "El PDF supera el límite de 100 páginas. Divide el documento e inténtalo de nuevo.",
+  "drop.error.pages": "El PDF supera el límite de 30 páginas. Divide el documento e inténtalo de nuevo.",
   "drop.sampleError": "No se pudo cargar el PDF de ejemplo.",
   "drop.ocr": "¿Es un escaneo? Activar OCR para leer el texto",
   "drop.ocrRunning": "Aplicando OCR… (puede tardar un poco)",
@@ -151,7 +151,7 @@ export const es: Messages = {
     "Arrastra el archivo. Todo se procesa localmente con pdf.js en tu navegador, nunca se sube a un servidor.",
   "how.step2.title": "Revisa los correos",
   "how.step2.desc":
-    "Los primeros 5 correos son gratis. Filtra genéricos (info@, support@) y personales (@gmail.com) con un clic.",
+    "Los primeros 10 correos son gratis. Filtra genéricos (info@, support@) y personales (@gmail.com) con un clic.",
   "how.step3.title": "Descarga la lista",
   "how.step3.desc":
     "Exporta todos los correos a CSV o TXT en un clic, listos para tu CRM o campaña.",

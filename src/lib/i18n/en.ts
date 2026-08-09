@@ -23,7 +23,7 @@ export const en: Messages = {
   "drop.error.parse":
     "We couldn't read the PDF. Make sure it isn't password-protected or damaged.",
   "drop.sample": "Try with a sample PDF",
-  "drop.error.pages": "The PDF exceeds the 100-page limit. Split the document and try again.",
+  "drop.error.pages": "The PDF exceeds the 30-page limit. Split the document and try again.",
   "drop.sampleError": "Could not load the sample PDF.",
   "drop.ocr": "Scanned document? Run OCR to read the text",
   "drop.ocrRunning": "Running OCR… (may take a moment)",
@@ -150,7 +150,7 @@ export const en: Messages = {
     "Drop the file. Everything is processed locally with pdf.js in your browser, never uploaded to a server.",
   "how.step2.title": "Review the emails",
   "how.step2.desc":
-    "The first 5 emails are free. Filter generic (info@, support@) and personal (@gmail.com) emails with one click.",
+    "The first 10 emails are free. Filter generic (info@, support@) and personal (@gmail.com) emails with one click.",
   "how.step3.title": "Download the list",
   "how.step3.desc":
     "Export all emails to CSV or TXT in one click, ready for your CRM or campaign.",
