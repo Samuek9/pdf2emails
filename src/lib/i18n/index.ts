@@ -1,6 +1,8 @@
 import { es } from "./es";
 import { en } from "./en";
 import { pt } from "./pt";
+import { fr } from "./fr";
+import { de } from "./de";
 import type { Locale, Messages } from "./types";
 
 export type { Locale, Messages } from "./types";
@@ -12,10 +14,19 @@ const SPANISH_COUNTRIES = new Set([
 
 const PORTUGUESE_COUNTRIES = new Set(["BR", "PT", "AO", "MZ", "CV", "GW", "ST", "MO", "TL"]);
 
+const FRENCH_COUNTRIES = new Set([
+  "FR", "BE", "CH", "LU", "MC", "SN", "CI", "ML", "BF", "NE", "TG", "BJ", "CM",
+  "GA", "GN", "CF", "CG", "CD", "HT", "MG", "RW", "BI", "DJ", "KM", "SC",
+]);
+
+const GERMAN_COUNTRIES = new Set(["DE", "AT", "CH", "LI", "LU"]);
+
 export function detectLocale(country: string): Locale {
   const code = country.toUpperCase();
   if (SPANISH_COUNTRIES.has(code)) return "es";
   if (PORTUGUESE_COUNTRIES.has(code)) return "pt";
+  if (FRENCH_COUNTRIES.has(code)) return "fr";
+  if (GERMAN_COUNTRIES.has(code)) return "de";
   return "en";
 }
 
@@ -26,7 +37,7 @@ export function getLocale(): Locale {
   return detectLocale(country);
 }
 
-const dicts: Record<Locale, Messages> = { es, en, pt };
+const dicts: Record<Locale, Messages> = { es, en, pt, fr, de };
 
 /** Devuelve el diccionario del idioma detectado (cacheado por sesion). */
 export function getMessages(): Messages {
