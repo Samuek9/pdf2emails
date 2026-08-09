@@ -7,7 +7,7 @@ import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { PdfDropzone } from "@/components/PdfDropzone";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { initAnalytics, trackEvent } from "@/lib/analytics";
-import { getClientCountry, getCountryName } from "@/lib/countries";
+import { getClientCountry, getCountryName, getLocalPrice } from "@/lib/countries";
 import { parseAllEmails } from "@/lib/emails";
 import { getPricing } from "@/lib/pricing";
 import { t } from "@/lib/i18n";
@@ -16,6 +16,7 @@ import type { Gateway, ParsedPdf } from "@/lib/types";
 export default function HomePage() {
   const country = useMemo(() => getClientCountry(), []);
   const pricing = useMemo(() => getPricing(country), [country]);
+  const local = useMemo(() => getLocalPrice(country), [country]);
 
   const [parsed, setParsed] = useState<ParsedPdf | null>(null);
   const [unlocked, setUnlocked] = useState(false);
@@ -164,7 +165,7 @@ export default function HomePage() {
                 <p className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">
                   $7.99 <span className="text-lg font-semibold text-slate-400">USD</span>
                 </p>
-                <p className="mt-1 text-sm font-semibold text-slate-500">≈ $32,000 COP</p>
+                {local && <p className="mt-1 text-sm font-semibold text-slate-500">≈ {local.amount} {local.currency}</p>}
                 <ul className="mt-4 space-y-2 text-sm text-slate-600">
                   <li>✓ {t("pricing.f1")}</li>
                   <li>✓ {t("pricing.f2")}</li>

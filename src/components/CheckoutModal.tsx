@@ -5,6 +5,7 @@ import { ArrowRight, Check, CheckCircle2, CreditCard, Landmark, Loader2, Lock, S
 import { trackEvent } from "@/lib/analytics";
 import { t } from "@/lib/i18n";
 import { getPricing } from "@/lib/pricing";
+import { getLocalPrice } from "@/lib/countries";
 import type { Gateway } from "@/lib/types";
 
 interface CheckoutModalProps {
@@ -38,6 +39,7 @@ export function CheckoutModal({
   lockedCount,
 }: CheckoutModalProps) {
   const pricing = useMemo(() => getPricing(country), [country]);
+  const local = getLocalPrice(country);
   const [step, setStep] = useState<Step>("method");
   const [gateway, setGateway] = useState<Gateway>(pricing.primaryGateway);
   const [error, setError] = useState<string | null>(null);
@@ -233,7 +235,7 @@ export function CheckoutModal({
               {pricing.region === "latam" && (
                 <div className="text-right">
                   <p className="text-xs font-medium text-emerald-400">{t("checkout.latamPpp")}</p>
-                  <p className="text-sm font-bold">≈ $32,000 COP</p>
+                  {local && <p className="text-sm font-bold">≈ {local.amount} {local.currency}</p>}
                 </div>
               )}
             </div>

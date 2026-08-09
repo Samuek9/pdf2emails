@@ -5,6 +5,7 @@ import { Check, Copy, Download, FileText, Lock, RefreshCw, ShieldCheck } from "l
 import { trackEvent } from "@/lib/analytics";
 import { downloadBlob, toCsv, toTxt } from "@/lib/csv";
 import { applyFilters } from "@/lib/emails";
+import { getLocalPrice } from "@/lib/countries";
 import { t } from "@/lib/i18n";
 import type { EmailCategory, ExtractOptions, ExtractedEmail, ParsedPdf, Pricing } from "@/lib/types";
 
@@ -296,6 +297,7 @@ function PaywallOverlay({
   lockedCount: number;
   onUnlock: () => void;
 }) {
+  const local = getLocalPrice(pricing.countryCode);
   return (
     <div className="absolute inset-0 z-10 flex items-end justify-center bg-gradient-to-t from-white via-white/60 to-transparent px-4 pb-6 pt-20">
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-xl">
@@ -315,7 +317,7 @@ function PaywallOverlay({
           <span className="ml-1 text-sm font-semibold text-slate-500">USD</span>
           {pricing.region === "latam" && (
             <p className="mt-1 text-xs font-bold text-emerald-600">
-              {t("result.latamPrice", { price: "32,000" })}
+              {local && t("result.latamPrice", { amount: local.amount, currency: local.currency })}
             </p>
           )}
         </div>

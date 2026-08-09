@@ -65,3 +65,28 @@ export function getClientCountry(): string {
     .find((r) => r.startsWith("user_country="));
   return cookie ? cookie.split("=")[1] : (process.env.NEXT_PUBLIC_DEFAULT_COUNTRY ?? "US");
 }
+
+// Estimados aproximados del precio de $7.99 USD en la moneda local de cada pais LATAM.
+export const COUNTRY_LOCAL_PRICE: Record<string, { currency: string; amount: string }> = {
+  CO: { currency: "COP", amount: "32,000" },
+  MX: { currency: "MXN", amount: "155" },
+  AR: { currency: "ARS", amount: "9,500" },
+  CL: { currency: "CLP", amount: "7,600" },
+  PE: { currency: "PEN", amount: "30" },
+  EC: { currency: "USD", amount: "7.99" },
+  UY: { currency: "UYU", amount: "320" },
+  PY: { currency: "PYG", amount: "58,000" },
+  BO: { currency: "BOB", amount: "55" },
+  BR: { currency: "BRL", amount: "44" },
+  CR: { currency: "CRC", amount: "4,150" },
+  DO: { currency: "DOP", amount: "480" },
+  PA: { currency: "USD", amount: "7.99" },
+  GT: { currency: "GTQ", amount: "62" },
+  NI: { currency: "NIO", amount: "288" },
+};
+
+export function getLocalPrice(
+  countryCode: string,
+): { currency: string; amount: string } | null {
+  return COUNTRY_LOCAL_PRICE[countryCode.toUpperCase()] ?? null;
+}

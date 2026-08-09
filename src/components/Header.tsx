@@ -18,6 +18,7 @@ export function Header() {
           <a href="#como-funciona" className="transition hover:text-slate-900">{t("nav.how")}</a>
           <a href="#precios" className="transition hover:text-slate-900">{t("nav.pricing")}</a>
           <a href="#faq" className="transition hover:text-slate-900">{t("nav.faq")}</a>
+          <a href="/blog" className="transition hover:text-slate-900">{t("nav.blog")}</a>
         </nav>
         <a href="#extractor" className="btn-primary !px-4 !py-2">{t("nav.try")}</a>
       </div>
