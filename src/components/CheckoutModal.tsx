@@ -240,29 +240,19 @@ export function CheckoutModal({
             <p className="mt-5 text-xs font-bold uppercase tracking-wider text-slate-500">
               Método de pago
             </p>
-            <div className="mt-2 grid gap-2">
-              {([pricing.primaryGateway, pricing.secondaryGateway] as Gateway[]).map((g) => (
-                <button
-                  key={g}
-                  onClick={() => setGateway(g)}
-                  className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition ${
-                    gateway === g
-                      ? "border-emerald-500 bg-emerald-50/50 ring-1 ring-emerald-500"
-                      : "border-slate-200 bg-white hover:border-slate-300"
-                  }`}
-                >
-                  <span className="text-emerald-700">
-                    {GATEWAY_META[g].icon === "card" ? <CreditCard size={18} /> : <Landmark size={18} />}
-                  </span>
-                  <span>
-                    <span className="block text-sm font-semibold text-slate-800">
-                      {GATEWAY_META[g].name}
-                    </span>
-                    <span className="block text-xs text-slate-500">{GATEWAY_META[g].subtitle}</span>
-                  </span>
-                  {gateway === g && <Check size={18} className="ml-auto text-emerald-600" />}
-                </button>
-              ))}
+            <div className="mt-2 flex items-center gap-3 rounded-xl border border-emerald-500 bg-emerald-50/50 px-4 py-3 ring-1 ring-emerald-500">
+              <span className="text-emerald-700">
+                {GATEWAY_META[pricing.primaryGateway].icon === "card" ? <CreditCard size={18} /> : <Landmark size={18} />}
+              </span>
+              <span>
+                <span className="block text-sm font-semibold text-slate-800">
+                  {GATEWAY_META[pricing.primaryGateway].name}
+                </span>
+                <span className="block text-xs text-slate-500">
+                  {GATEWAY_META[pricing.primaryGateway].subtitle}
+                </span>
+              </span>
+              <Check size={18} className="ml-auto text-emerald-600" />
             </div>
 
             {step === "processing" ? (

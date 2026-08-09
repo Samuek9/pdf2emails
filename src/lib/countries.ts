@@ -19,10 +19,7 @@ export const LATAM_COUNTRY_CODES = new Set([
   "DO",
   "PA",
   "GT",
-  "SV",
-  "HN",
   "NI",
-  "VE",
 ]);
 
 export const LATAM_COUNTRIES: Country[] = [
@@ -40,10 +37,7 @@ export const LATAM_COUNTRIES: Country[] = [
   { code: "DO", name: "Rep. Dominicana", flag: "🇩🇴" },
   { code: "PA", name: "Panamá", flag: "🇵🇦" },
   { code: "GT", name: "Guatemala", flag: "🇬🇹" },
-  { code: "SV", name: "El Salvador", flag: "🇸🇻" },
-  { code: "HN", name: "Honduras", flag: "🇭🇳" },
   { code: "NI", name: "Nicaragua", flag: "🇳🇮" },
-  { code: "VE", name: "Venezuela", flag: "🇻🇪" },
 ];
 
 export const ROW_COUNTRIES: Country[] = [
