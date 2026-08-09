@@ -28,3 +28,6 @@ yarn-error.log*
 
 # assets scratch (galeria no usada en el producto)
 imagenes/
+
+# reports generados (lighthouse)
+lighthouse-*

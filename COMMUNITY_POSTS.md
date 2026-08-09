@@ -276,6 +276,42 @@
 ## Grupos de tu lista que NO sirven para esto
 Evita publicar en: r/Bitcoin, r/BitcoinBeginners, r/CryptoCurrency, r/CryptoMoonShots, r/CryptoTechnology, r/Coinbase, r/binance, r/ethtrader, r/dogecoin, r/cryptocurrencymemes (crypto), r/Fitness, r/crossfit (fitness), r/personalfinance, r/povertyfinance, r/FluentInFinance, r/stocks, r/UKPersonalFinance, r/PersonalFinanceCanada (finanzas personales), r/CityPorn, r/German, r/dreaminglanguages, r/Stoicism, r/Frugal (off-topic), r/beermoney, r/RemoteJobseekers, r/remotejobsfinders, r/remotework, r/RemoteWorkers, r/WFHJobs (búsqueda de empleo, no el público). En los grupos de **Multinivel / MLM / afiliados de marketing** usa el ángulo #19 con cautela (muchos banean venta directa).
 
+---
+
+## Posts de feedback objetivo (pedir opinión honesta)
+
+### ROAST. r/roastmylandingpage — pedir críticas
+**Título:** "Roast my micro-SaaS landing: pdf2emails.com (client-side email extractor)"
+
+**Cuerpo:**
+> Roast me. I made a tool that extracts emails from PDFs in the browser (100% client-side, nothing uploaded), then lets you filter, SMTP-verify and export to CSV. Free for small PDFs, one-off payment to unlock large ones.
+>
+> I've been staring at it too long and need fresh eyes. Be brutal — what's unclear, untrustworthy, or ugly? Does it read like a scam? Is the pricing confusing? Would YOU pay? What would make you leave in the first 5 seconds?
+>
+> https://pdf2emails.com — thanks in advance.
+
+### CRITIQUE. r/design_critiques — diseño
+**Título:** "[Design Critique] pdf2emails.com — landing de un extractor de emails (client-side)"
+
+**Cuerpo:**
+> Looking for honest design feedback on my landing: https://pdf2emails.com
+> - Visual hierarchy & readability
+> - Trust signals (privacy is the core promise)
+> - Pricing section clarity
+> - Mobile layout
+> What's working and what should I change? Happy to give critiques back in return.
+
+### REVIEW. r/SaaS · IndieHackers — revisión de producto
+**Título:** "Roast my micro-SaaS before I launch on Product Hunt"
+
+**Cuerpo:**
+> Solo builder here. **pdf2emails.com** — extracts emails from PDFs (incl. scanned via OCR) entirely in the browser, so files never leave the device. Free up to ~10 emails, one-off payment + regional pricing (PPP) for large PDFs.
+>
+> Before my Product Hunt launch I'd love a reality check: Is the value prop clear? Does the client-side privacy angle actually matter to buyers, or am I over-indexing on it? Any deal-breaker UX issues? What's the one thing I should fix first?
+>
+> https://pdf2emails.com — genuinely appreciate blunt answers.
+
+
 
 
 
