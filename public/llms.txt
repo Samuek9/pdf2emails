@@ -1,0 +1,23 @@
+# PDF2Emails
+
+Extract email addresses from any PDF entirely in your browser. No uploads, 100% private.
+
+PDF2Emails is a free-to-start web tool that parses PDF files locally with pdf.js, extracts
+every email address, and lets you clean, deduplicate, verify, enrich and export the list to
+CSV/Excel. Scanned PDFs are supported via OCR (tesseract.js). Payments are handled by Wompi
+and dLocal Go.
+
+## Key pages
+
+- Landing (multi-language): https://pdf2emails.com/{es|en|pt|fr|de}
+- Blog: https://pdf2emails.com/blog
+- Use cases: https://pdf2emails.com/use-cases
+- Privacy: https://pdf2emails.com/privacy
+- Terms: https://pdf2emails.com/terms
+
+## Core facts
+
+- 100% client-side processing; files never leave the device.
+- Free extraction for small PDFs; paid unlock for cleaning, verifying and exporting the full list.
+- OCR support for scanned PDFs.
+- Prices by country: Latin America (dLocal Go) vs rest of world (Wompi).

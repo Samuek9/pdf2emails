@@ -153,7 +153,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
               e.stopPropagation();
               setNeedsOcr(false);
             }}
-            className="text-xs text-slate-400 underline underline-offset-2 hover:text-slate-600"
+            className="text-xs text-slate-500 underline underline-offset-2 hover:text-slate-700"
           >
             {t("drop.title")}
           </button>
@@ -168,7 +168,7 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
               {t("drop.title")}{" "}
               <span className="text-emerald-600 underline underline-offset-2">{t("drop.choose")}</span>
             </p>
-            <p className="mt-1 text-xs text-slate-400">{t("drop.sub", { max: MAX_SIZE_MB })}</p>
+            <p className="mt-1 text-xs text-slate-500">{t("drop.sub", { max: MAX_SIZE_MB })}</p>
             <button
               type="button"
               onClick={(e) => {

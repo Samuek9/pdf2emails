@@ -1,7 +1,19 @@
-import { getDocument, GlobalWorkerOptions, version } from "pdfjs-dist";
+// pdfjs-dist se carga bajo demanda (lazy import) para no inflar el JS inicial
+// de la landing. Solo se descarga cuando el usuario procesa un PDF.
+type PdfJsModule = typeof import("pdfjs-dist");
 
-// El worker de pdf.js se sirve desde unpkg para garantizar la misma version.
-GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${version}/build/pdf.worker.min.mjs`;
+let pdfjsPromise: Promise<PdfJsModule> | null = null;
+
+async function loadPdfJs(): Promise<PdfJsModule> {
+  if (!pdfjsPromise) {
+    pdfjsPromise = import("pdfjs-dist").then((pdfjs) => {
+      // El worker de pdf.js se sirve desde unpkg para garantizar la misma version.
+      pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+      return pdfjs;
+    });
+  }
+  return pdfjsPromise;
+}
 
 // pdfjs-dist v4 usa Promise.withResolvers (Chrome 119+, Safari 17.4+).
 // Polyfill minimo para navegadores mas antiguos.
@@ -29,6 +41,7 @@ export interface PdfParseResult {
 }
 
 export async function extractTextFromFile(file: File): Promise<PdfParseResult> {
+  const { getDocument } = await loadPdfJs();
   const arrayBuffer = await file.arrayBuffer();
   const loadingTask = getDocument({ data: new Uint8Array(arrayBuffer) });
   const pdf = await loadingTask.promise;
@@ -54,6 +67,7 @@ export async function extractTextFromFile(file: File): Promise<PdfParseResult> {
  * y la procesa con tesseract.js. Tesseract se carga bajo demanda (lazy import).
  */
 export async function extractTextWithOcr(file: File, lang: string): Promise<PdfParseResult> {
+  const { getDocument } = await loadPdfJs();
   const arrayBuffer = await file.arrayBuffer();
   const loadingTask = getDocument({ data: new Uint8Array(arrayBuffer) });
   const pdf = await loadingTask.promise;

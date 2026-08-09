@@ -5,7 +5,8 @@ interface PosthogLike {
   init: (...args: unknown[]) => void;
 }
 
-const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+const POSTHOG_KEY =
+  process.env.NEXT_PUBLIC_POSTHOG_KEY || process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
 const POSTHOG_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com";
 
 let posthogClient: PosthogLike | null = null;
@@ -21,7 +22,11 @@ export async function initAnalytics(): Promise<void> {
     posthog.init(POSTHOG_KEY, {
       api_host: POSTHOG_HOST,
       capture_pageview: false,
+      capture_pageleave: true,
       autocapture: false,
+      // Error tracking: registra errores no capturados y promesas rechazadas
+      // como eventos $exception (ver en el dashboard "Errores").
+      capture_exceptions: true,
       // Session replay: permite ver literalmente qué hace cada usuario.
       session_recording: {
         maskAllInputs: true,
