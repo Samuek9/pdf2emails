@@ -32,47 +32,26 @@ export async function createWompiIntent(input: {
   currency: string;
   reference: string;
 }): Promise<WompiIntent> {
-  const privateKey = process.env.WOMPI_PRIVATE_KEY;
   const integrityKey = process.env.WOMPI_INTEGRITY_KEY;
-  if (!privateKey || !integrityKey) {
-    throw new Error("WOMPI_PRIVATE_KEY or WOMPI_INTEGRITY_KEY is not configured");
+  if (!integrityKey) {
+    throw new Error("WOMPI_INTEGRITY_KEY is not configured");
   }
 
-  // Convierte USD -> COP si la moneda de entrada es USD.
+  // La cuenta de Wompi es SOLO en COP: convierte USD -> COP (tasa en vivo).
   const isUsd = input.currency.toUpperCase() === "USD";
   const rate = isUsd ? await getCopRate() : 1;
   const amountInCents = isUsd ? Math.round(input.amountInCents * rate) : input.amountInCents;
   const currency = isUsd ? "COP" : input.currency.toUpperCase();
 
-  const res = await fetch(`${WOMPI_API_BASE}/transactions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${privateKey}`,
-    },
-    body: JSON.stringify({
-      amount_in_cents: amountInCents,
-      currency,
-      reference: input.reference,
-      payment_method: { type: "CARD" },
-      redirect_url: `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/thank-you`,
-    }),
-  });
-
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Wompi create transaction failed (${res.status}): ${body}`);
-  }
-
-  const json = (await res.json()) as { data: { id: string; status: string } };
-  const transactionId = json.data.id;
-
+  // El widget de Wompi crea la transaccion en el navegador (con el token de la
+  // tarjeta). El backend SOLO genera la firma de integridad:
+  // HMAC-SHA256(reference:amountInCents:currency) con la integrity key.
   const signature = crypto
     .createHmac("sha256", integrityKey)
-    .update(`${input.reference}:${amountInCents}:${currency}:${transactionId}`)
+    .update(`${input.reference}:${amountInCents}:${currency}`)
     .digest("hex");
 
-  return { transactionId, status: json.data.status, signature, amountInCents, currency };
+  return { transactionId: input.reference, status: "PENDING", signature, amountInCents, currency };
 }
 
 /** Consulta el estado de una transaccion en WOMPI. */
