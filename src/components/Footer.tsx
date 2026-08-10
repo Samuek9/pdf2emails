@@ -88,6 +88,19 @@ export function Footer() {
                 height="54"
               />
             </a>
+            <a
+              href="https://launchbuff.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Featured on LaunchBuff"
+            >
+              <img
+                src="https://launchbuff.com/badge-featured-dark.svg"
+                alt="Featured on LaunchBuff"
+                width="256"
+                height="80"
+              />
+            </a>
           </div>
           <a href="mailto:info@pdf2emails.com" className="transition hover:text-slate-600">info@pdf2emails.com</a>
         </div>
