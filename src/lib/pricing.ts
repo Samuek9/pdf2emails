@@ -10,17 +10,20 @@ const LATAM_PRICE_COP = 32000;
  * la UI). page.tsx y CheckoutModal deben derivar SIEMPRE los montos de aqui
  * (o de orders.ts), nunca hardcodear un precio nuevo.
  */
-export function getPricing(countryCode: string): Pricing {
+export function getPricing(countryCode: string, couponCode?: string | null): Pricing {
   const latam = isLatam(countryCode);
+  const full = resolveOrder(countryCode, "full", couponCode);
+  const fullverify = resolveOrder(countryCode, "fullverify", couponCode);
   return {
     region: latam ? "latam" : "row",
     countryCode,
-    displayPrice: latam ? "$7.99 USD" : "$19 USD",
-    priceUsd: resolveOrder(countryCode, "full").amountUsd,
-    verifyPriceUsd: resolveOrder(countryCode, "fullverify").amountUsd,
+    displayPrice: `$${full.amountUsd} USD`,
+    priceUsd: full.amountUsd,
+    verifyPriceUsd: fullverify.amountUsd,
     verifyOnlyUsd: latam ? CART_PRICES_USD.latam.verify : CART_PRICES_USD.row.verify,
     priceCop: latam ? LATAM_PRICE_COP : 0,
     primaryGateway: latam ? "dlocal" : "wompi",
     secondaryGateway: latam ? "wompi" : "dlocal",
+    couponApplied: full.couponApplied,
   };
 }

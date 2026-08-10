@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
     orderId?: string;
     option?: string;
     country?: string;
+    coupon?: string;
   } | null;
 
   if (!body?.orderId || !isCheckoutOption(body?.option) || !body?.country) {
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
   // El monto y el pais NUNCA vienen del cliente: se calculan aqui a partir del
   // pais REAL (geolocalizado por Vercel) y la opcion elegida.
   const country = resolveServerCountry(request, body.country);
-  const order = resolveOrder(country, body.option);
+  const order = resolveOrder(country, body.option, body.coupon);
 
   try {
     const intent = await createDlocalPayment({

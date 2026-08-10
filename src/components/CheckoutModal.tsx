@@ -18,6 +18,7 @@ interface CheckoutModalProps {
   option: CheckoutOption;
   lockedCount: number;
   amount: number;
+  coupon?: string | null;
 }
 
 type Step = "method" | "processing" | "success";
@@ -42,6 +43,7 @@ export function CheckoutModal({
   option,
   lockedCount,
   amount,
+  coupon,
 }: CheckoutModalProps) {
   const pricing = useMemo(() => getPricing(country), [country]);
   const local = useLocalPrice(country, amount);
@@ -179,7 +181,7 @@ export function CheckoutModal({
         const intentRes = await fetch("/api/wompi/create-intent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ reference: referenceRef.current, option, country }),
+          body: JSON.stringify({ reference: referenceRef.current, option, country, coupon }),
         });
         if (!intentRes.ok) {
           const errBody = await intentRes.text().catch(() => "");
@@ -207,7 +209,7 @@ export function CheckoutModal({
         try {
           window.localStorage.setItem(
             PENDING_PAYMENT_KEY,
-            JSON.stringify({ gateway: "wompi", reference: referenceRef.current, option, country }),
+            JSON.stringify({ gateway: "wompi", reference: referenceRef.current, option, country, coupon }),
           );
         } catch { /* noop */ }
 
@@ -234,7 +236,7 @@ export function CheckoutModal({
           void fetch("/api/wompi/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ transactionId: tx.id, reference: referenceRef.current, option, country }),
+            body: JSON.stringify({ transactionId: tx.id, reference: referenceRef.current, option, country, coupon }),
           })
             .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`verify ${r.status}`))))
             .then((d: { ok: boolean; token?: string }) => {
@@ -264,7 +266,7 @@ export function CheckoutModal({
         const res = await fetch("/api/dlocal/create-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: referenceRef.current, option, country: pricing.countryCode }),
+          body: JSON.stringify({ orderId: referenceRef.current, option, country: pricing.countryCode, coupon }),
         });
         if (!res.ok) {
           const errBody = await res.text().catch(() => "");
@@ -287,6 +289,7 @@ export function CheckoutModal({
               dlocalPaymentId: intent.id,
               option,
               country: pricing.countryCode,
+              coupon,
             }),
           );
         } catch { /* noop */ }
@@ -307,7 +310,7 @@ export function CheckoutModal({
       const res = await fetch("/api/payments/demo-token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ option, country }),
+        body: JSON.stringify({ option, country, coupon }),
       });
       const d = (await res.json().catch(() => null)) as { ok?: boolean; token?: string } | null;
       if (!res.ok || !d?.ok || !d.token) throw new Error("demo token failed");

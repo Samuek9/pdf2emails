@@ -4,8 +4,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type PendingPayment =
-  | { gateway: "wompi"; reference: string; option: string; country: string }
-  | { gateway: "dlocal"; orderId: string; dlocalPaymentId: string; option: string; country: string };
+  | { gateway: "wompi"; reference: string; option: string; country: string; coupon?: string | null }
+  | {
+      gateway: "dlocal";
+      orderId: string;
+      dlocalPaymentId: string;
+      option: string;
+      country: string;
+      coupon?: string | null;
+    };
 
 const PENDING_PAYMENT_KEY = "pdf2emails_pending_payment";
 
@@ -50,6 +57,7 @@ export default function ThankYouPage() {
               orderId: pending.orderId,
               option: pending.option,
               country: pending.country,
+              coupon: pending.coupon,
             }),
           })
         : wompiId
@@ -61,6 +69,7 @@ export default function ThankYouPage() {
                 reference: pending.reference,
                 option: pending.option,
                 country: pending.country,
+                coupon: pending.coupon,
               }),
             })
           : Promise.reject(new Error("missing wompi transaction id"));

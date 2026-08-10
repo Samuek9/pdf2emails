@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
     orderId?: string;
     option?: string;
     country?: string;
+    coupon?: string;
   } | null;
 
   if (!body?.paymentId || !body?.orderId || !isCheckoutOption(body?.option) || !body?.country) {
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
     // (el cliente nunca lo controla); aqui solo confirmamos que lo cobrado por
     // dLocal para esta orden no es menor a lo esperado para pais+opcion.
     const country = resolveServerCountry(request, body.country);
-    const order = resolveOrder(country, body.option);
+    const order = resolveOrder(country, body.option, body.coupon);
     if (payment.amount < order.amountUsd - 0.01) {
       return NextResponse.json({ ok: false, error: "amount too low" }, { status: 402 });
     }

@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
     reference?: string;
     option?: string;
     country?: string;
+    coupon?: string;
   } | null;
 
   if (!body?.transactionId || !body?.reference || !isCheckoutOption(body?.option) || !body?.country) {
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     const country = resolveServerCountry(request, body.country);
-    const order = resolveOrder(country, body.option);
+    const order = resolveOrder(country, body.option, body.coupon);
     const token = signPaymentToken({
       ref: body.reference,
       gateway: "wompi",

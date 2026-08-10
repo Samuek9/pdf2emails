@@ -32,8 +32,11 @@ export default function HomePage() {
   // Pais como estado con default estable (US) en server y primer render del
   // cliente para evitar hydration mismatch. Se resuelve el real tras el montaje.
   const [country, setCountry] = useState<string>("US");
+  // Codigo de cupon de lanzamiento (?promo=LAUNCH50), validado y aplicado
+  // siempre server-side en orders.ts — esto solo decide que precio MOSTRAR.
+  const [promoCode, setPromoCode] = useState<string | null>(null);
   const pathname = usePathname();
-  const pricing = useMemo(() => getPricing(country), [country]);
+  const pricing = useMemo(() => getPricing(country, promoCode), [country, promoCode]);
   const localPrice = useLocalPrice(country, pricing.priceUsd);
 
   // Lee el pais de la cookie (o query ?c= del selector del footer). Se re-ejecuta
@@ -45,6 +48,7 @@ export default function HomePage() {
     const cookieCountry = document.cookie.split("; ").find((r) => r.startsWith("user_country="));
     const effective = qCountry || (cookieCountry ? cookieCountry.split("=")[1] : undefined) || "US";
     setCountry(effective);
+    setPromoCode(qs.get("promo"));
   }, [pathname]);
   const [parsed, setParsed] = useState<ParsedPdf | null>(null);
   const [verifyOpen, setVerifyOpen] = useState(false);
@@ -398,6 +402,7 @@ export default function HomePage() {
         option={checkoutOption}
         lockedCount={parsed ? Math.max(0, parsed.all.length - 10) : 0}
         amount={checkoutAmount}
+        coupon={promoCode}
       />
       <VerifyModal
         open={verifyOpen}

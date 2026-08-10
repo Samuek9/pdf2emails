@@ -41,4 +41,5 @@ export interface Pricing {
   priceCop: number;
   primaryGateway: Gateway;
   secondaryGateway: Gateway;
+  couponApplied: string | null;
 }

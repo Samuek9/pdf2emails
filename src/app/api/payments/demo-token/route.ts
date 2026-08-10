@@ -17,12 +17,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Demo mode disabled: a real gateway is configured" }, { status: 403 });
   }
 
-  const body = (await request.json().catch(() => null)) as { option?: string; country?: string } | null;
+  const body = (await request.json().catch(() => null)) as { option?: string; country?: string; coupon?: string } | null;
   if (!isCheckoutOption(body?.option) || !body?.country) {
     return NextResponse.json({ error: "option and country are required" }, { status: 400 });
   }
 
-  const order = resolveOrder(body.country, body.option);
+  const order = resolveOrder(body.country, body.option, body.coupon);
   const token = signPaymentToken({
     ref: `demo-${Date.now()}`,
     gateway: "demo",

@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
     reference?: string;
     option?: string;
     country?: string;
+    coupon?: string;
   } | null;
 
   if (!body?.reference || !isCheckoutOption(body?.option) || !body?.country) {
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
   // El monto NUNCA viene del cliente: se calcula aqui a partir del pais REAL
   // (geolocalizado por Vercel, no el que declare el body) y la opcion elegida.
   const country = resolveServerCountry(request, body.country);
-  const order = resolveOrder(country, body.option);
+  const order = resolveOrder(country, body.option, body.coupon);
 
   try {
     const intent = await createWompiIntent({

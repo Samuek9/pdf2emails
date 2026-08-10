@@ -57,9 +57,37 @@ export function Footer() {
       </div>
       <div className="border-t border-slate-100 px-4 py-4">
         <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-2 text-xs text-slate-500 sm:flex-row">
-          <div className="flex gap-4">
+          <div className="flex items-center gap-4">
             <a href="/terms" className="transition hover:text-slate-600">Terms</a>
             <a href="/privacy" className="transition hover:text-slate-600">Privacy</a>
+            <a href="https://kittylaunch.com/p/pdf2emails" target="_blank" rel="noopener">
+              <img
+                src="https://kittylaunch.com/api/public/badges/launch_badge.svg?theme=light&name=PDF2Emails"
+                width="280"
+                alt="PDF2Emails on KittyLaunch"
+                data-kittylaunch-badge="1"
+              />
+            </a>
+            <a
+              href="https://backlinklog.com/listing/pdf2emails.com?utm_source=backlinklog&utm_medium=badge"
+              target="_blank"
+              rel="noopener"
+            >
+              <img
+                src="https://backlinklog.com/badge/pdf2emails.com.svg"
+                alt="Listed on BacklinkLog"
+                width="160"
+                height="40"
+              />
+            </a>
+            <a href="https://launchzone.co/p/pdf2emails" target="_blank" rel="noopener">
+              <img
+                src="https://launchzone.co/badge.svg"
+                alt="Find us on LaunchZone"
+                width="154"
+                height="54"
+              />
+            </a>
           </div>
           <a href="mailto:info@pdf2emails.com" className="transition hover:text-slate-600">info@pdf2emails.com</a>
         </div>

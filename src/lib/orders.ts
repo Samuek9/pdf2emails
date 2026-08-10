@@ -35,17 +35,43 @@ const PRICES_USD: Record<"latam" | "row", Record<CheckoutOption, number>> = {
   },
 };
 
+/**
+ * Cupones de lanzamiento (KittyLaunch / BacklinkLog). Solo aplican a "full" y
+ * "fullverify" — los upsells de carrito (cartVerify/cartPro) quedan fuera a
+ * proposito para no complicar el modelo aerolinea de precios individuales.
+ */
+interface Coupon {
+  discountPercent: number;
+  expiresAt: string;
+}
+
+const COUPONS: Record<string, Coupon> = {
+  LAUNCH50: { discountPercent: 50, expiresAt: "2026-09-10T23:59:59Z" },
+};
+
+/** Valida un codigo de cupon contra el registro y su expiracion (server-side, nunca confia en el cliente mas alla del codigo). */
+function getValidCoupon(code: string | null | undefined, option: CheckoutOption): Coupon | null {
+  if (!code || (option !== "full" && option !== "fullverify")) return null;
+  const coupon = COUPONS[code.trim().toUpperCase()];
+  if (!coupon) return null;
+  if (new Date(coupon.expiresAt).getTime() < Date.now()) return null;
+  return coupon;
+}
+
 export interface ResolvedOrder {
   region: "latam" | "row";
   option: CheckoutOption;
   amountUsd: number;
+  couponApplied: string | null;
 }
 
-/** Calcula el monto autoritativo en el servidor a partir del pais y la opcion elegida. */
-export function resolveOrder(countryCode: string, option: CheckoutOption): ResolvedOrder {
+/** Calcula el monto autoritativo en el servidor a partir del pais, la opcion elegida y un cupon opcional. */
+export function resolveOrder(countryCode: string, option: CheckoutOption, couponCode?: string | null): ResolvedOrder {
   const region = isLatam(countryCode) ? "latam" : "row";
-  const amountUsd = Math.round(PRICES_USD[region][option] * 100) / 100;
-  return { region, option, amountUsd };
+  const base = PRICES_USD[region][option];
+  const coupon = getValidCoupon(couponCode, option);
+  const amountUsd = Math.round(base * (coupon ? 1 - coupon.discountPercent / 100 : 1) * 100) / 100;
+  return { region, option, amountUsd, couponApplied: coupon ? couponCode!.trim().toUpperCase() : null };
 }
 
 /**
