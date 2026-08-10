@@ -133,28 +133,30 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
             <p className="mt-1 text-xs text-slate-500">{t("result.emptySub")}</p>
           </div>
         ) : (
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                <th className="px-5 py-3">{t("result.thIndex")}</th>
-                <th className="px-5 py-3">{t("result.thEmail")}</th>
-                <th className="px-5 py-3">{t("result.thType")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visible.map((entry, i) => (
-                <EmailRow key={entry.email} entry={entry} index={i + 1} />
-              ))}
-              {showPaywall &&
-                rest.map((entry, i) => (
-                  <EmailRow key={entry.email} entry={entry} index={visible.length + i + 1} blurred />
+          <div className="max-h-[28rem] overflow-y-auto rounded-b-xl">
+            <table className="w-full text-left">
+              <thead className="sticky top-0 z-10 bg-slate-50">
+                <tr className="border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <th className="px-5 py-3">{t("result.thIndex")}</th>
+                  <th className="px-5 py-3">{t("result.thEmail")}</th>
+                  <th className="px-5 py-3">{t("result.thType")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {visible.map((entry, i) => (
+                  <EmailRow key={entry.email} entry={entry} index={i + 1} />
                 ))}
-              {effectivelyUnlocked &&
-                rest.map((entry, i) => (
-                  <EmailRow key={entry.email} entry={entry} index={visible.length + i + 1} />
-                ))}
-            </tbody>
-          </table>
+                {showPaywall &&
+                  rest.map((entry, i) => (
+                    <EmailRow key={entry.email} entry={entry} index={visible.length + i + 1} blurred />
+                  ))}
+                {effectivelyUnlocked &&
+                  rest.map((entry, i) => (
+                    <EmailRow key={entry.email} entry={entry} index={visible.length + i + 1} />
+                  ))}
+              </tbody>
+            </table>
+          </div>
         )}
 
         {showPaywall && (
