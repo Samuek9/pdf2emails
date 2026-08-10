@@ -72,9 +72,10 @@ export function CheckoutModal({
 
 
   const wompiLiveConfigured = Boolean(process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY);
-  const [liveConfig, setLiveConfig] = useState<{ wompi: boolean; dlocal: boolean }>({
+  const [liveConfig, setLiveConfig] = useState<{ wompi: boolean; dlocal: boolean; loaded: boolean }>({
     wompi: wompiLiveConfigured,
     dlocal: false,
+    loaded: false,
   });
 
   useEffect(() => {
@@ -93,10 +94,14 @@ export function CheckoutModal({
       .then((r) => (r.ok ? r.json() : null))
       .then((cfg: { wompi?: boolean; dlocal?: boolean } | null) => {
         if (!cancelled && cfg) {
-          setLiveConfig({ wompi: !!cfg.wompi, dlocal: !!cfg.dlocal });
+          setLiveConfig({ wompi: !!cfg.wompi, dlocal: !!cfg.dlocal, loaded: true });
+        } else if (!cancelled) {
+          setLiveConfig((c) => ({ ...c, loaded: true }));
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!cancelled) setLiveConfig((c) => ({ ...c, loaded: true }));
+      });
     return () => {
       cancelled = true;
     };
@@ -142,6 +147,20 @@ export function CheckoutModal({
       region: pricing.region,
       lockedCount,
     });
+
+    // Espera a que /api/payments/config termine de cargar antes de decidir el
+    // flujo (evita el error "no configurado" por condicion de carrera en el
+    // primer clic).
+    if (!liveConfig.loaded) {
+      await new Promise<void>((resolve) => {
+        const t0 = Date.now();
+        const check = () => {
+          if (liveConfig.loaded || Date.now() - t0 > 3000) return resolve();
+          setTimeout(check, 50);
+        };
+        check();
+      });
+    }
 
     if (gateway === "wompi" && liveConfig.wompi) {
       setStep("processing");
@@ -199,7 +218,14 @@ export function CheckoutModal({
             orderId: referenceRef.current,
           }),
         });
-        if (!res.ok) throw new Error("dLocal Go no configurado");
+        if (!res.ok) {
+          const errBody = await res.text().catch(() => "");
+          let detail = "";
+          try { detail = JSON.parse(errBody)?.error || ""; } catch { detail = errBody.slice(0, 120); }
+          setStep("method");
+          setError(detail ? `${t("checkout.errDlocal")} (${detail})` : t("checkout.errDlocal"));
+          return;
+        }
         const intent = (await res.json()) as { redirectUrl: string };
         // Redirigimos al checkout de dLocal Go; al volver (success_url=/ ?paid=1)
         // la landing detecta el pago y desbloquea.
