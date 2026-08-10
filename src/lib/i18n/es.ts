@@ -8,12 +8,12 @@ export const es: Messages = {
   "nav.blog": "Blog",
   "nav.try": "Probar gratis",
   "hero.badge": "100% en tu navegador — tus PDFs nunca salen de tu equipo",
-  "hero.title1": "Convierte cualquier PDF en una lista de correos limpia y lista para usar en",
+  "hero.title1": "Convierte cualquier PDF en una lista de correos limpia y verificada en",
   "hero.titleAccent": "segundos",
   "hero.sub":
     "Arrastra un PDF (incluso escaneado, con OCR integrado) y detectamos todos los correos que contiene, listos para exportar a CSV o TXT. Sin registro y sin subir archivos a servidores.",
   "hero.cta": "Probar gratis ahora",
-  "hero.note": "Gratis hasta 10 correos o 3 páginas · Sin registro",
+  "hero.note": "Gratis hasta 10 correos · Sin registro",
   "drop.title": "Arrastra tu PDF aquí o",
   "drop.choose": "elige un archivo",
   "drop.sub": "PDF · hasta {max} MB · se procesa 100% en tu navegador · sin registro",
@@ -132,7 +132,7 @@ export const es: Messages = {
   "checkout.view": "Ver correos y descargar",
   "checkout.demo":
     "Modo demo: no hay credenciales de pago configuradas, así que el pago se simula para que pruebes el flujo completo. Conecta Wompi o dLocal Go en las variables de entorno para cobros reales.",
-  "checkout.secure": "Pago cifrado · Soporte a factura",
+  "checkout.secure": "Pago cifrado · Soporte a factura · Sin suscripciones ocultas",
   "checkout.errWompi": "El pago no fue aprobado o fue cancelado. Intenta de nuevo.",
   "checkout.errWompiStart":
     "No se pudo iniciar el pago con Wompi. Usa el modo demo para probar el flujo.",
@@ -167,7 +167,7 @@ export const es: Messages = {
   "pricing.verifyPrice": "$4.99",
   "pricing.verifySub": "Limpia y verifica tu lista para evitar rebotes y bloqueos de spam.",
   "pricing.sub":
-    "Los PDFs de hasta 3 páginas o 10 correos son gratis, sin registro. Desbloquea PDFs más grandes desde {price}, con precio preferencial para Latinoamérica (PPP).",
+    "Los PDFs de hasta 10 correos son gratis, sin registro. Desbloquea PDFs más grandes desde {price}, con precio preferencial para Latinoamérica (PPP).",
   "pricing.yourPrice": "Tu precio",
   "pricing.latam": "Latinoamérica · pagos locales (Pix, Nequi)",
   "pricing.row": "Resto del mundo · tarjeta de crédito",
@@ -184,7 +184,7 @@ export const es: Messages = {
   "faq.q2": "¿Qué tipos de correos detecta?",
   "faq.a2": "Cualquier dirección con formato de email. Puedes excluir genéricos y personales con dos casillas.",
   "faq.q3": "¿Puedo probarlo gratis?",
-  "faq.a3": "Sí. Los PDFs de hasta 3 páginas o 10 correos se extraen 100% gratis, sin registro. Solo pagas si necesitas desbloquear PDFs más grandes.",
+  "faq.a3": "Sí. Los PDFs de hasta 10 correos se extraen 100% gratis, sin registro. Solo pagas si necesitas desbloquear listas más grandes.",
   "faq.q4": "¿Qué pasa si el PDF tiene contraseña o es un escaneo?",
   "faq.a4": "Para escaneos activa el OCR. Si el PDF está protegido con contraseña, elimínala e inténtalo de nuevo.",
   "faq.q5": "¿Cómo funciona el pago por país?",

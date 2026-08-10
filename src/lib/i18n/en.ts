@@ -8,12 +8,12 @@ export const en: Messages = {
   "nav.blog": "Blog",
   "nav.try": "Try free",
   "hero.badge": "100% in your browser — your PDFs never leave your device",
-  "hero.title1": "Turn any PDF into a clean, ready-to-use email list in",
+  "hero.title1": "Turn any PDF into a clean, verified email list in",
   "hero.titleAccent": "seconds",
   "hero.sub":
     "Drop a PDF — even a scanned one (built-in OCR) — and we detect every email inside, ready to export as CSV or TXT. No signup and no files uploaded to servers.",
   "hero.cta": "Try it free now",
-  "hero.note": "Free up to 10 emails or 3 pages · No signup",
+  "hero.note": "Free up to 10 emails · No signup",
   "drop.title": "Drag your PDF here or",
   "drop.choose": "choose a file",
   "drop.sub": "PDF · up to {max} MB · processed 100% in your browser · no signup",
@@ -131,7 +131,7 @@ export const en: Messages = {
   "checkout.view": "View emails and download",
   "checkout.demo":
     "Demo mode: no payment credentials are configured, so the payment is simulated for you to test the full flow. Connect Wompi or dLocal Go in the environment variables for real charges.",
-  "checkout.secure": "Secure payment · Invoice support",
+  "checkout.secure": "Secure payment · Invoice support · No hidden subscriptions",
   "checkout.errWompi": "The payment was not approved or was cancelled. Try again.",
   "checkout.errWompiStart":
     "Could not start the payment with Wompi. Use demo mode to test the flow.",
@@ -166,7 +166,7 @@ export const en: Messages = {
   "pricing.verifyPrice": "$4.99",
   "pricing.verifySub": "Clean and verify your list to avoid bounces and spam blocks.",
   "pricing.sub":
-    "PDFs up to 3 pages or 10 emails are free, no signup. Unlock larger PDFs from {price}, with a preferential price for Latin America (PPP).",
+    "PDFs up to 10 emails are free, no signup. Unlock larger PDFs from {price}, with a preferential price for Latin America (PPP).",
   "pricing.yourPrice": "Your price",
   "pricing.latam": "Latin America · local payments (Pix, Nequi)",
   "pricing.row": "Rest of the world · credit card",
@@ -183,7 +183,7 @@ export const en: Messages = {
   "faq.q2": "What types of emails does it detect?",
   "faq.a2": "Any email-format address. You can exclude generic and personal ones with two checkboxes.",
   "faq.q3": "Can I try it for free?",
-  "faq.a3": "Yes. PDFs up to 3 pages or 10 emails are extracted 100% free, no signup. You only pay to unlock larger PDFs.",
+  "faq.a3": "Yes. PDFs up to 10 emails are extracted 100% free, no signup. You only pay to unlock larger lists.",
   "faq.q4": "What if the PDF has a password or is a scan?",
   "faq.a4": "For scans, enable OCR. If the PDF is password-protected, remove the password and try again.",
   "faq.q5": "How does payment by country work?",
