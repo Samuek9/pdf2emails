@@ -46,7 +46,7 @@ export default function Post() {
         </p>
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
           <p className="font-semibold text-slate-800">Start for free</p>
-          <p className="mt-1 text-sm text-slate-500">Free for small PDFs (up to 5 pages or 50 emails), no signup.</p>
+          <p className="mt-1 text-sm text-slate-500">Free for small PDFs (up to 5 pages and 50 emails), no signup.</p>
           <Link
             href="/"
             className="mt-4 inline-flex items-center rounded-xl bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-700/20 hover:bg-emerald-700"

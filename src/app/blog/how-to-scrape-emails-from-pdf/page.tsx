@@ -27,7 +27,7 @@ export default function Post() {
         <h2 className="text-xl font-bold text-slate-900">Steps</h2>
         <ol className="list-decimal space-y-2 pl-5">
           <li>Drop your PDF (or use the sample).</li>
-          <li>Review the emails — small PDFs (up to 5 pages or 50 emails) are 100% free.</li>
+          <li>Review the emails — small PDFs (up to 5 pages and 50 emails) are 100% free.</li>
           <li>Filter generic and personal emails.</li>
           <li>Download the full list as CSV or TXT.</li>
         </ol>

@@ -31,7 +31,7 @@ export default function Post() {
           <li>Exportación a CSV o TXT.</li>
           <li>OCR para PDFs escaneados.</li>
         </ul>
-        <p>Los PDFs pequeños (hasta 5 páginas o 50 correos) son gratis, sin registro.</p>
+        <p>Los PDFs pequeños (hasta 5 páginas y 50 correos) son gratis, sin registro.</p>
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
           <Link
             href="/"

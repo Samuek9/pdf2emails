@@ -117,7 +117,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               "@type": "FAQPage",
               mainEntity: [
                 { "@type": "Question", name: "Are my PDFs uploaded to a server?", acceptedAnswer: { "@type": "Answer", text: "No. All processing happens locally in your browser with pdf.js. The file never leaves your device." } },
-                { "@type": "Question", name: "Can I try it for free?", acceptedAnswer: { "@type": "Answer", text: "Yes. PDFs up to 5 pages or 50 emails are extracted 100% free, no signup, no usage limit. You only pay to unlock larger lists or verify the list." } },
+                { "@type": "Question", name: "Can I try it for free?", acceptedAnswer: { "@type": "Answer", text: "Yes. PDFs up to 5 pages and 50 emails are extracted 100% free, no signup, no usage limit. You only pay to unlock larger lists or verify the list." } },
                 { "@type": "Question", name: "What if the PDF is a scan?", acceptedAnswer: { "@type": "Answer", text: "Enable OCR to read scanned PDFs and extract the emails inside." } },
                 { "@type": "Question", name: "How does payment by country work?", acceptedAnswer: { "@type": "Answer", text: "By geolocation: Latin America uses dLocal Go, the rest of the world uses Wompi, with preferential prices." } }
               ],

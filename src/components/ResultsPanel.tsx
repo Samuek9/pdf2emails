@@ -50,7 +50,7 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
     }
   }, [parsed, result.totalEmails]);
 
-  const isFree = parsed.numPages <= FREE_PAGES || result.totalEmails <= PREVIEW;
+  const isFree = parsed.numPages <= FREE_PAGES && result.totalEmails <= PREVIEW;
   const effectivelyUnlocked = unlocked || isFree;
   const lockedCount = Math.max(0, result.totalEmails - PREVIEW);
   const showPaywall = !effectivelyUnlocked && lockedCount > 0;

@@ -31,7 +31,7 @@ export default function Post() {
           <li>Feed email marketing tools.</li>
           <li>Keep your data private (no uploads).</li>
         </ul>
-        <p>Small PDFs (up to 5 pages or 50 emails) are free, no signup. OCR available for scans.</p>
+        <p>Small PDFs (up to 5 pages and 50 emails) are free, no signup. OCR available for scans.</p>
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
           <Link
             href="/"
