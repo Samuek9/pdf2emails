@@ -30,7 +30,6 @@ interface ResultsPanelProps {
 export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnlock, onReset, fullPrice, verifyPrice }: ResultsPanelProps) {
   const [options, setOptions] = useState<ExtractOptions>({ excludeGeneric: true, excludePersonal: false });
   const [copied, setCopied] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const trackedFile = useRef<string | null>(null);
 
   const result = useMemo(() => applyFilters(parsed.all, parsed.totalRaw, options), [parsed, options]);
@@ -170,29 +169,22 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
           <p className="text-sm font-bold text-slate-800">{t("result.unlocked")}</p>
           <SecurityPreview emails={result.emails} />
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <div className="relative">
-              <button
-                className="btn-secondary"
-                onClick={() => setMenuOpen((o) => !o)}
-                aria-haspopup="menu"
-                aria-expanded={menuOpen}
-              >
-                <Download size={16} /> {t("sec.rawBtn")} ▾
-              </button>
-              {menuOpen && (
-                <div className="absolute z-20 mt-2 w-52 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
-                  <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-slate-700 transition hover:bg-emerald-50" onClick={() => { setMenuOpen(false); onVerify("csv"); }}>
-                    <FileText size={15} /> CSV (.csv)
-                  </button>
-                  <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-slate-700 transition hover:bg-emerald-50" onClick={() => { setMenuOpen(false); onVerify("txt"); }}>
-                    <FileText size={15} /> TXT (.txt)
-                  </button>
-                  <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-slate-700 transition hover:bg-emerald-50" onClick={() => { setMenuOpen(false); onVerify("excel"); }}>
-                    <FileText size={15} /> Excel (.xlsx)
-                  </button>
-                </div>
-              )}
-            </div>
+            <select
+              className="btn-secondary cursor-pointer"
+              value=""
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v) onVerify(v as "csv" | "txt" | "excel");
+                e.target.value = "";
+              }}
+            >
+              <option value="" disabled>
+                {t("sec.rawBtn")} ▾
+              </option>
+              <option value="csv">CSV (.csv)</option>
+              <option value="txt">TXT (.txt)</option>
+              <option value="excel">Excel (.xlsx)</option>
+            </select>
             <button className="btn-primary !px-6 !py-3" onClick={() => onVerify("verify")}>
               <ShieldCheck size={16} /> {t("result.verifyBtn")}
             </button>
