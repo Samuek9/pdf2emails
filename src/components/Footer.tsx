@@ -22,9 +22,11 @@ export function Footer() {
   function handleCountryChange(code: string) {
     setCountry(code);
     document.cookie = `user_country=${code};path=/;max-age=2592000;samesite=lax`;
-    // Redirige al idioma coherente con el pais seleccionado (US->en, CO->es, BR->pt, ...).
+    // Redirige al idioma coherente con el pais (US->en, CO->es, BR->pt...).
+    // Incluye ?c= para que la moneda local se actualice aunque el idioma no cambie
+    // (p.ej. Chile -> Ecuador, ambos /es).
     const locale = detectLocale(code);
-    router.push(`/${locale}`);
+    router.push(`/${locale}?c=${code}`);
   }
 
   return (
@@ -57,7 +59,7 @@ export function Footer() {
             <a href="/terms" className="transition hover:text-slate-600">Terms</a>
             <a href="/privacy" className="transition hover:text-slate-600">Privacy</a>
           </div>
-          <a href="mailto:soporte@pdf2emails.com" className="transition hover:text-slate-600">soporte@pdf2emails.com</a>
+          <a href="mailto:info@pdf2emails.com" className="transition hover:text-slate-600">info@pdf2emails.com</a>
         </div>
       </div>
     </footer>

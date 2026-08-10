@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   ArrowRight,
   CreditCard,
@@ -30,12 +31,20 @@ export default function HomePage() {
   // Pais como estado con default estable (US) en server y primer render del
   // cliente para evitar hydration mismatch. Se resuelve el real tras el montaje.
   const [country, setCountry] = useState<string>("US");
+  const pathname = usePathname();
   const pricing = useMemo(() => getPricing(country), [country]);
   const localPrice = useLocalPrice(country, pricing.priceUsd);
 
+  // Lee el pais de la cookie (o query ?c= del selector del footer). Se re-ejecuta
+  // al cambiar la ruta, de modo que cambiar el pais actualiza la moneda local.
   useEffect(() => {
-    setCountry(getClientCountry());
-  }, []);
+    if (typeof window === "undefined") return;
+    const qs = new URLSearchParams(window.location.search);
+    const qCountry = qs.get("c");
+    const cookieCountry = document.cookie.split("; ").find((r) => r.startsWith("user_country="));
+    const effective = qCountry || (cookieCountry ? cookieCountry.split("=")[1] : undefined) || "US";
+    setCountry(effective);
+  }, [pathname]);
   const [parsed, setParsed] = useState<ParsedPdf | null>(null);
   const [verifyOpen, setVerifyOpen] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
