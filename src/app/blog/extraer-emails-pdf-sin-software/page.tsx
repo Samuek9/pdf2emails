@@ -27,7 +27,7 @@ export default function Post() {
         <h2 className="text-xl font-bold text-slate-900">Los pasos</h2>
         <ol className="list-decimal space-y-2 pl-5">
           <li>Arrastra tu PDF en PDF2Emails.</li>
-          <li>Revisa los primeros 5 correos gratis.</li>
+          <li>Revisa los correos — los PDFs pequeños (hasta 5 páginas o 50 correos) son 100% gratis.</li>
           <li>Filtra genéricos y personales si lo necesitas.</li>
           <li>Descarga el CSV o TXT con la lista completa.</li>
         </ol>

@@ -47,7 +47,7 @@ export default function Post() {
         </p>
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
           <p className="font-semibold text-slate-800">Empieza gratis</p>
-          <p className="mt-1 text-sm text-slate-500">Primeros 5 correos gratis, sin registro.</p>
+          <p className="mt-1 text-sm text-slate-500">Gratis para PDFs pequeños (hasta 5 páginas o 50 correos), sin registro.</p>
           <Link
             href="/"
             className="mt-4 inline-flex items-center rounded-xl bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-700/20 hover:bg-emerald-700"

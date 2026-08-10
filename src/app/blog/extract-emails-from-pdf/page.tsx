@@ -41,9 +41,9 @@ export default function Post() {
         <h2 className="text-xl font-bold text-slate-900">Step by step</h2>
         <ol className="list-decimal space-y-2 pl-5">
           <li>Open PDF2Emails and drop your PDF (or use the sample).</li>
-          <li>Review the first 5 emails for free.</li>
+          <li>Review the emails found — small PDFs (up to 5 pages or 50 emails) are 100% free.</li>
           <li>Enable the generic/personal filters if needed.</li>
-          <li>Unlock the full list and download the CSV or TXT.</li>
+          <li>Download the full list as CSV or TXT.</li>
         </ol>
         <h2 className="text-xl font-bold text-slate-900">What if the PDF is a scan?</h2>
         <p>
@@ -52,7 +52,7 @@ export default function Post() {
         </p>
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
           <p className="font-semibold text-slate-800">Try the tool for free now</p>
-          <p className="mt-1 text-sm text-slate-500">First 5 emails free, no signup.</p>
+          <p className="mt-1 text-sm text-slate-500">Free for small PDFs (up to 5 pages or 50 emails), no signup.</p>
           <Link
             href="/"
             className="mt-4 inline-flex items-center rounded-xl bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-700/20 hover:bg-emerald-700"

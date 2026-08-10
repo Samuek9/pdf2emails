@@ -45,7 +45,7 @@ export default function Post() {
         <h2 className="text-xl font-bold text-slate-900">Paso a paso</h2>
         <ol className="list-decimal space-y-2 pl-5">
           <li>Entra a PDF2Emails y arrastra tu PDF (o usa el PDF de ejemplo).</li>
-          <li>Revisa los primeros 5 correos gratis.</li>
+          <li>Revisa los correos — los PDFs pequeños (hasta 5 páginas o 50 correos) son 100% gratis.</li>
           <li>Activa los filtros de genéricos y personales si los necesitas.</li>
           <li>Desbloquea la lista completa y descarga el CSV o TXT.</li>
         </ol>
@@ -57,7 +57,7 @@ export default function Post() {
         </p>
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
           <p className="font-semibold text-slate-800">Prueba la herramienta gratis ahora</p>
-          <p className="mt-1 text-sm text-slate-500">Primeros 5 correos gratis, sin registro.</p>
+          <p className="mt-1 text-sm text-slate-500">Gratis para PDFs pequeños (hasta 5 páginas o 50 correos), sin registro.</p>
           <Link
             href="/"
             className="mt-4 inline-flex items-center rounded-xl bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-700/20 hover:bg-emerald-700"
