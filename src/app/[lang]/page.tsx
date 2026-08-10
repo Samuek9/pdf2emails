@@ -175,9 +175,16 @@ export default function HomePage() {
             .catch(() => {});
         }
       }
+      // Página de confirmación post-compra: URL estable para tracking de
+      // conversión (Google Ads / Analytics). Delay para dejar iniciar descargas.
+      window.setTimeout(() => {
+        window.location.assign("/thank-you");
+      }, 1200);
     },
     [checkoutAmount, checkoutOption, parsed, cartSel],
   );
+
+
 
   const handleCartCheckout = useCallback(
     (amount: number, sel: { verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean }, email: string) => {
