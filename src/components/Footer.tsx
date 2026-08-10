@@ -101,6 +101,18 @@ export function Footer() {
                 height="80"
               />
             </a>
+            <a
+              href="https://www.nxgntools.com/tools/pdf2emails?utm_source=pdf2emails"
+              target="_blank"
+              rel="noopener"
+              style={{ display: "inline-block", width: "auto" }}
+            >
+              <img
+                src="https://www.nxgntools.com/api/embed/pdf2emails?type=LAUNCHING_SOON_ON"
+                alt="Launching soon on NxGn Tools"
+                style={{ height: 48, width: "auto" }}
+              />
+            </a>
           </div>
           <a href="mailto:info@pdf2emails.com" className="transition hover:text-slate-600">info@pdf2emails.com</a>
         </div>
