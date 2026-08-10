@@ -29,8 +29,18 @@ export async function POST(request: NextRequest) {
 
   const { status, paymentId, orderId } = extractFields(body);
 
-  // Validacion opcional de firma de dLocal Go (X-Dlocal-Signature / X-Signature).
-  // Si falla, igualmente se registra pero marcado. No bloqueamos para no perder datos.
+  // Registro el evento en los logs de Vercel (persistente y consultable) para
+  // verificar que dLocal envía webhooks y capturar el payment_id real.
+  console.log(
+    JSON.stringify({
+      event: "dlocal_webhook",
+      status,
+      paymentId,
+      orderId,
+      body,
+    }),
+  );
+
   received.unshift({ at: new Date().toISOString(), status, paymentId, orderId });
   if (received.length > MAX) received.pop();
 
