@@ -13,10 +13,12 @@ export function Footer() {
   // El pais real (cookie) se lee despues del montaje.
   const [country, setCountry] = useState("US");
   const router = useRouter();
+  const [year, setYear] = useState(2026);
 
   useEffect(() => {
     const cookie = document.cookie.split("; ").find((r) => r.startsWith("user_country="));
     setCountry(cookie ? cookie.split("=")[1] : "US");
+    setYear(new Date().getFullYear());
   }, []);
 
   function handleCountryChange(code: string) {
@@ -35,7 +37,7 @@ export function Footer() {
         <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
           <Mail size={16} className="text-emerald-600" />
           {t("brand")}
-          <span className="font-normal text-slate-500">{t("footer.tag", { year: new Date().getFullYear() })}</span>
+          <span className="font-normal text-slate-500">{t("footer.tag", { year })}</span>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500">
           <label htmlFor="country-demo" className="font-medium">{t("footer.country")}</label>
