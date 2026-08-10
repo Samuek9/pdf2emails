@@ -280,7 +280,7 @@ export function CheckoutModal({
                 <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
                   {t("checkout.total")}
                 </p>
-                <p className="mt-1 text-3xl font-extrabold">
+                <p suppressHydrationWarning className="mt-1 text-3xl font-extrabold">
                   {local
                     ? `${local.symbol}${local.amount}`
                     : `$${amount.toFixed(2)}`}
@@ -292,7 +292,7 @@ export function CheckoutModal({
               {local && (
                 <div className="text-right">
                   <p className="text-xs font-medium text-emerald-400">{t("checkout.latamPpp")}</p>
-                  <p className="text-sm font-bold text-emerald-300">
+                  <p suppressHydrationWarning className="text-sm font-bold text-emerald-300">
                     ≈ {local.symbol}{local.amount} {local.currency}
                   </p>
                 </div>
