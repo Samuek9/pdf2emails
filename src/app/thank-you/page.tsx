@@ -1,12 +1,20 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useEffect } from "react";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Thank you — PDF2Emails",
-  robots: { index: false, follow: false },
-};
-
 export default function ThankYouPage() {
+  // Al volver de dLocal (?paid=1), marca el desbloqueo para que la home
+  // (que lo lee de localStorage) lo aplique. Se hace tras montar para no
+  // romper el hydration.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("paid") === "1") {
+      window.localStorage.setItem("pdf2emails_unlocked", "1");
+    }
+  }, []);
+
   return (
     <div className="mx-auto flex min-h-[60vh] w-full max-w-xl flex-col items-center justify-center px-4 text-center">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
@@ -38,3 +46,4 @@ export default function ThankYouPage() {
     </div>
   );
 }
+

@@ -49,7 +49,7 @@ export async function createDlocalPayment(input: {
       amount: input.amount,
       order_id: input.orderId,
       description: input.description,
-      success_url: `${site}/?paid=1`,
+      success_url: `${site}/thank-you?paid=1`,
       back_url: `${site}/`,
       notification_url: `${site}/api/dlocal/webhook`,
     }),
