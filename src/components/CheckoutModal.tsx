@@ -157,11 +157,13 @@ export function CheckoutModal({
           }),
         });
         if (!intentRes.ok) throw new Error("WOMPI no configurado en el servidor");
-        const intent = (await intentRes.json()) as { signature: string };
+        const intent = (await intentRes.json()) as { signature: string; amountInCents: number; currency: string };
 
+        // El backend convierte USD->COP (cuenta de Wompi solo COP). El widget debe
+        // cobrar la MISMA moneda y monto que la transaccion creada.
         const widget = new window.WidgetCheckout!({
-          currency: "USD",
-          amountInCents: Math.round(amount * 100),
+          currency: intent.currency,
+          amountInCents: intent.amountInCents,
           reference: referenceRef.current,
           publicKey: process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY,
           signature: intent.signature,
