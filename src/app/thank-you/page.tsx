@@ -13,6 +13,16 @@ export default function ThankYouPage() {
     if (params.get("paid") === "1") {
       window.localStorage.setItem("pdf2emails_unlocked", "1");
     }
+    // Dispara el evento de conversión de Google Ads (AW-18380745476).
+    // Usa el identificador de conversión/etiqueta que Google te asigne.
+    try {
+      const gtag = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
+      if (typeof gtag === "function") {
+        gtag("event", "conversion", { send_to: "AW-18380745476/XXXXXXXXXXXXXXX" });
+      }
+    } catch {
+      // gtag no disponible
+    }
   }, []);
 
   return (
