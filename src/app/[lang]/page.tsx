@@ -53,17 +53,16 @@ export default function HomePage() {
   }, []);
 
   // Desbloqueo de pago: detecta el retorno de dLocal (?paid=1) y restaura la
-  // persistencia de localStorage. Se hace tras el montaje para no romper hydration.
+  // persistencia. Se hace tras el montaje para no romper hydration.
+  // NOTA: no desbloquear globalmente sin archivo presente; el desbloqueo se
+  // vincula a la sesion del archivo (ver handleParsed) para no ocultar el paywall.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const justPaid = params.get("paid") === "1";
-    const prevUnlocked = window.localStorage.getItem("pdf2emails_unlocked") === "1";
-    if (justPaid || prevUnlocked) {
+    if (justPaid) {
       window.localStorage.setItem("pdf2emails_unlocked", "1");
       setUnlocked(true);
-    }
-    if (justPaid) {
       window.history.replaceState(null, "", window.location.pathname);
     }
   }, []);
@@ -91,6 +90,10 @@ export default function HomePage() {
     try { const prev = Number(window.localStorage.getItem("pdf2emails_count") || 0); window.localStorage.setItem("pdf2emails_count", String(prev + all.length)); } catch { /* noop */ }
     const data = { text, numPages, fileName, all, totalRaw, at: Date.now() };
     setParsed(data);
+    // Al subir un archivo NUEVO, se resetea el desbloqueo para que el paywall
+    // se muestre. El desbloqueo de un pago aplica solo a ese archivo/sesion.
+    setUnlocked(false);
+    try { window.localStorage.removeItem("pdf2emails_unlocked"); } catch { /* noop */ }
     // Persistir en localStorage para sobrevivir al cruce de dominio (checkout
     // de dLocal) y al "back". Se valida con TTL al restaurar.
     try { window.localStorage.setItem("pdf2emails_session", JSON.stringify(data)); } catch { /* overflow: se ignora */ }
