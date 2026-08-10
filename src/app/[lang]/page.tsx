@@ -11,7 +11,7 @@ import {
   UploadCloud,
 } from "lucide-react";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
-import { downloadBlob, downloadXlsx, toCsv } from "@/lib/csv";
+import { copyToClipboard, downloadBlob, downloadXlsx, toCsv } from "@/lib/csv";
 import { PdfDropzone } from "@/components/PdfDropzone";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import type { FreeAction } from "@/components/ResultsPanel";
@@ -115,7 +115,7 @@ export default function HomePage() {
       const emails = parsed.all.map((e) => e.email);
       const base = parsed.fileName.replace(/\.pdf$/i, "") || "emails";
       if (freeAction === "copy") {
-        void navigator.clipboard?.writeText(emails.join("\n"));
+        void copyToClipboard(emails.join("\n"));
       } else if (freeAction === "excel") {
         void downloadXlsx(emails);
       } else {

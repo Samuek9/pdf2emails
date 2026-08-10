@@ -7,6 +7,36 @@ export function toTxt(emails: string[]): string {
   return emails.join("\n") + "\n";
 }
 
+/**
+ * Copia texto al portapapeles de forma robusta. El API moderno
+ * (navigator.clipboard) requiere gesto de usuario activo y permiso, y puede
+ * rechazar en modals/iframes; por eso cae a execCommand como fallback.
+ */
+export async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    // falla -> intenta fallback
+  }
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
 export function downloadBlob(filename: string, content: string, mimeType: string): void {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
