@@ -27,18 +27,27 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const seg = pathname.split("/")[1]?.toLowerCase();
 
+  // 1) Resolver el pais: PRIMERO la cookie manual del usuario (selector del
+  //    footer / demo), SOLO si no existe usamos la IP. Asi el cambio de pais
+  //    persiste entre recargas y no lo pisa la geolocalizacion.
+  const cookieCountry = request.cookies.get("user_country")?.value?.toUpperCase();
+  const ipCountry =
+    request.headers.get("x-vercel-ip-country")?.toUpperCase() ||
+    process.env.NEXT_PUBLIC_DEFAULT_COUNTRY?.toUpperCase() ||
+    "US";
+  const country = cookieCountry || ipCountry;
+
+  // 2) Resolver el idioma: si la URL ya trae /es|/en|/pt|/fr|/de, se respeta;
+  //    si no (raiz u otras rutas), se detecta por el pais (cookie manual o IP).
   let locale = "en";
   if (seg && LOCALES.includes(seg)) {
     locale = seg;
   } else {
-    const country =
-      request.headers.get("x-vercel-ip-country")?.toUpperCase() ||
-      process.env.NEXT_PUBLIC_DEFAULT_COUNTRY?.toUpperCase() ||
-      "US";
     locale = detectLocale(country);
   }
 
-  // Redirige la raiz al idioma detectado (SEO: subrutas /es /en /pt /fr /de)
+  // 3) Redirige la raiz al idioma detectado (SEO: subrutas /es /en /pt /fr /de).
+  //    La cookie manual del pais gana sobre la IP para decidir el idioma.
   if (pathname === "/") {
     return NextResponse.redirect(new URL(`/${locale}`, request.url), 307);
   }
@@ -50,11 +59,12 @@ export function middleware(request: NextRequest) {
     maxAge: 60 * 60 * 24 * 30,
     path: "/",
   });
-  response.cookies.set(
-    "user_country",
-    request.headers.get("x-vercel-ip-country")?.toUpperCase() || locale,
-    { httpOnly: false, sameSite: "lax", maxAge: 60 * 60 * 24 * 30, path: "/" },
-  );
+  response.cookies.set("user_country", country, {
+    httpOnly: false,
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 30,
+    path: "/",
+  });
   return response;
 }
 

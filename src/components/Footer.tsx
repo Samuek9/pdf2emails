@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Mail } from "lucide-react";
 import { LATAM_COUNTRIES, ROW_COUNTRIES } from "@/lib/countries";
-import { t } from "@/lib/i18n";
+import { t, detectLocale } from "@/lib/i18n";
 
 const ALL_COUNTRIES = [...LATAM_COUNTRIES, ...ROW_COUNTRIES];
 
@@ -11,6 +12,7 @@ export function Footer() {
   // Estado estable en server y primer render (evita hydration mismatch).
   // El pais real (cookie) se lee despues del montaje.
   const [country, setCountry] = useState("US");
+  const router = useRouter();
 
   useEffect(() => {
     const cookie = document.cookie.split("; ").find((r) => r.startsWith("user_country="));
@@ -20,7 +22,9 @@ export function Footer() {
   function handleCountryChange(code: string) {
     setCountry(code);
     document.cookie = `user_country=${code};path=/;max-age=2592000;samesite=lax`;
-    window.location.reload();
+    // Redirige al idioma coherente con el pais seleccionado (US->en, CO->es, BR->pt, ...).
+    const locale = detectLocale(code);
+    router.push(`/${locale}`);
   }
 
   return (
