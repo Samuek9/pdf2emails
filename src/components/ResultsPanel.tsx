@@ -8,8 +8,8 @@ import { applyFilters } from "@/lib/emails";
 import { t } from "@/lib/i18n";
 import type { EmailCategory, ExtractOptions, ExtractedEmail, ParsedPdf } from "@/lib/types";
 
-const FREE_PAGES = 3;
-const PREVIEW = 10;
+const FREE_PAGES = 5;
+const PREVIEW = 50;
 
 type UnlockOption = "full" | "fullverify";
 
