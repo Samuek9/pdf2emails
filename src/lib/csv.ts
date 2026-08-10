@@ -1,6 +1,23 @@
+/**
+ * Neutraliza inyeccion de formulas CSV/XLSX (OWASP CSV Injection): un email
+ * extraido de un PDF puede empezar con "=", "+", "-" o "@" (ej. un telefono
+ * "+573001234567juan@empresa.com" pegado sin espacio al email en el PDF
+ * original), y Excel/Sheets interpretan esos caracteres al inicio de una
+ * celda como el arranque de una formula. Anteponer un apostrofe fuerza a que
+ * se trate como texto literal.
+ */
+function sanitizeCell(value: string): string {
+  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+}
+
+function csvField(value: string): string {
+  const v = sanitizeCell(value);
+  return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+}
+
 export function toCsv(emails: string[], includeHeader = true): string {
   const header = includeHeader ? "email\n" : "";
-  return header + emails.map((email) => email).join("\n") + "\n";
+  return header + emails.map(csvField).join("\n") + "\n";
 }
 
 export function toTxt(emails: string[]): string {
@@ -52,7 +69,7 @@ export function downloadBlob(filename: string, content: string, mimeType: string
 /** Exporta una lista de emails a un archivo Excel (.xlsx) en el navegador. */
 export async function downloadXlsx(emails: string[]): Promise<void> {
   const xlsx = await import("xlsx");
-  const rows = [["email"], ...emails.map((e) => [e])];
+  const rows = [["email"], ...emails.map((e) => [sanitizeCell(e)])];
   const ws = xlsx.utils.aoa_to_sheet(rows);
   const wb = xlsx.utils.book_new();
   xlsx.utils.book_append_sheet(wb, ws, "emails");

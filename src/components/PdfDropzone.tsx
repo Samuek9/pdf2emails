@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { FileUp, Filter, Loader2, ScanSearch, ShieldCheck, Sparkles } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
-import { extractTextFromFile, extractTextWithOcr } from "@/lib/pdf";
+import { extractTextFromFile, extractTextWithOcr, TooManyPagesError } from "@/lib/pdf";
 import { parseAllEmails } from "@/lib/emails";
 import { t, ocrLang } from "@/lib/i18n";
 
@@ -53,7 +53,6 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
           return;
         }
         const { text, numPages } = await extractTextFromFile(file);
-        if (numPages > 30) { setError(t("drop.error.pages")); return; }
         trackEvent("pdf_uploaded", { fileName: file.name, numPages, fileSizeBytes: file.size });
         if (text.trim().length === 0) {
           // Parece escaneado (sin capa de texto): ofrecemos OCR.
@@ -61,9 +60,13 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
         } else {
           onParsed(text, numPages, file.name);
         }
-      } catch {
-        setError(t("drop.error.parse"));
-        trackEvent("pdf_parse_error", { fileName: file.name });
+      } catch (e) {
+        if (e instanceof TooManyPagesError) {
+          setError(t("drop.error.pages"));
+        } else {
+          setError(t("drop.error.parse"));
+          trackEvent("pdf_parse_error", { fileName: file.name });
+        }
       } finally {
         setIsLoading(false);
       }
@@ -89,11 +92,10 @@ export function PdfDropzone({ onParsed }: PdfDropzoneProps) {
     setOcrRunning(true);
     try {
       const { text, numPages } = await extractTextWithOcr(lastFileRef.current, ocrLang());
-      if (numPages > 30) { setError(t("drop.error.pages")); return; }
       trackEvent("ocr_completed", { fileName: lastFileRef.current.name, numPages });
       onParsed(text, numPages, lastFileRef.current.name);
-    } catch {
-      setError(t("drop.error.parse"));
+    } catch (e) {
+      setError(e instanceof TooManyPagesError ? t("drop.error.pages") : t("drop.error.parse"));
     } finally {
       setOcrRunning(false);
     }

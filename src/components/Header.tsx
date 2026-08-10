@@ -4,19 +4,13 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Mail } from "lucide-react";
-import { t } from "@/lib/i18n";
+import { t, getLocale } from "@/lib/i18n";
 
 // Las anclas (#faq, #precios, #como-funciona) viven SOLO en la home (/{locale}).
 // Este componente navega a la home con el hash y hace scroll tras el montaje.
 function AnchorLink({ id, children }: { id: string; children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-
-  function getLocale(): string {
-    if (typeof window === "undefined") return "es";
-    const c = document.cookie.split("; ").find((r) => r.startsWith("user_locale="));
-    return c ? c.split("=")[1] || "es" : "es";
-  }
 
   function handleClick(e: React.MouseEvent) {
     e.preventDefault();

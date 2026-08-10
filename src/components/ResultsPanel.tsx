@@ -273,9 +273,14 @@ function EmailRow({ entry, index, blurred }: { entry: ExtractedEmail; index: num
   );
 }
 
+// Muestra el estado REAL de cada email: sin verificar. Antes esta tabla le
+// asignaba "peligro"/"valido" al azar (por posicion en el array) a los
+// correos reales del usuario para empujar el upsell — eso era una senal
+// fabricada, no un analisis real. La version honesta es mostrar que ningun
+// email se ha verificado todavia (cierto para cualquier lista recien
+// extraida) y dejar que el upsell venda con datos reales, no inventados.
 function SecurityPreview({ emails }: { emails: ExtractedEmail[] }) {
   const sample = emails.slice(0, 6);
-  const statuses = ["valid", "valid", "dangerCatch", "dangerSpam", "dangerOcr", "dangerCatch"];
   return (
     <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200 bg-white">
       <table className="w-full text-left text-xs">
@@ -287,19 +292,15 @@ function SecurityPreview({ emails }: { emails: ExtractedEmail[] }) {
           </tr>
         </thead>
         <tbody>
-          {sample.map((entry, i) => {
-            const st = statuses[i % statuses.length];
-            const green = st === "valid";
-            return (
-              <tr key={entry.email} className="border-b border-slate-100 last:border-0">
-                <td className="px-3 py-1.5 font-mono text-slate-700">{entry.email}</td>
-                <td className="px-3 py-1.5 text-slate-500">#{i + 1}</td>
-                <td className="px-3 py-1.5 font-medium">
-                  {green ? <span className="text-emerald-600">🟢 {t("sec.valid")}</span> : <span className="text-red-600">🔴 {t(`sec.${st}`)}</span>}
-                </td>
-              </tr>
-            );
-          })}
+          {sample.map((entry, i) => (
+            <tr key={entry.email} className="border-b border-slate-100 last:border-0">
+              <td className="px-3 py-1.5 font-mono text-slate-700">{entry.email}</td>
+              <td className="px-3 py-1.5 text-slate-500">#{i + 1}</td>
+              <td className="px-3 py-1.5 font-medium">
+                <span className="text-slate-500">⚪ {t("sec.unverified")}</span>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

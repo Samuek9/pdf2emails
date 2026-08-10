@@ -40,8 +40,11 @@ interface Row {
   phone: string;
 }
 
+// Neutraliza inyeccion de formulas CSV (OWASP CSV Injection): telefono/company
+// pueden empezar con "=", "+", "-" o "@" (comun en datos extraidos de PDF).
 function csvCell(v: unknown): string {
   let s = String(v ?? "");
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   if (/[",\n]/.test(s)) s = `"${s.replace(/"/g, '""')}"`;
   return s;
 }

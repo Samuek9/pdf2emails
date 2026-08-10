@@ -52,7 +52,16 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}`, request.url), 307);
   }
 
-  const response = NextResponse.next();
+  // Reenvia el idioma REAL de esta URL como header de request (no cookie):
+  // layout.tsx lo usa para title/canonical/hreflang. Con la cookie sola, un
+  // visitante que cambia de idioma navegando (o Googlebot rastreando /es
+  // despues de que la cookie quedo en /pt de una visita anterior) recibia un
+  // <head> en el idioma equivocado con canonical apuntando a OTRA URL — eso
+  // le decia a Google "no indexes esta pagina, indexa la otra".
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-locale", locale);
+
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.cookies.set("user_locale", locale, {
     httpOnly: false,
     sameSite: "lax",

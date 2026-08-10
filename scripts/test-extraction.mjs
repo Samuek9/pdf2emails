@@ -38,7 +38,13 @@ for (let i = 1; i <= numPages; i++) {
 }
 await pdf.destroy();
 
-const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+// Mantener en sync con src/lib/emails.ts (TLD acotado, ver comentario ahi).
+const TLDS =
+  "com|org|net|edu|gov|mil|int|info|biz|name|pro|coop|museum|aero|jobs|mobi|travel|" +
+  "xyz|online|site|store|tech|app|dev|cloud|email|agency|solutions|systems|network|" +
+  "media|design|studio|company|group|digital|world|today|life|top|shop|club|live|" +
+  "work|team";
+const EMAIL_REGEX = new RegExp(`[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(?:${TLDS}|[a-z]{2})`, "gi");
 const found = [...new Set((text.match(EMAIL_REGEX) ?? []).map((e) => e.toLowerCase()))].sort();
 
 console.log(`numPages: ${numPages}`);

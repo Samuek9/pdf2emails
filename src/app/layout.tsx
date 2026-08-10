@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import Script from "next/script";
 import "./globals.css";
 import { Header } from "@/components/Header";
@@ -25,9 +25,21 @@ const DESCRIPTIONS: Record<string, string> = {
   de: "Extrahiere alle E-Mails aus einem PDF in deinem Browser. Bereinige, filtere und exportiere als CSV. 100% privat, keine Uploads. Kostenlos für kleine PDFs.",
 };
 
-export async function generateMetadata(): Promise<Metadata> {
+/**
+ * El header x-locale (seteado por middleware.ts a partir del segmento REAL
+ * de la URL de este request) manda sobre la cookie: la cookie es cross-sesion
+ * y puede quedar desfasada del idioma que realmente se esta sirviendo ahora.
+ */
+async function resolveLocale(): Promise<string> {
+  const h = await headers();
+  const fromHeader = h.get("x-locale");
+  if (fromHeader) return fromHeader;
   const c = await cookies();
-  const lang = c.get("user_locale")?.value || "en";
+  return c.get("user_locale")?.value || "en";
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await resolveLocale();
   const title = TITLES[lang] ?? TITLES.en;
   const desc = DESCRIPTIONS[lang] ?? DESCRIPTIONS.en;
   return {
@@ -69,8 +81,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const c = await cookies();
-  const lang = c.get("user_locale")?.value || "en";
+  const lang = await resolveLocale();
   return (
     <html lang={lang}>
       <body className="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">

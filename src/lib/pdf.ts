@@ -46,12 +46,27 @@ export interface PdfParseResult {
   numPages: number;
 }
 
+export const MAX_PAGES = 30;
+
+/** Se lanza cuando el PDF excede MAX_PAGES — se detecta ANTES de procesar
+ * ninguna pagina (y antes de arrancar OCR), no despues de gastar el trabajo. */
+export class TooManyPagesError extends Error {
+  constructor(public numPages: number) {
+    super(`PDF has ${numPages} pages, max is ${MAX_PAGES}`);
+    this.name = "TooManyPagesError";
+  }
+}
+
 export async function extractTextFromFile(file: File): Promise<PdfParseResult> {
   const { getDocument } = await loadPdfJs();
   const arrayBuffer = await file.arrayBuffer();
   const loadingTask = getDocument({ data: new Uint8Array(arrayBuffer) });
   const pdf = await loadingTask.promise;
   const numPages = pdf.numPages;
+  if (numPages > MAX_PAGES) {
+    await pdf.destroy();
+    throw new TooManyPagesError(numPages);
+  }
 
   let text = "";
   for (let i = 1; i <= numPages; i++) {
@@ -78,6 +93,10 @@ export async function extractTextWithOcr(file: File, lang: string): Promise<PdfP
   const loadingTask = getDocument({ data: new Uint8Array(arrayBuffer) });
   const pdf = await loadingTask.promise;
   const numPages = pdf.numPages;
+  if (numPages > MAX_PAGES) {
+    await pdf.destroy();
+    throw new TooManyPagesError(numPages);
+  }
 
   const { createWorker } = await import("tesseract.js");
   const worker = await createWorker(lang);
@@ -91,8 +110,13 @@ export async function extractTextWithOcr(file: File, lang: string): Promise<PdfP
     canvas.height = viewport.height;
     const ctx = canvas.getContext("2d");
     if (!ctx) {
+      // No silenciar: si el navegador no puede darnos un contexto 2D, el
+      // usuario terminaria con un resultado incompleto sin saberlo. Mejor
+      // fallar y dejar que reintente en vez de devolver texto a medias.
       page.cleanup();
-      continue;
+      await worker.terminate();
+      await pdf.destroy();
+      throw new Error(`Could not get 2D canvas context for page ${i}`);
     }
     await page.render({ canvasContext: ctx, viewport }).promise;
     const { data } = await worker.recognize(canvas);

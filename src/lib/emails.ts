@@ -5,7 +5,20 @@ import type {
   ExtractedEmail,
 } from "./types";
 
-const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+// TLD acotado a una lista real + cualquier ccTLD de 2 letras — NO un
+// [a-zA-Z]{2,} sin limite. La extraccion de texto de PDF frecuentemente pierde
+// el espacio entre parrafos/celdas ("...ventas@empresa.comGracias por..." o
+// dos emails pegados "juan@x.comana@y.com"); sin limite, el TLD greedy se
+// tragaba el texto/email siguiente entero en vez de parar en el TLD real.
+const TLDS =
+  "com|org|net|edu|gov|mil|int|info|biz|name|pro|coop|museum|aero|jobs|mobi|travel|" +
+  "xyz|online|site|store|tech|app|dev|cloud|email|agency|solutions|systems|network|" +
+  "media|design|studio|company|group|digital|world|today|life|top|shop|club|live|" +
+  "work|team";
+const EMAIL_REGEX = new RegExp(
+  `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(?:${TLDS}|[a-z]{2})`,
+  "gi",
+);
 
 const GENERIC_LOCAL_PARTS = new Set([
   "info",
