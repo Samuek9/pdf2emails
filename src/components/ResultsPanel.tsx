@@ -13,11 +13,14 @@ const PREVIEW = 10;
 
 type UnlockOption = "full" | "fullverify";
 
+// Accion gratuita que el usuario queria hacer al abrir el modal de upsell.
+export type FreeAction = "copy" | "csv" | "excel" | "verify";
+
 interface ResultsPanelProps {
   parsed: ParsedPdf;
   unlocked: boolean;
   onDownloaded: (format: "csv" | "txt") => void;
-  onVerify: () => void;
+  onVerify: (action: FreeAction) => void;
   onUnlock: (option: UnlockOption) => void;
   onReset: () => void;
   fullPrice: number;
@@ -116,7 +119,7 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
           <FilterChip label={t("result.filterPersonal")} checked={options.excludePersonal} onChange={(v) => setOptions((o) => ({ ...o, excludePersonal: v }))} />
         </div>
         {effectivelyUnlocked && result.totalEmails > 0 && (
-          <button onClick={() => void handleCopy()} className="btn-secondary !py-2 text-xs">
+          <button onClick={() => onVerify("copy")} className="btn-secondary !py-2 text-xs">
             {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
             {copied ? t("result.copied") : t("result.copyAll")}
           </button>
@@ -164,13 +167,13 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
           <p className="text-sm font-bold text-slate-800">{t("result.unlocked")}</p>
           <SecurityPreview emails={result.emails} />
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <button className="btn-secondary" onClick={() => void handleDownload("csv")}>
+            <button className="btn-secondary" onClick={() => onVerify("csv")}>
               <Download size={16} /> {t("sec.rawBtn")}
             </button>
-            <button className="btn-primary !px-6 !py-3" onClick={onVerify}>
+            <button className="btn-primary !px-6 !py-3" onClick={() => onVerify("verify")}>
               <ShieldCheck size={16} /> {t("result.verifyBtn")}
             </button>
-            <button className="btn-secondary" onClick={() => void handleExcel()}>
+            <button className="btn-secondary" onClick={() => onVerify("excel")}>
               <FileText size={16} /> Excel
             </button>
           </div>

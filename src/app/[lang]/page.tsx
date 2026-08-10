@@ -11,9 +11,10 @@ import {
   UploadCloud,
 } from "lucide-react";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
-import { downloadBlob } from "@/lib/csv";
+import { downloadBlob, downloadXlsx, toCsv } from "@/lib/csv";
 import { PdfDropzone } from "@/components/PdfDropzone";
 import { ResultsPanel } from "@/components/ResultsPanel";
+import type { FreeAction } from "@/components/ResultsPanel";
 import { StatsBar } from "@/components/StatsBar";
 import { CheckoutModal } from "@/components/CheckoutModal";
 import { VerifyModal } from "@/components/VerifyModal";
@@ -100,19 +101,30 @@ export default function HomePage() {
     setDownloaded(true);
   }, []);
 
-  const handleVerify = useCallback(() => {
+  // Accion gratuita que el usuario queria hacer (copy/csv/excel/verify) antes
+  // de abrir el modal de upsell. Al "skip" del modal se ejecuta esa accion.
+  const [freeAction, setFreeAction] = useState<FreeAction>("csv");
+
+  const handleVerify = useCallback((action: FreeAction) => {
+    setFreeAction(action);
     setVerifyOpen(true);
   }, []);
 
   const handleFreeDownload = useCallback(() => {
     if (parsed) {
       const emails = parsed.all.map((e) => e.email);
-      const csv = "email\n" + emails.map((e) => e).join("\n") + "\n";
-      downloadBlob(`${parsed.fileName.replace(/\.pdf$/i, "") || "emails"}-correos.csv`, csv, "text/csv;charset=utf-8");
-      trackEvent("csv_downloaded", { format: "csv", totalEmails: emails.length });
+      const base = parsed.fileName.replace(/\.pdf$/i, "") || "emails";
+      if (freeAction === "copy") {
+        void navigator.clipboard?.writeText(emails.join("\n"));
+      } else if (freeAction === "excel") {
+        void downloadXlsx(emails);
+      } else {
+        downloadBlob(`${base}-correos.csv`, toCsv(emails), "text/csv;charset=utf-8");
+      }
+      trackEvent("csv_downloaded", { format: freeAction === "excel" ? "excel" : "csv", totalEmails: emails.length });
     }
     setVerifyOpen(false);
-  }, [parsed]);
+  }, [parsed, freeAction]);
 
   const handleUnlock = useCallback(
     (option: "full" | "fullverify") => {
