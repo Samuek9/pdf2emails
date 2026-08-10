@@ -123,7 +123,7 @@ export const es: Messages = {
   "checkout.title": "Desbloquear {n} correos",
   "checkout.sub": "Lista completa + exportación CSV/TXT.",
   "checkout.total": "Total a pagar",
-  "checkout.latamPpp": "Precio LATAM (PPP)",
+  "checkout.latamPpp": "Precio local estimado",
   "checkout.payMethod": "Método de pago",
   "checkout.pay": "Pagar {price}",
   "checkout.processing": "Procesando pago…",

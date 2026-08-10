@@ -66,9 +66,10 @@ export function getClientCountry(): string {
   return cookie ? cookie.split("=")[1] : (process.env.NEXT_PUBLIC_DEFAULT_COUNTRY ?? "US");
 }
 
-// Estimados aproximados del precio de $7.99 USD en la moneda local de cada pais LATAM.
+// Estimados aproximados del precio en la moneda local de cada pais.
 // Tipos de cambio aproximados USD -> moneda local (se actualizan en vivo via /api/fx).
 export const COUNTRY_LOCAL_PRICE: Record<string, { currency: string; rate: number }> = {
+  // LATAM
   CO: { currency: "COP", rate: 4000 },
   MX: { currency: "MXN", rate: 19.3 },
   AR: { currency: "ARS", rate: 1200 },
@@ -84,6 +85,29 @@ export const COUNTRY_LOCAL_PRICE: Record<string, { currency: string; rate: numbe
   PA: { currency: "USD", rate: 1 },
   GT: { currency: "GTQ", rate: 7.8 },
   NI: { currency: "NIO", rate: 36 },
+  // Resto del mundo
+  US: { currency: "USD", rate: 1 },
+  CA: { currency: "CAD", rate: 1.36 },
+  GB: { currency: "GBP", rate: 0.79 },
+  DE: { currency: "EUR", rate: 0.92 },
+  FR: { currency: "EUR", rate: 0.92 },
+  ES: { currency: "EUR", rate: 0.92 },
+  IT: { currency: "EUR", rate: 0.92 },
+  PT: { currency: "EUR", rate: 0.92 },
+  NL: { currency: "EUR", rate: 0.92 },
+  BE: { currency: "EUR", rate: 0.92 },
+  AT: { currency: "EUR", rate: 0.92 },
+  IE: { currency: "EUR", rate: 0.92 },
+  AU: { currency: "AUD", rate: 1.52 },
+  NZ: { currency: "NZD", rate: 1.65 },
+  JP: { currency: "JPY", rate: 150 },
+  CH: { currency: "CHF", rate: 0.88 },
+  SE: { currency: "SEK", rate: 10.4 },
+  NO: { currency: "NOK", rate: 10.6 },
+  DK: { currency: "DKK", rate: 6.9 },
+  PL: { currency: "PLN", rate: 4.0 },
+  IN: { currency: "INR", rate: 83.5 },
+  ZA: { currency: "ZAR", rate: 18.6 },
 };
 
 export function getLocalPrice(

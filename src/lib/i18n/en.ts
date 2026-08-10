@@ -122,7 +122,7 @@ export const en: Messages = {
   "checkout.title": "Unlock {n} emails",
   "checkout.sub": "Full list + CSV/TXT export.",
   "checkout.total": "Total to pay",
-  "checkout.latamPpp": "LATAM price (PPP)",
+  "checkout.latamPpp": "Estimated local price",
   "checkout.payMethod": "Payment method",
   "checkout.pay": "Pay {price}",
   "checkout.processing": "Processing payment…",

@@ -161,7 +161,7 @@ export const de: Messages = {
   "checkout.title": "{n} E-Mails freischalten",
   "checkout.sub": "Vollständige Liste + CSV/TXT-Export.",
   "checkout.total": "Zu zahlender Betrag",
-  "checkout.latamPpp": "LATAM-Preis (PPP)",
+  "checkout.latamPpp": "Geschätzter lokaler Preis",
   "checkout.payMethod": "Zahlungsmethode",
   "checkout.pay": "{price} bezahlen",
   "checkout.processing": "Zahlung wird verarbeitet…",

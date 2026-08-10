@@ -285,10 +285,10 @@ export function CheckoutModal({
                   <span className="text-base font-semibold text-slate-300"> USD</span>
                 </p>
               </div>
-              {pricing.region === "latam" && (
+              {local && (
                 <div className="text-right">
                   <p className="text-xs font-medium text-emerald-400">{t("checkout.latamPpp")}</p>
-                  {local && <p className="text-sm font-bold">≈ {local.amount} {local.currency}</p>}
+                  <p className="text-sm font-bold">≈ {local.amount} {local.currency}</p>
                 </div>
               )}
             </div>

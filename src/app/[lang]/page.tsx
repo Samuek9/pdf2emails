@@ -325,7 +325,7 @@ export default function HomePage() {
             <p className="mt-1 text-sm font-semibold text-slate-500">
               {pricing.region === "latam" ? t("pricing.latam") : t("pricing.row")}
             </p>
-            {pricing.region === "latam" && localPrice && (
+            {localPrice && (
               <p className="mt-2 inline-flex items-center rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">
                 ≈ {localPrice.amount} {localPrice.currency}
               </p>

@@ -161,7 +161,7 @@ export const fr: Messages = {
   "checkout.title": "Débloquer {n} emails",
   "checkout.sub": "Liste complète + export CSV/TXT.",
   "checkout.total": "Total à payer",
-  "checkout.latamPpp": "Prix LATAM (PPP)",
+  "checkout.latamPpp": "Prix local estimé",
   "checkout.payMethod": "Méthode de paiement",
   "checkout.pay": "Payer {price}",
   "checkout.processing": "Traitement du paiement…",
