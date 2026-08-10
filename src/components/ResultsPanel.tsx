@@ -14,7 +14,7 @@ const PREVIEW = 50;
 type UnlockOption = "full" | "fullverify";
 
 // Accion gratuita que el usuario queria hacer al abrir el modal de upsell.
-export type FreeAction = "copy" | "csv" | "excel" | "verify";
+export type FreeAction = "copy" | "csv" | "txt" | "excel" | "verify";
 
 interface ResultsPanelProps {
   parsed: ParsedPdf;
@@ -30,6 +30,7 @@ interface ResultsPanelProps {
 export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnlock, onReset, fullPrice, verifyPrice }: ResultsPanelProps) {
   const [options, setOptions] = useState<ExtractOptions>({ excludeGeneric: true, excludePersonal: false });
   const [copied, setCopied] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const trackedFile = useRef<string | null>(null);
 
   const result = useMemo(() => applyFilters(parsed.all, parsed.totalRaw, options), [parsed, options]);
@@ -169,14 +170,31 @@ export function ResultsPanel({ parsed, unlocked, onDownloaded, onVerify, onUnloc
           <p className="text-sm font-bold text-slate-800">{t("result.unlocked")}</p>
           <SecurityPreview emails={result.emails} />
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <button className="btn-secondary" onClick={() => onVerify("csv")}>
-              <Download size={16} /> {t("sec.rawBtn")}
-            </button>
+            <div className="relative">
+              <button
+                className="btn-secondary"
+                onClick={() => setMenuOpen((o) => !o)}
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+              >
+                <Download size={16} /> {t("sec.rawBtn")} ▾
+              </button>
+              {menuOpen && (
+                <div className="absolute z-20 mt-2 w-52 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
+                  <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-slate-700 transition hover:bg-emerald-50" onClick={() => { setMenuOpen(false); onVerify("csv"); }}>
+                    <FileText size={15} /> CSV (.csv)
+                  </button>
+                  <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-slate-700 transition hover:bg-emerald-50" onClick={() => { setMenuOpen(false); onVerify("txt"); }}>
+                    <FileText size={15} /> TXT (.txt)
+                  </button>
+                  <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-slate-700 transition hover:bg-emerald-50" onClick={() => { setMenuOpen(false); onVerify("excel"); }}>
+                    <FileText size={15} /> Excel (.xlsx)
+                  </button>
+                </div>
+              )}
+            </div>
             <button className="btn-primary !px-6 !py-3" onClick={() => onVerify("verify")}>
               <ShieldCheck size={16} /> {t("result.verifyBtn")}
-            </button>
-            <button className="btn-secondary" onClick={() => onVerify("excel")}>
-              <FileText size={16} /> Excel
             </button>
           </div>
           <p className="mt-2 text-xs font-medium text-red-600">{t("sec.rawWarning")}</p>

@@ -11,7 +11,7 @@ import {
   UploadCloud,
 } from "lucide-react";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
-import { copyToClipboard, downloadBlob, downloadXlsx, toCsv } from "@/lib/csv";
+import { copyToClipboard, downloadBlob, downloadXlsx, toCsv, toTxt } from "@/lib/csv";
 import { PdfDropzone } from "@/components/PdfDropzone";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import type { FreeAction } from "@/components/ResultsPanel";
@@ -124,10 +124,15 @@ export default function HomePage() {
         void copyToClipboard(emails.join("\n"));
       } else if (freeAction === "excel") {
         void downloadXlsx(emails);
+      } else if (freeAction === "txt") {
+        downloadBlob(`${base}-correos.txt`, toTxt(emails), "text/plain;charset=utf-8");
       } else {
         downloadBlob(`${base}-correos.csv`, toCsv(emails), "text/csv;charset=utf-8");
       }
-      trackEvent("csv_downloaded", { format: freeAction === "excel" ? "excel" : "csv", totalEmails: emails.length });
+      trackEvent("csv_downloaded", {
+        format: freeAction === "excel" ? "excel" : freeAction === "txt" ? "txt" : "csv",
+        totalEmails: emails.length,
+      });
     }
     setVerifyOpen(false);
   }, [parsed, freeAction]);
