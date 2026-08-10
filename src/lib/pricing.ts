@@ -6,6 +6,8 @@ const LATAM_VERIFY_USD = 12.99;
 const LATAM_PRICE_COP = 32000;
 const ROW_PRICE_USD = 19;
 const ROW_VERIFY_USD = 29;
+const LATAM_VERIFY_ONLY_USD = 2.49;
+const ROW_VERIFY_ONLY_USD = 4.99;
 
 /**
  * Paridad de precios por pais (UNICA fuente de verdad; page.tsx y CheckoutModal
@@ -21,6 +23,7 @@ export function getPricing(countryCode: string): Pricing {
     displayPrice: latam ? "$7.99 USD" : "$19 USD",
     priceUsd: latam ? LATAM_PRICE_USD : ROW_PRICE_USD,
     verifyPriceUsd: latam ? LATAM_VERIFY_USD : ROW_VERIFY_USD,
+    verifyOnlyUsd: latam ? LATAM_VERIFY_ONLY_USD : ROW_VERIFY_ONLY_USD,
     priceCop: latam ? LATAM_PRICE_COP : 0,
     primaryGateway: latam ? "dlocal" : "wompi",
     secondaryGateway: latam ? "wompi" : "dlocal",

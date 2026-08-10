@@ -78,7 +78,7 @@ export const de: Messages = {
   "verify.title": "Bereinigen und prüfen",
   "verify.sub": "Wir entfernen Spam-Fallen, tote E-Mails und Syntaxfehler, um deine Domain vor Spam-Blockaden zu schützen.",
   "verify.found": "Wir haben {n} E-Mails in deinem PDF erkannt.",
-  "verify.price": "$4.99 · prüfe bis zu 2.000 E-Mails",
+  "verify.price": "Prüfe bis zu 2.000 E-Mails",
   "verify.emailLabel": "Wohin sollen wir deine geprüfte Liste senden?",
   "verify.cta": "Ja, bereinigen und prüfen für $4.99",
   "verify.success": "Fertig! Wir aktualisieren unsere Server. Wir schreiben dir an {email}.",

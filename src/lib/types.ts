@@ -37,6 +37,7 @@ export interface Pricing {
   displayPrice: string;
   priceUsd: number;
   verifyPriceUsd: number;
+  verifyOnlyUsd: number;
   priceCop: number;
   primaryGateway: Gateway;
   secondaryGateway: Gateway;

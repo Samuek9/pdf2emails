@@ -308,7 +308,9 @@ export default function HomePage() {
             <span className="absolute -top-3 left-5 rounded-full bg-slate-700 px-3 py-1 text-[11px] font-bold text-white">
               {t("pricing.verifyTitle")}
             </span>
-            <p className="text-4xl font-extrabold tracking-tight text-slate-900">{t("pricing.verifyPrice")}</p>
+            <p className="text-4xl font-extrabold tracking-tight text-slate-900">
+              ${Number.isInteger(pricing.verifyOnlyUsd) ? pricing.verifyOnlyUsd : pricing.verifyOnlyUsd.toFixed(2)}
+            </p>
             <p className="mt-1 text-sm font-semibold text-slate-500">{t("pricing.verifySub")}</p>
             <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-slate-600">
               <ShieldCheck size={14} className="text-emerald-700" /> {t("verify.price")}

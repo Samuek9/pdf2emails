@@ -65,7 +65,7 @@ export const pt: Messages = {
   "verify.sub":
     "Removemos armadilhas de spam, emails mortos e erros de sintaxe para proteger seu domínio de bloqueios de spam.",
   "verify.found": "Detectamos {n} emails no seu PDF.",
-  "verify.price": "$4.99 · verifique até 2.000 emails",
+  "verify.price": "Verifique até 2.000 emails",
   "verify.emailLabel": "Para qual email enviamos sua lista verificada?",
   "verify.cta": "Sim, limpar e verificar por $4.99",
   "verify.success": "Pronto! Estamos atualizando nossos servidores de verificação. Avisaremos você em {email}.",

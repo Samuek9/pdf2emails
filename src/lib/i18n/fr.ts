@@ -78,7 +78,7 @@ export const fr: Messages = {
   "verify.title": "Nettoyer et vérifier votre liste",
   "verify.sub": "Nous supprimons les pièges à spam, les emails morts et les erreurs de syntaxe pour protéger votre domaine des blocages.",
   "verify.found": "Nous avons détecté {n} emails dans votre PDF.",
-  "verify.price": "$4.99 · vérifiez jusqu'à 2 000 emails",
+  "verify.price": "Vérifiez jusqu'à 2 000 emails",
   "verify.emailLabel": "À quelle adresse envoyons-nous votre liste vérifiée ?",
   "verify.cta": "Oui, nettoyer et vérifier pour $4.99",
   "verify.success": "C'est fait ! Nous mettons à jour nos serveurs. Nous vous écrirons à {email}.",
