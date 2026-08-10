@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { BlogExtractor } from "@/components/BlogExtractor";
 
 export const metadata: Metadata = {
@@ -72,18 +73,27 @@ const posts = [
   },
 ];
 
-export default function BlogIndex() {
+export default async function BlogIndex() {
+  // Filtra los posts por idioma del visitante (cookie user_locale del middleware).
+  // Solo existen posts ES y EN: los hispanohablantes ven ES, el resto ve EN.
+  const c = await cookies();
+  const locale = c.get("user_locale")?.value || "en";
+  const visibleLang = locale === "es" ? "ES" : "EN";
+  const visiblePosts = posts.filter((p) => p.lang === visibleLang);
+
   return (
     <div className="mx-auto max-w-3xl">
       <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Blog</h1>
       <p className="mt-2 text-sm text-slate-500">
-        Guías para extraer correos de PDFs y mejorar tu prospección.
+        {locale === "es"
+          ? "Guías para extraer correos de PDFs y mejorar tu prospección."
+          : "Guides to extract emails from PDFs and improve your prospecting."}
       </p>
       <div className="mt-6">
         <BlogExtractor />
       </div>
       <div className="mt-8 space-y-4">
-        {posts.map((p) => (
+        {visiblePosts.map((p) => (
           <Link
             key={p.href}
             href={p.href}
