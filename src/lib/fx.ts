@@ -42,6 +42,10 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
   PLN: "zł",
   INR: "₹",
   ZAR: "R",
+  KES: "KSh",
+  NGN: "₦",
+  IDR: "Rp",
+  MYR: "RM",
 };
 
 export function currencySymbol(currency: string): string {

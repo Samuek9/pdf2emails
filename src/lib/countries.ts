@@ -4,6 +4,16 @@ export interface Country {
   flag: string;
 }
 
+// A pesar del nombre (historico), este set no es "paises de habla hispana de
+// LatAm": es "paises donde dLocal Go realmente procesa pagos" (verificado
+// contra https://dlocalgo.com/es/cobertura) + su precio PPP mas bajo. dLocal
+// Go tambien opera en Kenia, Nigeria, Indonesia y Malasia — antes esos paises
+// caian en el precio global ($19 via Wompi, que ademas puede no aceptar bien
+// tarjetas emitidas ahi), a pesar de que dLocal Go si los cubre.
+// DO y NI quedan porque ya estaban antes de esta auditoria, pero la pagina de
+// cobertura publica de dLocal Go NO los lista explicitamente entre los 13
+// paises de LatAm — si algun pago desde ahi falla, verificar directamente en
+// el dashboard de dLocal Go antes de asumir que es un bug de esta lista.
 export const LATAM_COUNTRY_CODES = new Set([
   "CO",
   "MX",
@@ -20,6 +30,10 @@ export const LATAM_COUNTRY_CODES = new Set([
   "PA",
   "GT",
   "NI",
+  "KE",
+  "NG",
+  "ID",
+  "MY",
 ]);
 
 export const LATAM_COUNTRIES: Country[] = [
@@ -38,6 +52,10 @@ export const LATAM_COUNTRIES: Country[] = [
   { code: "PA", name: "Panamá", flag: "🇵🇦" },
   { code: "GT", name: "Guatemala", flag: "🇬🇹" },
   { code: "NI", name: "Nicaragua", flag: "🇳🇮" },
+  { code: "KE", name: "Kenya", flag: "🇰🇪" },
+  { code: "NG", name: "Nigeria", flag: "🇳🇬" },
+  { code: "ID", name: "Indonesia", flag: "🇮🇩" },
+  { code: "MY", name: "Malaysia", flag: "🇲🇾" },
 ];
 
 export const ROW_COUNTRIES: Country[] = [
@@ -85,6 +103,10 @@ export const COUNTRY_LOCAL_PRICE: Record<string, { currency: string; rate: numbe
   PA: { currency: "USD", rate: 1 },
   GT: { currency: "GTQ", rate: 7.8 },
   NI: { currency: "NIO", rate: 36 },
+  KE: { currency: "KES", rate: 129 },
+  NG: { currency: "NGN", rate: 1550 },
+  ID: { currency: "IDR", rate: 15800 },
+  MY: { currency: "MYR", rate: 4.4 },
   // Resto del mundo
   US: { currency: "USD", rate: 1 },
   CA: { currency: "CAD", rate: 1.36 },
@@ -134,6 +156,10 @@ export const LOCAL_PAYMENT_METHODS: Record<string, string[]> = {
   PA: ["Tarjetas locales"],
   GT: ["Tarjetas locales"],
   NI: ["Tarjetas locales"],
+  KE: ["M-Pesa", "Tarjetas locales"],
+  NG: ["Tarjetas locales", "Transferencia bancaria"],
+  ID: ["Tarjetas locales", "Transferencia bancaria"],
+  MY: ["Tarjetas locales", "FPX"],
 };
 
 export function getLocalPaymentMethods(countryCode: string): string[] {

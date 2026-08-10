@@ -167,9 +167,9 @@ export const es: Messages = {
   "pricing.verifyPrice": "$4.99",
   "pricing.verifySub": "Limpia y verifica tu lista para evitar rebotes y bloqueos de spam.",
   "pricing.sub":
-    "Los PDFs de hasta 50 correos son gratis, sin registro. Desbloquea PDFs más grandes desde {price}, con precio preferencial para Latinoamérica (PPP).",
+    "Los PDFs de hasta 50 correos son gratis, sin registro. Desbloquea PDFs más grandes desde {price}, con precio preferencial (PPP) segun tu país.",
   "pricing.yourPrice": "Tu precio",
-  "pricing.latam": "Latinoamérica · pagos locales (Pix, Nequi)",
+  "pricing.latam": "Precio regional · pagos locales (Pix, Nequi, M-Pesa)",
   "pricing.row": "Resto del mundo · tarjeta de crédito",
   "pricing.f1": "Precio preferencial (PPP)",
   "pricing.f2": "PSE · Pix · OXXO · tarjetas locales",
