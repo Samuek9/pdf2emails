@@ -44,11 +44,13 @@ export async function createWompiIntent(input: {
   const currency = isUsd ? "COP" : input.currency.toUpperCase();
 
   // El widget de Wompi crea la transaccion en el navegador (con el token de la
-  // tarjeta). El backend SOLO genera la firma de integridad:
-  // HMAC-SHA256(reference:amountInCents:currency) con la integrity key.
+  // tarjeta). El backend SOLO genera la firma de integridad. Formato exacto de
+  // Wompi: SHA256("<referencia><monto_en_centavos><moneda><secreto_integridad>")
+  // concatenado SIN separadores, con el secreto de integridad al final de la
+  // cadena (NO es HMAC). El orden de los campos importa.
   const signature = crypto
-    .createHmac("sha256", integrityKey)
-    .update(`${input.reference}:${amountInCents}:${currency}`)
+    .createHash("sha256")
+    .update(`${input.reference}${amountInCents}${currency}${integrityKey}`)
     .digest("hex");
 
   return { transactionId: input.reference, status: "PENDING", signature, amountInCents, currency };

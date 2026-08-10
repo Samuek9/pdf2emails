@@ -175,8 +175,25 @@ export function CheckoutModal({
             reference: referenceRef.current,
           }),
         });
-        if (!intentRes.ok) throw new Error("WOMPI no configurado en el servidor");
-        const intent = (await intentRes.json()) as { signature: string; amountInCents: number; currency: string };
+        if (!intentRes.ok) {
+          const errBody = await intentRes.text().catch(() => "");
+          throw new Error(`WOMPI create-intent (${intentRes.status}): ${errBody.slice(0, 160)}`);
+        }
+        const intent = (await intentRes.json()) as {
+          signature: string;
+          amountInCents: number;
+          currency: string;
+        };
+
+        const publicKey = process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY;
+        if (!publicKey) {
+          throw new Error(
+            "NEXT_PUBLIC_WOMPI_PUBLIC_KEY no está inyectada en el bundle del cliente. Revisa la variable en Vercel y haz redeploy.",
+          );
+        }
+        if (typeof window.WidgetCheckout !== "function") {
+          throw new Error("window.WidgetCheckout no está definido tras cargar checkout.wompi.co/widget.js");
+        }
 
         // El backend convierte USD->COP (cuenta de Wompi solo COP). El widget debe
         // cobrar la MISMA moneda y monto que la transaccion creada.
@@ -184,9 +201,10 @@ export function CheckoutModal({
           currency: intent.currency,
           amountInCents: intent.amountInCents,
           reference: referenceRef.current,
-          publicKey: process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY,
-          signature: intent.signature,
-          redirectUrl: window.location.origin,
+          publicKey,
+          // El Widget JS de Wompi espera la firma como OBJETO { integrity }.
+          signature: { integrity: intent.signature },
+          redirectUrl: `${window.location.origin}/thank-you?paid=1`,
         });
         widget.open((result) => {
           if (result.transaction && result.transaction.status === "APPROVED") {
@@ -196,9 +214,12 @@ export function CheckoutModal({
             setError(t("checkout.errWompi"));
           }
         });
-      } catch {
+      } catch (e) {
+        const detail = e instanceof Error ? e.message : String(e);
         setStep("method");
-        setError(t("checkout.errWompiStart"));
+        // Muestra el detalle real del error para poder diagnosticar (útil en
+        // desarrollo / pruebas). En producción se conserva el mensaje general.
+        setError(`${t("checkout.errWompiStart")} — ${detail}`);
       }
       return;
     }
