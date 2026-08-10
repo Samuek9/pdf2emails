@@ -281,14 +281,20 @@ export function CheckoutModal({
                   {t("checkout.total")}
                 </p>
                 <p className="mt-1 text-3xl font-extrabold">
-                  {`$${amount.toFixed(2)}`}
-                  <span className="text-base font-semibold text-slate-300"> USD</span>
+                  {local
+                    ? `${local.symbol}${local.amount}`
+                    : `$${amount.toFixed(2)}`}
+                  <span className="text-base font-semibold text-slate-300">
+                    {local ? local.currency : " USD"}
+                  </span>
                 </p>
               </div>
               {local && (
                 <div className="text-right">
                   <p className="text-xs font-medium text-emerald-400">{t("checkout.latamPpp")}</p>
-                  <p className="text-sm font-bold">≈ {local.amount} {local.currency}</p>
+                  <p className="text-sm font-bold text-emerald-300">
+                    ≈ {local.symbol}{local.amount} {local.currency}
+                  </p>
                 </div>
               )}
             </div>
@@ -317,7 +323,7 @@ export function CheckoutModal({
               </div>
             ) : (
               <button className="btn-primary mt-5 w-full" onClick={() => void handlePay()}>
-                <Lock size={16} /> {t("checkout.pay", { price: `$${amount.toFixed(2)}` })}
+                <Lock size={16} /> {t("checkout.pay", { price: local ? `${local.symbol}${local.amount}` : `$${amount.toFixed(2)}` })}
               </button>
             )}
 

@@ -13,6 +13,41 @@ function formatLocal(v: number): string {
   return (Math.round(v * 100) / 100).toString();
 }
 
+// Simbolos de moneda conocidos para mostrar junto al monto local.
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  USD: "$",
+  COP: "$",
+  MXN: "$",
+  ARS: "$",
+  CLP: "$",
+  BRL: "R$",
+  PEN: "S/",
+  UYU: "$U",
+  PYG: "₲",
+  BOB: "Bs",
+  CRC: "₡",
+  DOP: "RD$",
+  GTQ: "Q",
+  NIO: "C$",
+  CAD: "C$",
+  GBP: "£",
+  EUR: "€",
+  AUD: "A$",
+  NZD: "NZ$",
+  JPY: "¥",
+  CHF: "CHF",
+  SEK: "kr",
+  NOK: "kr",
+  DKK: "kr",
+  PLN: "zł",
+  INR: "₹",
+  ZAR: "R",
+};
+
+export function currencySymbol(currency: string): string {
+  return CURRENCY_SYMBOLS[currency.toUpperCase()] ?? `${currency} `;
+}
+
 /**
  * Devuelve el estimado del monto (en USD) convertido a la moneda local del pais.
  * Usa la tasa en vivo (via /api/fx) y, si aun no cargo o falla, cae a la tasa
@@ -21,7 +56,7 @@ function formatLocal(v: number): string {
 export function useLocalPrice(
   countryCode: string,
   amountUsd: number = PRICE_USD,
-): { currency: string; amount: string } | null {
+): { currency: string; amount: string; symbol: string } | null {
   const [rates, setRates] = useState<Record<string, number> | null>(cachedRates);
 
   useEffect(() => {
@@ -41,6 +76,10 @@ export function useLocalPrice(
   if (!base) return null;
 
   const rate = rates?.[base.currency] ?? base.rate;
-  return { currency: base.currency, amount: formatLocal(amountUsd * rate) };
+  return {
+    currency: base.currency,
+    amount: formatLocal(amountUsd * rate),
+    symbol: currencySymbol(base.currency),
+  };
 }
 

@@ -327,7 +327,7 @@ export default function HomePage() {
             </p>
             {localPrice && (
               <p className="mt-2 inline-flex items-center rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">
-                ≈ {localPrice.amount} {localPrice.currency}
+                ≈ {localPrice.symbol}{localPrice.amount} {localPrice.currency}
               </p>
             )}
             <ul className="mt-4 space-y-2 text-sm text-slate-600">
