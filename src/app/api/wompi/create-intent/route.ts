@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createWompiIntent } from "@/lib/wompi";
+import { isCheckoutOption, resolveOrder } from "@/lib/orders";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as {
-    amountInCents?: number;
-    currency?: string;
     reference?: string;
+    option?: string;
+    country?: string;
   } | null;
 
-  if (!body?.amountInCents || !body?.reference) {
+  if (!body?.reference || !isCheckoutOption(body?.option) || !body?.country) {
     return NextResponse.json(
-      { error: "amountInCents and reference are required" },
+      { error: "reference, option and country are required" },
       { status: 400 },
     );
   }
@@ -20,10 +21,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "WOMPI is not configured" }, { status: 501 });
   }
 
+  // El monto NUNCA viene del cliente: se calcula aqui a partir del pais y la
+  // opcion elegida (unica fuente de verdad: apps/lib/orders.ts -> pricing).
+  const order = resolveOrder(body.country, body.option);
+
   try {
     const intent = await createWompiIntent({
-      amountInCents: body.amountInCents,
-      currency: body.currency ?? "USD",
+      amountInCents: Math.round(order.amountUsd * 100),
+      currency: "USD",
       reference: body.reference,
     });
     return NextResponse.json(intent);

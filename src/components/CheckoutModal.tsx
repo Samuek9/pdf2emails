@@ -7,13 +7,15 @@ import { t } from "@/lib/i18n";
 import { getPricing } from "@/lib/pricing";
 import { useLocalPrice } from "@/lib/fx";
 import { getLocalPaymentMethods } from "@/lib/countries";
+import type { CheckoutOption } from "@/lib/orders";
 import type { Gateway } from "@/lib/types";
 
 interface CheckoutModalProps {
   open: boolean;
   onClose: () => void;
-  onSuccess: (gateway: Gateway | "demo") => void;
+  onSuccess: (gateway: Gateway | "demo", token: string) => void;
   country: string;
+  option: CheckoutOption;
   lockedCount: number;
   amount: number;
 }
@@ -23,10 +25,12 @@ type Step = "method" | "processing" | "success";
 declare global {
   interface Window {
     WidgetCheckout?: new (config: Record<string, unknown>) => {
-      open: (callback: (result: { transaction?: { status: string } }) => void) => void;
+      open: (callback: (result: { transaction?: { id: string; status: string } }) => void) => void;
     };
   }
 }
+
+const PENDING_PAYMENT_KEY = "pdf2emails_pending_payment";
 
 // Los nombres amigables del metodo de pago se renderizan via gwMeta localizado.
 
@@ -35,6 +39,7 @@ export function CheckoutModal({
   onClose,
   onSuccess,
   country,
+  option,
   lockedCount,
   amount,
 }: CheckoutModalProps) {
@@ -54,6 +59,7 @@ export function CheckoutModal({
   const [gateway, setGateway] = useState<Gateway>(pricing.primaryGateway);
   const [error, setError] = useState<string | null>(null);
   const [paidGateway, setPaidGateway] = useState<Gateway | "demo">("demo");
+  const paidTokenRef = useRef<string>("");
   const referenceRef = useRef<string>("");
   const viewedTrackedRef = useRef(false);
 
@@ -111,7 +117,8 @@ export function CheckoutModal({
 
   if (!open) return null;
 
-  function handleSuccess(gw: Gateway | "demo") {
+  function handleSuccess(gw: Gateway | "demo", token: string) {
+    paidTokenRef.current = token;
     setPaidGateway(gw);
     setStep("success");
     trackEvent("payment_successful", {
@@ -166,14 +173,13 @@ export function CheckoutModal({
       setStep("processing");
       try {
         await loadWompiScript();
+        // El monto lo calcula el servidor a partir de pais+opcion — nunca lo
+        // mandamos nosotros, para que no se pueda pagar un monto distinto al
+        // real manipulando la llamada.
         const intentRes = await fetch("/api/wompi/create-intent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            amountInCents: Math.round(amount * 100),
-            currency: "USD",
-            reference: referenceRef.current,
-          }),
+          body: JSON.stringify({ reference: referenceRef.current, option, country }),
         });
         if (!intentRes.ok) {
           const errBody = await intentRes.text().catch(() => "");
@@ -195,6 +201,16 @@ export function CheckoutModal({
           throw new Error("window.WidgetCheckout no está definido tras cargar checkout.wompi.co/widget.js");
         }
 
+        // Por si Wompi usa un metodo redirect (PSE) en vez del callback en
+        // pagina: dejamos rastro de a que compra pertenece esta transaccion
+        // para poder verificarla en /thank-you al volver.
+        try {
+          window.localStorage.setItem(
+            PENDING_PAYMENT_KEY,
+            JSON.stringify({ gateway: "wompi", reference: referenceRef.current, option, country }),
+          );
+        } catch { /* noop */ }
+
         // El backend convierte USD->COP (cuenta de Wompi solo COP). El widget debe
         // cobrar la MISMA moneda y monto que la transaccion creada.
         const widget = new window.WidgetCheckout!({
@@ -207,12 +223,29 @@ export function CheckoutModal({
           redirectUrl: `${window.location.origin}/thank-you?paid=1`,
         });
         widget.open((result) => {
-          if (result.transaction && result.transaction.status === "APPROVED") {
-            handleSuccess("wompi");
-          } else {
+          const tx = result.transaction;
+          if (!tx || tx.status !== "APPROVED") {
             setStep("method");
             setError(t("checkout.errWompi"));
+            return;
           }
+          // El callback en pagina SOLO dice que el widget cree que se aprobo.
+          // Confirmamos contra la API real de Wompi antes de desbloquear nada.
+          void fetch("/api/wompi/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ transactionId: tx.id, reference: referenceRef.current, option, country }),
+          })
+            .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`verify ${r.status}`))))
+            .then((d: { ok: boolean; token?: string }) => {
+              if (!d.ok || !d.token) throw new Error("verify not ok");
+              try { window.localStorage.removeItem(PENDING_PAYMENT_KEY); } catch { /* noop */ }
+              handleSuccess("wompi", d.token);
+            })
+            .catch(() => {
+              setStep("method");
+              setError(t("checkout.errWompi"));
+            });
         });
       } catch (e) {
         const detail = e instanceof Error ? e.message : String(e);
@@ -231,13 +264,7 @@ export function CheckoutModal({
         const res = await fetch("/api/dlocal/create-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            amount: amount,
-            currency: "USD",
-            country: pricing.countryCode,
-            description: "PDF2Emails - desbloqueo de lista completa",
-            orderId: referenceRef.current,
-          }),
+          body: JSON.stringify({ orderId: referenceRef.current, option, country: pricing.countryCode }),
         });
         if (!res.ok) {
           const errBody = await res.text().catch(() => "");
@@ -247,9 +274,22 @@ export function CheckoutModal({
           setError(detail ? `${t("checkout.errDlocal")} (${detail})` : t("checkout.errDlocal"));
           return;
         }
-        const intent = (await res.json()) as { redirectUrl: string };
-        // Redirigimos al checkout de dLocal Go; al volver (success_url=/ ?paid=1)
-        // la landing detecta el pago y desbloquea.
+        const intent = (await res.json()) as { id: string; redirectUrl: string; orderId: string };
+        // dLocal solo redirige de vuelta con "?paid=1" (sin el id del pago), asi
+        // que guardamos aqui lo necesario para confirmar el pago real al volver
+        // (ver /thank-you). Sin este registro, /thank-you NO desbloquea nada.
+        try {
+          window.localStorage.setItem(
+            PENDING_PAYMENT_KEY,
+            JSON.stringify({
+              gateway: "dlocal",
+              orderId: intent.orderId,
+              dlocalPaymentId: intent.id,
+              option,
+              country: pricing.countryCode,
+            }),
+          );
+        } catch { /* noop */ }
         window.location.href = intent.redirectUrl;
       } catch {
         setStep("method");
@@ -260,10 +300,23 @@ export function CheckoutModal({
       return;
     }
 
-    // Modo demo: simula el pago.
+    // Modo demo: sin pasarela real configurada, el servidor emite un token de
+    // prueba (se autodesactiva en cuanto haya llaves reales — ver la ruta).
     setStep("processing");
-    await new Promise((r) => setTimeout(r, 900));
-    handleSuccess(gateway === "wompi" ? "wompi" : "demo");
+    try {
+      const res = await fetch("/api/payments/demo-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ option, country }),
+      });
+      const d = (await res.json().catch(() => null)) as { ok?: boolean; token?: string } | null;
+      if (!res.ok || !d?.ok || !d.token) throw new Error("demo token failed");
+      await new Promise((r) => setTimeout(r, 500));
+      handleSuccess(gateway === "wompi" ? "wompi" : "demo", d.token);
+    } catch {
+      setStep("method");
+      setError(t("checkout.errWompi"));
+    }
   }
 
   return (
@@ -287,7 +340,7 @@ export function CheckoutModal({
             <p className="mt-2 text-sm text-slate-500">
               {t("checkout.approvedSub", { n: lockedCount })}
             </p>
-            <button className="btn-primary mt-6 w-full" onClick={() => onSuccess(paidGateway)}>
+            <button className="btn-primary mt-6 w-full" onClick={() => onSuccess(paidGateway, paidTokenRef.current)}>
               {t("checkout.view")} <ArrowRight size={16} />
             </button>
           </div>

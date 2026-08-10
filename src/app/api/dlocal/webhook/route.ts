@@ -1,48 +1,56 @@
+import crypto from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-// Almacen en memoria (por instancia serverless) de los ultimos webhooks recibidos.
-// No es persistente entre cold starts, pero sirve para VERIFICAR que dLocal esta
-// enviando eventos y capturar el payment_id real para consultas/reembolsos.
-const received: Array<{ at: string; status: string; paymentId: string; orderId: string }> = [];
-const MAX = 50;
+/**
+ * dLocal Go firma cada notificacion en el header Authorization:
+ *   "V2-HMAC-SHA256, Signature: <hex>"
+ * donde <hex> = HMAC-SHA256(secretKey, apiKey + rawBody).
+ * https://docs.dlocalgo.com/integration-api/welcome-to-dlocal-go-api/payments/notifications
+ */
+function isSignatureValid(rawBody: string, authHeader: string | null): boolean {
+  const apiKey = process.env.DLOCAL_API_KEY;
+  const secretKey = process.env.DLOCAL_SECRET_KEY;
+  if (!apiKey || !secretKey || !authHeader) return false;
 
-function extractFields(body: Record<string, unknown>): { status: string; paymentId: string; orderId: string } {
-  const status = String(body?.status ?? body?.payment_status ?? "unknown");
-  // En dLocal Go el webhook trae el payment id en "id" (o "payment_id").
-  const paymentId = String(body?.id ?? body?.payment_id ?? body?.transaction_id ?? "");
-  const orderId = String(body?.order_id ?? body?.orderId ?? "");
-  return { status, paymentId, orderId };
-}
+  const match = authHeader.match(/Signature:\s*([a-f0-9]+)/i);
+  if (!match) return false;
+  const received = match[1];
 
-export async function GET() {
-  return NextResponse.json({ received });
+  const expected = crypto.createHmac("sha256", secretKey).update(apiKey + rawBody).digest("hex");
+  try {
+    const a = Buffer.from(received, "hex");
+    const b = Buffer.from(expected, "hex");
+    return a.length === b.length && crypto.timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
 }
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
+  const rawBody = await request.text();
+  const verified = isSignatureValid(rawBody, request.headers.get("authorization"));
 
-  if (!body) {
-    return NextResponse.json({ received: true }, { status: 200 });
+  let payload: Record<string, unknown> | null = null;
+  try {
+    payload = JSON.parse(rawBody);
+  } catch {
+    payload = null;
   }
 
-  const { status, paymentId, orderId } = extractFields(body);
-
-  // Registro el evento en los logs de Vercel (persistente y consultable) para
-  // verificar que dLocal envía webhooks y capturar el payment_id real.
+  // El payload de dLocal Go solo trae { payment_id }: el estado real se
+  // confirma con GET /v1/payments/{id} (ver /api/dlocal/verify), que es lo
+  // que de verdad emite el comprobante de pago. Este webhook solo queda como
+  // registro/observabilidad en los logs de Vercel.
   console.log(
     JSON.stringify({
       event: "dlocal_webhook",
-      status,
-      paymentId,
-      orderId,
-      body,
+      verified,
+      paymentId: payload?.payment_id ?? payload?.id ?? null,
+      payload,
     }),
   );
-
-  received.unshift({ at: new Date().toISOString(), status, paymentId, orderId });
-  if (received.length > MAX) received.pop();
 
   return NextResponse.json({ received: true });
 }

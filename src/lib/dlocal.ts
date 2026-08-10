@@ -75,8 +75,16 @@ export async function createDlocalPayment(input: {
   };
 }
 
-/** Devuelve "PAID", "PENDING", etc. de un pago de dLocal Go. */
-export async function getDlocalPaymentStatus(paymentId: string): Promise<string> {
+export interface DlocalPaymentStatus {
+  id: string;
+  status: string;
+  orderId: string;
+  amount: number;
+  currency: string;
+}
+
+/** Consulta el estado REAL de un pago en dLocal Go, por su `id` propio de dLocal. */
+export async function getDlocalPayment(paymentId: string): Promise<DlocalPaymentStatus> {
   const res = await fetch(`${DLOCAL_API_BASE}/v1/payments/${paymentId}`, {
     method: "GET",
     headers: dlocalHeaders(),
@@ -84,6 +92,18 @@ export async function getDlocalPaymentStatus(paymentId: string): Promise<string>
   if (!res.ok) {
     throw new Error(`dLocal Go get payment failed (${res.status})`);
   }
-  const json = (await res.json()) as { status: string };
-  return json.status;
+  const json = (await res.json()) as {
+    id: string;
+    status: string;
+    order_id: string;
+    amount: number;
+    currency: string;
+  };
+  return {
+    id: json.id,
+    status: json.status,
+    orderId: json.order_id,
+    amount: json.amount,
+    currency: json.currency,
+  };
 }

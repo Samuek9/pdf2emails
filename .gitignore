@@ -34,3 +34,6 @@ lighthouse*
 
 # archivos temporales de prueba de pagos
 *-test.json
+
+.vercel
+.env*

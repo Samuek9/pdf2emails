@@ -1,19 +1,14 @@
 import { isLatam } from "./countries";
+import { CART_PRICES_USD, resolveOrder } from "./orders";
 import type { Pricing } from "./types";
 
-const LATAM_PRICE_USD = 7.99;
-const LATAM_VERIFY_USD = 12.99;
 const LATAM_PRICE_COP = 32000;
-const ROW_PRICE_USD = 19;
-const ROW_VERIFY_USD = 29;
-const LATAM_VERIFY_ONLY_USD = 2.49;
-const ROW_VERIFY_ONLY_USD = 4.99;
 
 /**
- * Paridad de precios por pais (UNICA fuente de verdad; page.tsx y CheckoutModal
- * deben derivar SIEMPRE los montos de aqui, nunca hardcodear):
- * - LATAM: full $7.99 USD (~ $32,000 COP) / full+verify $12.99, pasarela dLocal Go.
- * - Resto del mundo: full $19 USD / full+verify $29, pasarela Wompi.
+ * Paridad de precios por pais (UNICA fuente de verdad para lo que se COBRA:
+ * ./orders.ts — este archivo solo deriva de ahi lo que hace falta mostrar en
+ * la UI). page.tsx y CheckoutModal deben derivar SIEMPRE los montos de aqui
+ * (o de orders.ts), nunca hardcodear un precio nuevo.
  */
 export function getPricing(countryCode: string): Pricing {
   const latam = isLatam(countryCode);
@@ -21,9 +16,9 @@ export function getPricing(countryCode: string): Pricing {
     region: latam ? "latam" : "row",
     countryCode,
     displayPrice: latam ? "$7.99 USD" : "$19 USD",
-    priceUsd: latam ? LATAM_PRICE_USD : ROW_PRICE_USD,
-    verifyPriceUsd: latam ? LATAM_VERIFY_USD : ROW_VERIFY_USD,
-    verifyOnlyUsd: latam ? LATAM_VERIFY_ONLY_USD : ROW_VERIFY_ONLY_USD,
+    priceUsd: resolveOrder(countryCode, "full").amountUsd,
+    verifyPriceUsd: resolveOrder(countryCode, "fullverify").amountUsd,
+    verifyOnlyUsd: latam ? CART_PRICES_USD.latam.verify : CART_PRICES_USD.row.verify,
     priceCop: latam ? LATAM_PRICE_COP : 0,
     primaryGateway: latam ? "dlocal" : "wompi",
     secondaryGateway: latam ? "wompi" : "dlocal",

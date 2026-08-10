@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CheckCircle2, Loader2, ShieldCheck, X } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { isLatam } from "@/lib/countries";
+import { CART_PRICES_USD, type CheckoutOption } from "@/lib/orders";
 import { t } from "@/lib/i18n";
 
 interface VerifyModalProps {
@@ -12,11 +13,9 @@ interface VerifyModalProps {
   emailsCount: number;
   emails: string[];
   country: string;
-  onCheckout: (amount: number, sel: { verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean }, email: string) => void;
+  onCheckout: (amount: number, option: CheckoutOption, email: string) => void;
   onFreeDownload: () => void;
 }
-
-type Selection = { verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean };
 
 export function VerifyModal({ open, onClose, emailsCount, emails, country, onCheckout, onFreeDownload }: VerifyModalProps) {
   const [email, setEmail] = useState("");
@@ -25,12 +24,13 @@ export function VerifyModal({ open, onClose, emailsCount, emails, country, onChe
   const [done, setDone] = useState(false);
   const [pkg, setPkg] = useState<"verify" | "pro">("verify");
   const latam = isLatam(country);
-  const prices = { verify: latam ? 2.49 : 4.99, enrich: latam ? 4.99 : 9.99, clean: latam ? 1.49 : 2.99, phones: latam ? 1.99 : 3.99, templates: 4.99 };
-  const bundlePrice = latam ? 11.99 : 19.99;
-  const sel: Selection =
+  const prices = latam ? CART_PRICES_USD.latam : CART_PRICES_USD.row;
+  const bundlePrice = prices.bundle;
+  const option: CheckoutOption = pkg === "pro" ? "cartPro" : "cartVerify";
+  const sel =
     pkg === "pro"
-      ? { verify: true, enrich: true, clean: true, phones: true, templates: true }
-      : { verify: true, enrich: false, clean: true, phones: false, templates: false };
+      ? { verify: true, enrich: true, clean: true, phones: true }
+      : { verify: true, enrich: false, clean: true, phones: false };
 
   if (!open) return null;
 
@@ -83,8 +83,10 @@ export function VerifyModal({ open, onClose, emailsCount, emails, country, onChe
 
     setSubmitting(false);
     if (total > 0) {
-      // Cobro real: pasa al checkout (Wompi/dLocal) con el total del carrito.
-      onCheckout(total, sel, trimmed);
+      // Cobro real: pasa al checkout (Wompi/dLocal). El monto real que se
+      // cobra lo vuelve a calcular el servidor a partir de `option` — este
+      // `total` es solo para mostrarlo en el modal mientras carga.
+      onCheckout(total, option, trimmed);
     } else {
       setDone(true);
     }

@@ -1,20 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createDlocalPayment } from "@/lib/dlocal";
+import { isCheckoutOption, resolveOrder } from "@/lib/orders";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as {
-    amount?: number;
-    currency?: string;
-    country?: string;
-    description?: string;
     orderId?: string;
+    option?: string;
+    country?: string;
   } | null;
 
-  if (!body?.amount || !body?.currency || !body?.country || !body?.orderId) {
+  if (!body?.orderId || !isCheckoutOption(body?.option) || !body?.country) {
     return NextResponse.json(
-      { error: "amount, currency, country and orderId are required" },
+      { error: "orderId, option and country are required" },
       { status: 400 },
     );
   }
@@ -22,14 +21,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "DLOCAL is not configured" }, { status: 501 });
   }
 
+  // El monto NUNCA viene del cliente: se calcula aqui a partir del pais y la
+  // opcion elegida (unica fuente de verdad: apps/lib/orders.ts -> pricing).
+  const order = resolveOrder(body.country, body.option);
+
   try {
     const intent = await createDlocalPayment({
-      amount: body.amount,
-      currency: body.currency,
+      amount: order.amountUsd,
+      currency: "USD",
       country: body.country,
-      description: body.description ?? "PDF2Emails - desbloqueo de lista completa",
+      description: "PDF2Emails - desbloqueo de lista completa",
       orderId: body.orderId,
     });
+    // El cliente debe guardar `id` (paymentId real de dLocal) antes de salir
+    // del sitio: es lo unico que permite confirmar el pago al volver, ya que
+    // dLocal solo redirige con "?paid=1" y no manda el id en la URL de vuelta.
     return NextResponse.json(intent);
   } catch (error) {
     return NextResponse.json(

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyManyReal } from "@/lib/emailVerifier";
 import { companyFromEmail, nameFromEmail, enrichViaOpenAI } from "@/lib/enrich";
+import { processGrantFor } from "@/lib/orders";
+import { verifyPaymentToken } from "@/lib/paymentToken";
 
 export const runtime = "nodejs";
 
@@ -54,6 +56,7 @@ export async function POST(request: NextRequest) {
     emails?: string[];
     text?: string;
     options?: { verify?: boolean; clean?: boolean; enrich?: boolean; phones?: boolean };
+    paymentToken?: string;
   } | null;
 
   const emails = Array.isArray(body?.emails)
@@ -63,11 +66,30 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid emails" }, { status: 400 });
   }
 
+  // Este endpoint solo hace trabajo GRATIS para el negocio (nameFromEmail /
+  // companyFromEmail, regex de telefonos). Verificacion SMTP real y
+  // enriquecimiento con OpenAI cuestan dinero real por llamada, asi que
+  // exigen un comprobante de pago firmado por /api/wompi/verify o
+  // /api/dlocal/verify — nunca se confia en lo que el cliente pida sin pagar.
+  const proof = verifyPaymentToken(body?.paymentToken);
+  const grant = proof ? processGrantFor(proof.option) : null;
+
   const options = body?.options ?? {};
-  const doVerify = options.verify !== false;
+  const wantsVerify = options.verify !== false;
+  const wantsEnrich = options.enrich === true;
+  const wantsPhones = options.phones === true;
+
+  if ((wantsVerify && !grant?.verify) || (wantsEnrich && !grant?.enrich) || (wantsPhones && !grant?.phones)) {
+    return NextResponse.json(
+      { error: "Payment required for this processing option." },
+      { status: 402 },
+    );
+  }
+
+  const doVerify = wantsVerify;
   const doClean = options.clean !== false;
-  const doEnrich = options.enrich === true;
-  const doPhones = options.phones === true;
+  const doEnrich = wantsEnrich;
+  const doPhones = wantsPhones;
 
   const rows: Row[] = [];
 

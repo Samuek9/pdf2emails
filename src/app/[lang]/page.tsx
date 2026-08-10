@@ -25,7 +25,8 @@ import { getPricing } from "@/lib/pricing";
 import { useLocalPrice } from "@/lib/fx";
 import { parseAllEmails } from "@/lib/emails";
 import { t } from "@/lib/i18n";
-import type { ParsedPdf } from "@/lib/types";
+import { processGrantFor, type CheckoutOption } from "@/lib/orders";
+import type { Gateway, ParsedPdf } from "@/lib/types";
 
 export default function HomePage() {
   // Pais como estado con default estable (US) en server y primer render del
@@ -49,11 +50,10 @@ export default function HomePage() {
   const [verifyOpen, setVerifyOpen] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
+  const [paymentToken, setPaymentToken] = useState<string | null>(null);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [checkoutAmount, setCheckoutAmount] = useState(3.99);
-  const [checkoutOption, setCheckoutOption] = useState<"full" | "fullverify" | "cart">("full");
-  const [cartSel, setCartSel] = useState<{ verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean }>({ verify: true, enrich: false, clean: false, phones: false, templates: false });
-  const [cartEmail, setCartEmail] = useState("");
+  const [checkoutOption, setCheckoutOption] = useState<CheckoutOption>("full");
 
   useEffect(() => {
     void initAnalytics();
@@ -61,18 +61,22 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Desbloqueo de pago: detecta el retorno de dLocal (?paid=1) y restaura la
-  // persistencia. Se hace tras el montaje para no romper hydration.
-  // NOTA: no desbloquear globalmente sin archivo presente; el desbloqueo se
-  // vincula a la sesion del archivo (ver handleParsed) para no ocultar el paywall.
+  // Restaura el desbloqueo SOLO si ya existe un comprobante de pago valido
+  // (token firmado por el servidor tras confirmar el pago real — ver
+  // /thank-you, que es quien lo emite despues de volver de Wompi/dLocal).
+  // No confiar nunca en un simple "?paid=1" en la URL: eso se podia falsificar
+  // sin pagar.
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const justPaid = params.get("paid") === "1";
-    if (justPaid) {
-      window.localStorage.setItem("pdf2emails_unlocked", "1");
-      setUnlocked(true);
-      window.history.replaceState(null, "", window.location.pathname);
+    try {
+      const token = window.localStorage.getItem("pdf2emails_payment_token");
+      const unlockedFlag = window.localStorage.getItem("pdf2emails_unlocked") === "1";
+      if (token && unlockedFlag) {
+        setPaymentToken(token);
+        setUnlocked(true);
+      }
+    } catch {
+      /* noop */
     }
   }, []);
 
@@ -102,7 +106,11 @@ export default function HomePage() {
     // Al subir un archivo NUEVO, se resetea el desbloqueo para que el paywall
     // se muestre. El desbloqueo de un pago aplica solo a ese archivo/sesion.
     setUnlocked(false);
-    try { window.localStorage.removeItem("pdf2emails_unlocked"); } catch { /* noop */ }
+    setPaymentToken(null);
+    try {
+      window.localStorage.removeItem("pdf2emails_unlocked");
+      window.localStorage.removeItem("pdf2emails_payment_token");
+    } catch { /* noop */ }
     // Persistir en localStorage para sobrevivir al cruce de dominio (checkout
     // de dLocal) y al "back". Se valida con TTL al restaurar.
     try { window.localStorage.setItem("pdf2emails_session", JSON.stringify(data)); } catch { /* overflow: se ignora */ }
@@ -158,26 +166,38 @@ export default function HomePage() {
     [pricing],
   );
 
+  // El token solo lo emite el servidor tras confirmar un pago real (ver
+  // /api/wompi/verify y /api/dlocal/verify) — sin token valido, /api/process
+  // rechaza con 402 aunque el frontend "crea" que ya se pago.
   const handlePaymentSuccess = useCallback(
-    (gateway: "wompi" | "dlocal" | "demo") => {
+    (gateway: Gateway | "demo", token: string) => {
       setCheckoutOpen(false);
-      if (checkoutOption === "full" || checkoutOption === "fullverify") {
-        window.localStorage.setItem("pdf2emails_unlocked", "1");
-        setUnlocked(true);
-      }
+      window.localStorage.setItem("pdf2emails_unlocked", "1");
+      window.localStorage.setItem("pdf2emails_payment_token", token);
+      setUnlocked(true);
+      setPaymentToken(token);
       trackEvent("payment_successful", { gateway, amount: checkoutAmount, option: checkoutOption });
+
       if (parsed) {
         const emails = parsed.all.map((e) => e.email);
-        if (checkoutOption === "cart") {
+        const grant = processGrantFor(checkoutOption);
+        if (grant) {
           void fetch("/api/process", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ emails, text: parsed.text, options: { verify: cartSel.verify, clean: cartSel.clean, enrich: cartSel.enrich, phones: cartSel.phones } }),
+            body: JSON.stringify({
+              emails,
+              text: parsed.text,
+              options: grant,
+              paymentToken: token,
+            }),
           })
             .then((r) => (r.ok ? r.json() : null))
             .then((d: { csv?: string } | null) => {
-              if (d?.csv) downloadBlob("lista-procesada.csv", d.csv, "text/csv;charset=utf-8");
-              if (cartSel.templates) {
+              if (!d?.csv) return;
+              const filename = checkoutOption === "cartPro" ? "lista-procesada.csv" : "lista-verificada.csv";
+              downloadBlob(filename, d.csv, "text/csv;charset=utf-8");
+              if (checkoutOption === "cartPro") {
                 void fetch("/cold-email-templates.md")
                   .then((r) => r.text())
                   .then((txt) => downloadBlob("cold-email-templates.md", txt, "text/markdown;charset=utf-8"))
@@ -185,41 +205,25 @@ export default function HomePage() {
               }
             })
             .catch(() => {});
-        } else if (checkoutOption === "fullverify") {
-          void fetch("/api/process", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ emails, options: { verify: true, clean: true, enrich: false } }),
-          })
-            .then((r) => (r.ok ? r.json() : null))
-            .then((d: { csv?: string } | null) => {
-              if (d?.csv) downloadBlob("lista-verificada.csv", d.csv, "text/csv;charset=utf-8");
-            })
-            .catch(() => {});
         }
       }
       // Página de confirmación post-compra: URL estable para tracking de
-      // conversión (Google Ads / Analytics). Delay para dejar iniciar descargas.
+      // conversión (Google Ads / Analytics). Sin "?paid=1": el desbloqueo ya
+      // se hizo arriba con un pago verificado de verdad, /thank-you no debe
+      // volver a tocarlo.
       window.setTimeout(() => {
         window.location.assign("/thank-you");
       }, 1200);
     },
-    [checkoutAmount, checkoutOption, parsed, cartSel],
+    [checkoutAmount, checkoutOption, parsed],
   );
 
-
-
-  const handleCartCheckout = useCallback(
-    (amount: number, sel: { verify: boolean; enrich: boolean; clean: boolean; phones: boolean; templates: boolean }, email: string) => {
-      setCartSel(sel);
-      setCartEmail(email);
-      setCheckoutAmount(amount);
-      setCheckoutOption("cart");
-      setVerifyOpen(false);
-      setCheckoutOpen(true);
-    },
-    [],
-  );
+  const handleCartCheckout = useCallback((amount: number, option: CheckoutOption) => {
+    setCheckoutAmount(amount);
+    setCheckoutOption(option);
+    setVerifyOpen(false);
+    setCheckoutOpen(true);
+  }, []);
 
   return (
     <>
@@ -391,6 +395,7 @@ export default function HomePage() {
         onClose={() => setCheckoutOpen(false)}
         onSuccess={handlePaymentSuccess}
         country={country}
+        option={checkoutOption}
         lockedCount={parsed ? Math.max(0, parsed.all.length - 10) : 0}
         amount={checkoutAmount}
       />

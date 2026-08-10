@@ -3,9 +3,16 @@ import crypto from "node:crypto";
 const WOMPI_API_BASE = process.env.WOMPI_API_URL ?? "https://production.wompi.co/v1";
 
 export interface WompiIntent {
-  transactionId: string;
-  status: string;
+  reference: string;
   signature: string;
+  amountInCents: number;
+  currency: string;
+}
+
+export interface WompiTransaction {
+  id: string;
+  status: string;
+  reference: string;
   amountInCents: number;
   currency: string;
 }
@@ -53,11 +60,15 @@ export async function createWompiIntent(input: {
     .update(`${input.reference}${amountInCents}${currency}${integrityKey}`)
     .digest("hex");
 
-  return { transactionId: input.reference, status: "PENDING", signature, amountInCents, currency };
+  return { reference: input.reference, signature, amountInCents, currency };
 }
 
-/** Consulta el estado de una transaccion en WOMPI. */
-export async function getWompiTransactionStatus(transactionId: string): Promise<string> {
+/**
+ * Consulta el estado REAL de una transaccion en Wompi, por su ID (el que
+ * devuelve el widget en result.transaction.id — NO es nuestra `reference`,
+ * es un ID distinto que asigna Wompi al procesar el cobro).
+ */
+export async function getWompiTransaction(transactionId: string): Promise<WompiTransaction> {
   const privateKey = process.env.WOMPI_PRIVATE_KEY;
   if (!privateKey) throw new Error("WOMPI_PRIVATE_KEY is not configured");
 
@@ -66,6 +77,14 @@ export async function getWompiTransactionStatus(transactionId: string): Promise<
   });
   if (!res.ok) throw new Error(`Wompi get transaction failed (${res.status})`);
 
-  const json = (await res.json()) as { data: { status: string } };
-  return json.data.status;
+  const json = (await res.json()) as {
+    data: { id: string; status: string; reference: string; amount_in_cents: number; currency: string };
+  };
+  return {
+    id: json.data.id,
+    status: json.data.status,
+    reference: json.data.reference,
+    amountInCents: json.data.amount_in_cents,
+    currency: json.data.currency,
+  };
 }
