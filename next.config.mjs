@@ -27,11 +27,11 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://unpkg.com https://us-assets.i.posthog.com https://*.i.posthog.com https://checkout.wompi.co https://www.googletagmanager.com",
+              "script-src 'self' 'unsafe-inline' https://unpkg.com https://us-assets.i.posthog.com https://*.i.posthog.com https://checkout.wompi.co https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.googleadservices.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://us.i.posthog.com https://*.posthog.com https://production.wompi.co https://checkout.wompi.co https://api.wompi.co https://www.googletagmanager.com https://www.google-analytics.com https://google-analytics.com",
+              "connect-src 'self' https://us.i.posthog.com https://*.posthog.com https://production.wompi.co https://checkout.wompi.co https://api.wompi.co https://www.googletagmanager.com https://www.google-analytics.com https://google-analytics.com https://www.google.com https://google.com https://ad.doubleclick.net https://www.googleadservices.com https://googleads.g.doubleclick.net",
               "worker-src 'self' blob: https://unpkg.com",
               "frame-src 'self' https:",
               "base-uri 'self'",
