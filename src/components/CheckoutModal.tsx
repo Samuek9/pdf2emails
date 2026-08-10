@@ -6,6 +6,7 @@ import { trackEvent } from "@/lib/analytics";
 import { t } from "@/lib/i18n";
 import { getPricing } from "@/lib/pricing";
 import { useLocalPrice } from "@/lib/fx";
+import { getLocalPaymentMethods } from "@/lib/countries";
 import type { Gateway } from "@/lib/types";
 
 interface CheckoutModalProps {
@@ -40,9 +41,14 @@ export function CheckoutModal({
   const pricing = useMemo(() => getPricing(country), [country]);
   const local = useLocalPrice(country, amount);
   // Etiqueta de metodo de pago amigable (sin jargon de pasarela: Wompi/dLocal).
+  // LATAM: muestra los metodos locales reales del pais + dLocal Go.
   const gwMeta =
     pricing.region === "latam"
-      ? { name: t("checkout.payLocalName"), subtitle: t("checkout.payLocalSub"), icon: "bank" as const }
+      ? {
+          name: t("checkout.payLocalName"),
+          subtitle: getLocalPaymentMethods(country).join(" · ") || t("checkout.payLocalSub"),
+          icon: "bank" as const,
+        }
       : { name: t("checkout.payCardName"), subtitle: t("checkout.payCardSub"), icon: "card" as const };
   const [step, setStep] = useState<Step>("method");
   const [gateway, setGateway] = useState<Gateway>(pricing.primaryGateway);

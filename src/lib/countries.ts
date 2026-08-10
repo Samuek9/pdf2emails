@@ -91,3 +91,27 @@ export function getLocalPrice(
 ): { currency: string; rate: number } | null {
   return COUNTRY_LOCAL_PRICE[countryCode.toUpperCase()] ?? null;
 }
+
+// Metodos de pago locales por pais LATAM (nombres propios, sin traduccion).
+// Refleja los metodos locales que procesa dLocal Go en cada mercado.
+export const LOCAL_PAYMENT_METHODS: Record<string, string[]> = {
+  CO: ["Nequi", "PSE", "Efecty"],
+  BR: ["Pix", "Boleto"],
+  MX: ["OXXO", "SPEI", "Tarjetas locales"],
+  AR: ["Rapipago", "Pago Fácil", "Tarjetas locales"],
+  CL: ["Tarjetas locales", "Khipu"],
+  PE: ["PagoEfectivo", "Tarjetas locales"],
+  EC: ["Tarjetas locales"],
+  UY: ["Tarjetas locales"],
+  PY: ["Tarjetas locales"],
+  BO: ["Tarjetas locales"],
+  CR: ["SINPE", "Tarjetas locales"],
+  DO: ["Tarjetas locales"],
+  PA: ["Tarjetas locales"],
+  GT: ["Tarjetas locales"],
+  NI: ["Tarjetas locales"],
+};
+
+export function getLocalPaymentMethods(countryCode: string): string[] {
+  return LOCAL_PAYMENT_METHODS[countryCode.toUpperCase()] ?? [];
+}

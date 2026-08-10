@@ -1,8 +1,46 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { Mail } from "lucide-react";
 import { t } from "@/lib/i18n";
+
+// Las anclas (#faq, #precios, #como-funciona) viven SOLO en la home (/{locale}).
+// Este componente navega a la home con el hash y hace scroll tras el montaje.
+function AnchorLink({ id, children }: { id: string; children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  function getLocale(): string {
+    if (typeof window === "undefined") return "es";
+    const c = document.cookie.split("; ").find((r) => r.startsWith("user_locale="));
+    return c ? c.split("=")[1] || "es" : "es";
+  }
+
+  function handleClick(e: React.MouseEvent) {
+    e.preventDefault();
+    const inHome = pathname === "/" || /^\/[a-z]{2}$/.test(pathname ?? "");
+    if (inHome) {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      router.push(`/${getLocale()}#${id}`);
+    }
+  }
+
+  useEffect(() => {
+    if (!window.location.hash) return;
+    const anchor = window.location.hash.slice(1);
+    if (anchor !== id) return;
+    document.getElementById(anchor)?.scrollIntoView({ behavior: "smooth" });
+  }, [pathname, id]);
+
+  return (
+    <a href={`#${id}`} onClick={handleClick} className="transition hover:text-slate-900">
+      {children}
+    </a>
+  );
+}
 
 export function Header() {
   return (
@@ -15,12 +53,16 @@ export function Header() {
           <span className="text-lg font-extrabold tracking-tight text-slate-900">{t("brand")}</span>
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-semibold text-slate-600 sm:flex">
-          <a href="#como-funciona" className="transition hover:text-slate-900">{t("nav.how")}</a>
-          <a href="#precios" className="transition hover:text-slate-900">{t("nav.pricing")}</a>
-          <a href="#faq" className="transition hover:text-slate-900">{t("nav.faq")}</a>
-          <a href="/blog" className="transition hover:text-slate-900">{t("nav.blog")}</a>
+          <AnchorLink id="como-funciona">{t("nav.how")}</AnchorLink>
+          <AnchorLink id="precios">{t("nav.pricing")}</AnchorLink>
+          <AnchorLink id="faq">{t("nav.faq")}</AnchorLink>
+          <Link href="/blog" className="transition hover:text-slate-900">
+            {t("nav.blog")}
+          </Link>
         </nav>
-        <a href="#extractor" className="btn-primary !px-4 !py-2">{t("nav.try")}</a>
+        <AnchorLink id="extractor">
+          <span className="btn-primary !px-4 !py-2">{t("nav.try")}</span>
+        </AnchorLink>
       </div>
     </header>
   );
