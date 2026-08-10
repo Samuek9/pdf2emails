@@ -101,10 +101,48 @@ export async function verifyEmailReal(email: string): Promise<VerifyResult> {
 
 export async function verifyManyReal(emails: string[]): Promise<Record<string, VerifyResult>> {
   const out: Record<string, VerifyResult> = {};
-  const CHUNK = 5;
-  for (let i = 0; i < emails.length; i += CHUNK) {
-    const batch = emails.slice(i, i + CHUNK);
-    await Promise.all(batch.map(async (email) => (out[email] = await verifyEmailReal(email))));
+
+  // Agrupa por dominio: el catch-all es una propiedad del dominio, no de la casilla.
+  // Verificar un solo email por dominio detecta el catch-all y aplica el resultado
+  // a todos sus emails -> ahorro enorme de llamadas a la API paga.
+  const byDomain = new Map<string, string[]>();
+  for (const e of emails) {
+    const d = (e.split("@")[1] || "").toLowerCase();
+    const list = byDomain.get(d);
+    if (list) list.push(e);
+    else byDomain.set(d, [e]);
   }
+
+  const CHUNK = 5;
+
+  for (const [, group] of byDomain) {
+    const representative = group[0];
+
+    // 1) Pre-filtro MX GRATIS: si el dominio no acepta correo (sin MX),
+    //    todos los emails de ese dominio son invalidos SIN gastar la API.
+    const mx = await verifyMx(representative);
+    if (mx !== "valid") {
+      for (const e of group) out[e] = "invalid";
+      continue;
+    }
+
+    // 2) Verifica un email representativo del dominio.
+    const first = await verifyEmailReal(representative);
+    out[representative] = first;
+
+    // 3) Si el dominio es catch-all, TODOS sus emails son catch-all -> sin mas llamadas.
+    if (first === "catchall") {
+      for (const e of group) if (!(e in out)) out[e] = "catchall";
+      continue;
+    }
+
+    // 4) Dominio normal: se verifica cada casilla individualmente (necesario).
+    const rest = group.slice(1);
+    for (let i = 0; i < rest.length; i += CHUNK) {
+      const batch = rest.slice(i, i + CHUNK);
+      await Promise.all(batch.map(async (email) => (out[email] = await verifyEmailReal(email))));
+    }
+  }
+
   return out;
 }
