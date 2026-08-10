@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createWompiIntent } from "@/lib/wompi";
-import { isCheckoutOption, resolveOrder } from "@/lib/orders";
+import { isCheckoutOption, resolveOrder, resolveServerCountry } from "@/lib/orders";
 
 export const runtime = "nodejs";
 
@@ -21,9 +21,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "WOMPI is not configured" }, { status: 501 });
   }
 
-  // El monto NUNCA viene del cliente: se calcula aqui a partir del pais y la
-  // opcion elegida (unica fuente de verdad: apps/lib/orders.ts -> pricing).
-  const order = resolveOrder(body.country, body.option);
+  // El monto NUNCA viene del cliente: se calcula aqui a partir del pais REAL
+  // (geolocalizado por Vercel, no el que declare el body) y la opcion elegida.
+  const country = resolveServerCountry(request, body.country);
+  const order = resolveOrder(country, body.option);
 
   try {
     const intent = await createWompiIntent({

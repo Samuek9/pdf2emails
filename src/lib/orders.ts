@@ -1,3 +1,4 @@
+import type { NextRequest } from "next/server";
 import { isLatam } from "./countries";
 
 /**
@@ -45,6 +46,20 @@ export function resolveOrder(countryCode: string, option: CheckoutOption): Resol
   const region = isLatam(countryCode) ? "latam" : "row";
   const amountUsd = Math.round(PRICES_USD[region][option] * 100) / 100;
   return { region, option, amountUsd };
+}
+
+/**
+ * Pais para COBRAR (no para mostrar idioma/moneda): Vercel geolocaliza cada
+ * request real por IP en `x-vercel-ip-country` y esto no lo puede tocar el
+ * cliente. El `country` que manda el body (cookie del selector del footer,
+ * pensado para dejar elegir idioma/moneda de VISUALIZACION) NUNCA decide cuanto
+ * se cobra — solo se usa como fallback en local/dev, donde Vercel no inyecta
+ * el header. Sin esto, cualquiera podia declarar un pais LATAM para pagar el
+ * precio LATAM sin estar ahi.
+ */
+export function resolveServerCountry(request: NextRequest, fallback: string): string {
+  const ipCountry = request.headers.get("x-vercel-ip-country");
+  return (ipCountry || fallback || "US").toUpperCase();
 }
 
 export interface ProcessGrant {

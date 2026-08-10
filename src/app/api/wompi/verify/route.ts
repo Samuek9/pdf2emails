@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getWompiTransaction } from "@/lib/wompi";
-import { isCheckoutOption, resolveOrder } from "@/lib/orders";
+import { isCheckoutOption, resolveOrder, resolveServerCountry } from "@/lib/orders";
 import { signPaymentToken } from "@/lib/paymentToken";
 
 export const runtime = "nodejs";
@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: "reference mismatch" }, { status: 402 });
     }
 
-    const order = resolveOrder(body.country, body.option);
+    const country = resolveServerCountry(request, body.country);
+    const order = resolveOrder(country, body.option);
     const token = signPaymentToken({
       ref: body.reference,
       gateway: "wompi",

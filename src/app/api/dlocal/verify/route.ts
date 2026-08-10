@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDlocalPayment } from "@/lib/dlocal";
-import { isCheckoutOption, resolveOrder } from "@/lib/orders";
+import { isCheckoutOption, resolveOrder, resolveServerCountry } from "@/lib/orders";
 import { signPaymentToken } from "@/lib/paymentToken";
 
 export const runtime = "nodejs";
@@ -38,7 +38,8 @@ export async function POST(request: NextRequest) {
     // El monto ya quedo fijado de forma autoritativa en /api/dlocal/create-payment
     // (el cliente nunca lo controla); aqui solo confirmamos que lo cobrado por
     // dLocal para esta orden no es menor a lo esperado para pais+opcion.
-    const order = resolveOrder(body.country, body.option);
+    const country = resolveServerCountry(request, body.country);
+    const order = resolveOrder(country, body.option);
     if (payment.amount < order.amountUsd - 0.01) {
       return NextResponse.json({ ok: false, error: "amount too low" }, { status: 402 });
     }

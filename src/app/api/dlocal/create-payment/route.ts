@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createDlocalPayment } from "@/lib/dlocal";
-import { isCheckoutOption, resolveOrder } from "@/lib/orders";
+import { isCheckoutOption, resolveOrder, resolveServerCountry } from "@/lib/orders";
 
 export const runtime = "nodejs";
 
@@ -21,15 +21,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "DLOCAL is not configured" }, { status: 501 });
   }
 
-  // El monto NUNCA viene del cliente: se calcula aqui a partir del pais y la
-  // opcion elegida (unica fuente de verdad: apps/lib/orders.ts -> pricing).
-  const order = resolveOrder(body.country, body.option);
+  // El monto y el pais NUNCA vienen del cliente: se calculan aqui a partir del
+  // pais REAL (geolocalizado por Vercel) y la opcion elegida.
+  const country = resolveServerCountry(request, body.country);
+  const order = resolveOrder(country, body.option);
 
   try {
     const intent = await createDlocalPayment({
       amount: order.amountUsd,
       currency: "USD",
-      country: body.country,
+      country,
       description: "PDF2Emails - desbloqueo de lista completa",
       orderId: body.orderId,
     });
