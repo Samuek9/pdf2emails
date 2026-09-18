@@ -192,7 +192,7 @@ export const es: Messages = {
   "footer.tag": "© {year}",
   "footer.country": "País (demo precios):",
   "checkout.paypalName": "PayPal",
-  "checkout.paypalSub": "Tarjeta, saldo PayPal o cuenta bancaria",
+  "checkout.paypalSub": "Tarjeta (sin cuenta PayPal), saldo PayPal o cuenta bancaria",
   "checkout.payLocalName": "Pagos locales",
   "checkout.payLocalSub": "Pix · Nequi · PSE · OXXO",
   "cart.pkgVerifyDesc": "Verifica que no reboten y limpia los nombres",

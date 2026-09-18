@@ -182,7 +182,7 @@ export const de: Messages = {
   "pricing.note": "Preis berechnet für {country} anhand deines Standorts. Du kannst ihn im Footer ändern (Demo).",
   "stats.last": "Letzte Extraktion vor {min} min",
   "checkout.paypalName": "PayPal",
-  "checkout.paypalSub": "Karte, PayPal-Guthaben oder Bankkonto",
+  "checkout.paypalSub": "Karte (ohne PayPal-Konto), PayPal-Guthaben oder Bankkonto",
   "checkout.payLocalName": "Lokale Zahlung",
   "checkout.payLocalSub": "Pix · Nequi · PSE · OXXO",
   "cart.pkgVerifyDesc": "Prüft, ob E-Mails nicht zurückkommen, und bereinigt Namen",

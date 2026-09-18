@@ -97,6 +97,15 @@ async function paypalFetch(path: string, init: RequestInit = {}): Promise<Respon
  * cambiar despues. `custom_id` lleva nuestra referencia para poder confirmar
  * al capturar que la orden es de ESTA compra. Se cobra siempre en USD (PayPal
  * es el riel global).
+ *
+ * Sobre la experiencia de pago (friccion medida): se usa el bloque actual
+ * `payment_source.paypal.experience_context` — el `application_context`
+ * heredado ya no es la via soportada para pedir esto, y PayPal rechaza (422
+ * INCOMPATIBLE_PARAMETER_VALUE) cualquier campo que vaya en los dos bloques, asi
+ * que los campos viven SOLO aqui. `landing_page: BILLING` pide arrancar en el
+ * formulario de tarjeta (invitado, sin cuenta PayPal) en vez de la pantalla de
+ * login, que es donde se caia la gente sin cuenta. Si el pagador tiene sesion o
+ * prefiere su saldo, PayPal le deja cambiar arriba.
  */
 export async function createPaypalOrder(input: {
   amountUsd: number;
@@ -117,12 +126,17 @@ export async function createPaypalOrder(input: {
           amount: { currency_code: "USD", value: input.amountUsd.toFixed(2) },
         },
       ],
-      application_context: {
-        brand_name: "PDF2Emails",
-        shipping_preference: "NO_SHIPPING",
-        user_action: "PAY_NOW",
-        return_url: input.returnUrl,
-        cancel_url: input.cancelUrl,
+      payment_source: {
+        paypal: {
+          experience_context: {
+            brand_name: "PDF2Emails",
+            landing_page: "BILLING",
+            shipping_preference: "NO_SHIPPING",
+            user_action: "PAY_NOW",
+            return_url: input.returnUrl,
+            cancel_url: input.cancelUrl,
+          },
+        },
       },
     }),
   });
@@ -152,11 +166,15 @@ export async function getPaypalOrder(orderId: string): Promise<PaypalOrder> {
  * que el pagador todavia no aprobo (volvio a /thank-you sin pagar): tampoco es
  * un fallo de infraestructura, se devuelve la orden con su estado real para que
  * la ruta responda 402 en vez de 502.
+ *
+ * Body vacio a proposito: la orden ya quedo atada a su payment_source al
+ * crearla, asi que PayPal no pide repetirlo al capturar.
  */
 export async function capturePaypalOrder(orderId: string): Promise<PaypalOrder> {
   const res = await paypalFetch(`/v2/checkout/orders/${encodeURIComponent(orderId)}/capture`, {
     method: "POST",
     headers: { "PayPal-Request-Id": `capture-${orderId}`.slice(0, 108) },
+    body: "{}",
   });
 
   if (res.ok) return (await res.json()) as PaypalOrder;

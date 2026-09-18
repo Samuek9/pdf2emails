@@ -186,7 +186,7 @@ export const pt: Messages = {
   "pricing.f5": "Pagamento único por PDF",
   "pricing.note": "Preço calculado para {country} com base na sua localização. Você pode alterá-lo no rodapé (demo).",
   "checkout.paypalName": "PayPal",
-  "checkout.paypalSub": "Cartão, saldo PayPal ou conta bancária",
+  "checkout.paypalSub": "Cartão (sem conta PayPal), saldo PayPal ou conta bancária",
   "checkout.payLocalName": "Pagamento local",
   "checkout.payLocalSub": "Pix · Nequi · PSE · OXXO",
   "cart.pkgVerifyDesc": "Verifica se não rebatem e limpa os nomes",

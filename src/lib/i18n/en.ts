@@ -191,7 +191,7 @@ export const en: Messages = {
   "footer.tag": "© {year}",
   "footer.country": "Country (price demo):",
   "checkout.paypalName": "PayPal",
-  "checkout.paypalSub": "Card, PayPal balance or bank account",
+  "checkout.paypalSub": "Card (no PayPal account needed), PayPal balance or bank account",
   "checkout.payLocalName": "Local payment",
   "checkout.payLocalSub": "Pix · Nequi · PSE · OXXO",
   "cart.pkgVerifyDesc": "SMTP-verifies addresses and cleans names so your list doesn't bounce",
