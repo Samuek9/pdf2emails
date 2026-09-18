@@ -56,9 +56,9 @@ export function CheckoutModal({
   });
 
   // Pasarela con la que se va a cobrar de verdad: la preferida del pais
-  // (dLocal en LATAM, PayPal en el resto) si tiene llaves; si no, la otra que
+  // (dLocal Go en LATAM, PayPal en el resto) si tiene llaves; si no, la otra que
   // este viva. Sin ninguna, se queda la preferida y el pago corre en demo.
-  const effectiveGateway: Gateway =
+  const defaultGateway: Gateway =
     liveConfig.paypal || liveConfig.dlocal
       ? liveConfig[pricing.primaryGateway]
         ? pricing.primaryGateway
@@ -66,6 +66,19 @@ export function CheckoutModal({
           ? "paypal"
           : "dlocal"
       : pricing.primaryGateway;
+
+  // Eleccion manual del comprador. Aparece solo cuando las dos pasarelas estan
+  // vivas: asi un colombiano que quiera pagar con su saldo PayPal tambien puede,
+  // y quien no tenga cuenta PayPal se queda en el riel local.
+  const [gatewayOverride, setGatewayOverride] = useState<Gateway | null>(null);
+  const effectiveGateway: Gateway =
+    gatewayOverride && liveConfig[gatewayOverride] ? gatewayOverride : defaultGateway;
+  const alternativeGateway: Gateway | null =
+    liveConfig.paypal && liveConfig.dlocal
+      ? effectiveGateway === "paypal"
+        ? "dlocal"
+        : "paypal"
+      : null;
 
   // Etiqueta de metodo de pago amigable (sin jargon de pasarela): PayPal, o
   // los metodos locales reales del pais cuando cobra dLocal Go.
@@ -99,6 +112,7 @@ export function CheckoutModal({
     if (open) {
       setStep("method");
       setError(null);
+      setGatewayOverride(null);
       referenceRef.current = `pdf2emails-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     }
   }, [open, pricing.primaryGateway]);
@@ -353,6 +367,20 @@ export function CheckoutModal({
             ) : (
               <button className="btn-primary mt-5 w-full" onClick={() => void handlePay()}>
                 <Lock size={16} /> {t("checkout.pay", { price: local ? `${local.symbol}${local.amount}` : `$${amount.toFixed(2)}` })}
+              </button>
+            )}
+
+            {alternativeGateway && step === "method" && (
+              <button
+                type="button"
+                onClick={() => setGatewayOverride(alternativeGateway)}
+                className="mt-3 w-full text-center text-xs font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-2 transition hover:text-emerald-800"
+              >
+                {alternativeGateway === "paypal"
+                  ? t("checkout.switchPaypal")
+                  : t("checkout.switchLocal", {
+                      methods: getLocalPaymentMethods(country).slice(0, 3).join(" · "),
+                    })}
               </button>
             )}
 

@@ -183,6 +183,8 @@ export const fr: Messages = {
   "stats.last": "Dernière extraction il y a {min} min",
   "checkout.paypalName": "PayPal",
   "checkout.paypalSub": "Carte (sans compte PayPal), solde PayPal ou compte bancaire",
+  "checkout.switchPaypal": "Vous préférez payer avec PayPal ? (compte PayPal requis)",
+  "checkout.switchLocal": "Payer avec les moyens locaux ({methods})",
   "checkout.payLocalName": "Paiement local",
   "checkout.payLocalSub": "Pix · Nequi · PSE · OXXO",
   "cart.pkgVerifyDesc": "Vérifie que les emails ne rebondissent pas et nettoie les noms",

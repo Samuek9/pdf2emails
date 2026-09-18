@@ -187,6 +187,8 @@ export const pt: Messages = {
   "pricing.note": "Preço calculado para {country} com base na sua localização. Você pode alterá-lo no rodapé (demo).",
   "checkout.paypalName": "PayPal",
   "checkout.paypalSub": "Cartão (sem conta PayPal), saldo PayPal ou conta bancária",
+  "checkout.switchPaypal": "Prefere pagar com PayPal? (é preciso ter conta PayPal)",
+  "checkout.switchLocal": "Pagar com métodos locais ({methods})",
   "checkout.payLocalName": "Pagamento local",
   "checkout.payLocalSub": "Pix · Nequi · PSE · OXXO",
   "cart.pkgVerifyDesc": "Verifica se não rebatem e limpa os nomes",

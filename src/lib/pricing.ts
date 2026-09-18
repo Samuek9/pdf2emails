@@ -22,13 +22,15 @@ export function getPricing(countryCode: string, couponCode?: string | null): Pri
     verifyPriceUsd: fullverify.amountUsd,
     verifyOnlyUsd: latam ? CART_PRICES_USD.latam.verify : CART_PRICES_USD.row.verify,
     priceCop: latam ? LATAM_PRICE_COP : 0,
-    // PayPal es el riel por defecto para TODO el mundo: es la unica cuenta ya
-    // verificada y cobra en USD sin importar el pais de la tarjeta. dLocal Go
-    // sigue configurado como alternativa regional (PSE/Nequi/Pix/OXXO) y se usa
-    // solo si PayPal no tiene llaves. Para volver a "LATAM primero dLocal Go"
-    // basta con poner aqui: primaryGateway: latam ? "dlocal" : "paypal".
-    primaryGateway: "paypal",
-    secondaryGateway: "dlocal",
+    // Riel por pais. LATAM cobra con dLocal Go (dinero local: PSE, Nequi, Pix,
+    // OXXO, tarjetas locales) porque PayPal obliga a iniciar sesion o crear
+    // cuenta antes de pagar -- su pago como invitado ("PayPal account optional")
+    // no esta habilitado para esta cuenta, y pedir login mata la compra por
+    // impulso. PayPal queda como riel del resto del mundo, donde quien paga ya
+    // tiene cuenta PayPal. En el checkout el comprador puede cambiar de riel
+    // cuando ambos estan configurados (ver CheckoutModal).
+    primaryGateway: latam ? "dlocal" : "paypal",
+    secondaryGateway: latam ? "paypal" : "dlocal",
     couponApplied: full.couponApplied,
   };
 }
