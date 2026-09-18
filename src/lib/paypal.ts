@@ -148,7 +148,10 @@ export async function getPaypalOrder(orderId: string): Promise<PaypalOrder> {
 /**
  * Captura la orden (aqui es donde entra el dinero). Reintentar es seguro:
  * PayPal responde 422 ORDER_ALREADY_CAPTURED si ya se cobro, y en ese caso se
- * relee la orden en vez de tratarlo como error.
+ * relee la orden en vez de tratarlo como error. ORDER_NOT_APPROVED significa
+ * que el pagador todavia no aprobo (volvio a /thank-you sin pagar): tampoco es
+ * un fallo de infraestructura, se devuelve la orden con su estado real para que
+ * la ruta responda 402 en vez de 502.
  */
 export async function capturePaypalOrder(orderId: string): Promise<PaypalOrder> {
   const res = await paypalFetch(`/v2/checkout/orders/${encodeURIComponent(orderId)}/capture`, {
@@ -159,7 +162,7 @@ export async function capturePaypalOrder(orderId: string): Promise<PaypalOrder> 
   if (res.ok) return (await res.json()) as PaypalOrder;
 
   const body = await res.text().catch(() => "");
-  if (res.status === 422 && body.includes("ORDER_ALREADY_CAPTURED")) {
+  if (res.status === 422 && /ORDER_ALREADY_CAPTURED|ORDER_NOT_APPROVED/.test(body)) {
     return getPaypalOrder(orderId);
   }
   throw new Error(`PayPal capture failed (${res.status}): ${body.slice(0, 300)}`);
