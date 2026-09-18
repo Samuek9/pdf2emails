@@ -9,6 +9,7 @@ import { useLocalPrice } from "@/lib/fx";
 import { getLocalPaymentMethods } from "@/lib/countries";
 import type { CheckoutOption } from "@/lib/orders";
 import type { Gateway } from "@/lib/types";
+import { PayPalButtons } from "./PayPalButtons";
 
 interface CheckoutModalProps {
   open: boolean;
@@ -43,7 +44,9 @@ export function CheckoutModal({
   const [error, setError] = useState<string | null>(null);
   const [paidGateway, setPaidGateway] = useState<Gateway | "demo">("demo");
   const paidTokenRef = useRef<string>("");
-  const referenceRef = useRef<string>("");
+  // La referencia es estado (no ref) a proposito: el componente de botones del
+  // SDK de PayPal la recibe al montarse y necesita el valor ya generado.
+  const [reference, setReference] = useState("");
   const viewedTrackedRef = useRef(false);
 
   // Que pasarelas tienen llaves configuradas en el servidor. Se arranca en
@@ -113,7 +116,7 @@ export function CheckoutModal({
       setStep("method");
       setError(null);
       setGatewayOverride(null);
-      referenceRef.current = `pdf2emails-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      setReference(`pdf2emails-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
     }
   }, [open, pricing.primaryGateway]);
 
@@ -136,6 +139,11 @@ export function CheckoutModal({
       cancelled = true;
     };
   }, [open]);
+
+  // El pago por PayPal se hace con los botones embebidos del SDK cuando hay
+  // client-id publico (permite el boton de tarjeta sin login). Si no esta
+  // configurado, se mantiene el flujo de redireccion como respaldo.
+  const paypalSdkEnabled = Boolean(process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID);
 
   // El aviso de modo demo solo aparece cuando el servidor ya dijo que no hay
   // ninguna pasarela con llaves (antes de eso no se sabe todavia).
@@ -192,7 +200,7 @@ export function CheckoutModal({
         const res = await fetch("/api/paypal/create-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ reference: referenceRef.current, option, country, coupon }),
+          body: JSON.stringify({ reference, option, country, coupon }),
         });
         if (!res.ok) {
           const errBody = await res.text().catch(() => "");
@@ -207,7 +215,7 @@ export function CheckoutModal({
             JSON.stringify({
               gateway: "paypal",
               orderId: intent.id,
-              reference: referenceRef.current,
+              reference,
               option,
               country,
               coupon,
@@ -232,7 +240,7 @@ export function CheckoutModal({
         const res = await fetch("/api/dlocal/create-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: referenceRef.current, option, country: pricing.countryCode, coupon }),
+          body: JSON.stringify({ orderId: reference, option, country: pricing.countryCode, coupon }),
         });
         if (!res.ok) {
           const errBody = await res.text().catch(() => "");
@@ -364,6 +372,20 @@ export function CheckoutModal({
               <div className="btn-primary mt-5 w-full cursor-not-allowed opacity-70">
                 <Loader2 size={18} className="animate-spin" /> {t("checkout.processing")}
               </div>
+            ) : effectiveGateway === "paypal" && paypalSdkEnabled ? (
+              // Botones embebidos de PayPal: el de "Tarjeta" abre el formulario
+              // de tarjeta sin login (el flujo de redireccion siempre pide login).
+              <PayPalButtons
+                reference={reference}
+                option={option}
+                country={country}
+                coupon={coupon}
+                onApproved={(token) => handleSuccess("paypal", token)}
+                onFailed={(message) => {
+                  setStep("method");
+                  setError(message);
+                }}
+              />
             ) : (
               <button className="btn-primary mt-5 w-full" onClick={() => void handlePay()}>
                 <Lock size={16} /> {t("checkout.pay", { price: local ? `${local.symbol}${local.amount}` : `$${amount.toFixed(2)}` })}

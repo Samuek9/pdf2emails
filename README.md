@@ -67,10 +67,13 @@ Typecheck: `npm run typecheck` · Build de produccion: `npm run build`.
 
 ## Paridad de precios (PPP)
 
-| Región | Precio | Pasarela principal | Secundaria |
+| Región | Precio | Pasarela por defecto | Alternativa (enlace en el checkout) |
 |---|---|---|---|
-| LATAM (CO, MX, AR, CL, PE, BR…) | $7.99 USD (~ $32,000 COP) | PayPal | dLocal Go (PSE/Pix/OXXO) |
+| LATAM (CO, MX, AR, CL, PE, BR…) | $7.99 USD (~ $32,000 COP) | dLocal Go (PSE/Nequi/Pix/OXXO/tarjeta local, sin cuenta) | PayPal |
 | Resto del mundo | $19 USD | PayPal | dLocal Go |
+
+En el checkout, si las dos pasarelas están configuradas, el comprador puede cambiar de riel con un
+enlace bajo el botón de pago (`checkout.switchPaypal` / `checkout.switchLocal`).
 
 El país se detecta por `x-vercel-ip-country` (Vercel). En local, usa `NEXT_PUBLIC_DEFAULT_COUNTRY`.
 El middleware lo guarda en la cookie `user_country`.
@@ -85,6 +88,13 @@ El middleware lo guarda en la cookie `user_country`.
   devuelve el `approveUrl`) y al volver a `/thank-you?paid=1&token=<orderId>` el servidor **captura**
   la orden y confirma el monto en `/api/paypal/capture` antes de desbloquear nada. El webhook solo es
   la red de seguridad: si el navegador no vuelve, captura la orden aprobada que quedo huerfana.
+- **Botones embebidos de PayPal** (con `NEXT_PUBLIC_PAYPAL_CLIENT_ID` — el mismo client id, que es
+  publico): el checkout dibuja el SDK JS de PayPal con dos botones, PayPal y **"Tarjeta de débito o
+  crédito"**. El de tarjeta abre el formulario **sin pedir login**, que es lo que el flujo de
+  redirección no logra (esa cuenta no tiene pago como invitado en la pantalla alojada). El botón de
+  tarjeta solo se dibuja si PayPal lo considera elegible (`isEligible`) y requiere que la cuenta tenga
+  habilitadas las tarjetas: **PayPal → Enlaces y botones de pago → Elegir formas de pago → "Tarjetas
+  de crédito y débito estándar"**. Si falta el client id público, se usa la redirección como respaldo.
 - **dLocal Go real** (PSE, Pix, OXXO, tarjetas locales): define `DLOCAL_API_KEY`, `DLOCAL_SECRET_KEY`
   y `DLOCAL_ENV` (`sbx` o `live`). El cliente crea un payment link en `/api/dlocal/create-payment` y
   redirige al checkout de dLocal Go (`redirect_url`). Al volver a `/ ?paid=1` la landing desbloquea.
