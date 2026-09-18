@@ -3,8 +3,8 @@ import type { CheckoutOption } from "./orders";
 
 /**
  * Comprobante de pago firmado (HMAC), sin estado en servidor. Se emite SOLO
- * despues de confirmar un pago real contra la API de Wompi/dLocal (ver
- * /api/wompi/verify y /api/dlocal/verify) y es lo unico que /api/process
+ * despues de confirmar un pago real contra la API de PayPal/dLocal (ver
+ * /api/paypal/capture y /api/dlocal/verify) y es lo unico que /api/process
  * acepta para ejecutar procesamiento pagado (verificacion SMTP, OpenAI).
  * No hay base de datos en este proyecto, asi que la firma + expiracion corta
  * es la proteccion: no evita el replay dentro de su ventana de 2h, pero cierra
@@ -12,7 +12,7 @@ import type { CheckoutOption } from "./orders";
  */
 export interface PaymentTokenPayload {
   ref: string;
-  gateway: "wompi" | "dlocal" | "demo";
+  gateway: "paypal" | "dlocal" | "demo";
   option: CheckoutOption;
   amountUsd: number;
   iat: number;
@@ -23,7 +23,7 @@ const TTL_MS = 2 * 60 * 60 * 1000; // 2 horas
 function secret(): string {
   return (
     process.env.PAYMENT_TOKEN_SECRET ||
-    process.env.WOMPI_INTEGRITY_KEY ||
+    process.env.PAYPAL_CLIENT_SECRET ||
     process.env.DLOCAL_SECRET_KEY ||
     "pdf2emails-insecure-dev-secret-set-PAYMENT_TOKEN_SECRET"
   );

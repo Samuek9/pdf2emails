@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
   // Este endpoint solo hace trabajo GRATIS para el negocio (nameFromEmail /
   // companyFromEmail, regex de telefonos). Verificacion SMTP real y
   // enriquecimiento con OpenAI cuestan dinero real por llamada, asi que
-  // exigen un comprobante de pago firmado por /api/wompi/verify o
+  // exigen un comprobante de pago firmado por /api/paypal/capture o
   // /api/dlocal/verify — nunca se confia en lo que el cliente pida sin pagar.
   const proof = verifyPaymentToken(body?.paymentToken);
   const grant = proof ? processGrantFor(proof.option) : null;

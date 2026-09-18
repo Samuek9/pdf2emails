@@ -128,11 +128,11 @@ export const es: Messages = {
   "checkout.approvedSub": "Los {n} correos están desbloqueados. Descarga tu CSV o TXT ahora.",
   "checkout.view": "Ver correos y descargar",
   "checkout.demo":
-    "Modo demo: no hay credenciales de pago configuradas, así que el pago se simula para que pruebes el flujo completo. Conecta Wompi o dLocal Go en las variables de entorno para cobros reales.",
+    "Modo demo: no hay credenciales de pago configuradas, así que el pago se simula para que pruebes el flujo completo. Conecta PayPal o dLocal Go en las variables de entorno para cobros reales.",
   "checkout.secure": "Pago cifrado · Soporte a factura · Sin suscripciones ocultas",
-  "checkout.errWompi": "El pago no fue aprobado o fue cancelado. Intenta de nuevo.",
-  "checkout.errWompiStart":
-    "No se pudo iniciar el pago con Wompi. Usa el modo demo para probar el flujo.",
+  "checkout.errPaypal": "El pago no fue aprobado o fue cancelado. Intenta de nuevo.",
+  "checkout.errPaypalStart":
+    "No se pudo iniciar el pago con PayPal. Usa el modo demo para probar el flujo.",
   "checkout.errDlocal":
     "No se pudo iniciar el pago con dLocal Go. Configura las keys en el servidor o usa modo demo.",
   "feedback.q": "¿El archivo CSV extrajo correctamente los correos que necesitabas?",
@@ -191,8 +191,8 @@ export const es: Messages = {
   "cta.btn": "Subir mi PDF",
   "footer.tag": "© {year}",
   "footer.country": "País (demo precios):",
-  "checkout.payCardName": "Tarjeta de crédito",
-  "checkout.payCardSub": "Visa · Mastercard · Amex",
+  "checkout.paypalName": "PayPal",
+  "checkout.paypalSub": "Tarjeta, saldo PayPal o cuenta bancaria",
   "checkout.payLocalName": "Pagos locales",
   "checkout.payLocalSub": "Pix · Nequi · PSE · OXXO",
   "cart.pkgVerifyDesc": "Verifica que no reboten y limpia los nombres",

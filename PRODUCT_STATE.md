@@ -21,7 +21,7 @@
 - **Híbrido**: gratis para PDFs ≤3 páginas o ≤10 correos; paywall para grandes.
 - Paywall (precios por región, fuente: `src/lib/pricing.ts`):
   - LATAM (15 países dLocal): desbloquear **$7.99** · desbloquear+verificar **$12.99**.
-  - Global (Wompi): **$19** · **$29**.
+  - Global (PayPal): **$19** · **$29**.
 - **Carrito de upsells (modelo aerolínea)** — precios regionalizados (PPP):
   - Verificación anti-spam: **$2.49 LATAM / $4.99 global**
   - Enriquecer nombres/cargos: **$4.99 / $9.99**
@@ -29,7 +29,7 @@
   - Teléfonos/LinkedIn: **$1.99 / $3.99**
   - Pack plantillas Cold Email: **$4.99** (ambos)
   - **Bundle All (Ahorra 40%)**: **$11.99 LATAM / $19.99 global**
-- **Cobro real** vía **Wompi** (tarjeta global) y **dLocal Go** (PSE/Pix/OXXO). Llaves live configuradas y verificadas.
+- **Cobro real** vía **PayPal** (tarjeta global, saldo PayPal o cuenta bancaria) y **dLocal Go** (PSE/Pix/OXXO). Llaves live configuradas y verificadas.
 - Moneda local estimada con **tasa en vivo** (open.er-api.com) sobre el monto real.
 - Límites: máx. **30 páginas** y **15 MB**.
 
@@ -58,4 +58,4 @@
 - [x] Correo de soporte visible en el footer.
 
 ## Stack
-Next.js 15 (App Router) · React 19 · TypeScript · Tailwind · pdfjs-dist · tesseract.js · OpenAI · Vercel · Wompi · dLocal Go · Formspree.
+Next.js 15 (App Router) · React 19 · TypeScript · Tailwind · pdfjs-dist · tesseract.js · OpenAI · Vercel · PayPal · dLocal Go · Formspree.

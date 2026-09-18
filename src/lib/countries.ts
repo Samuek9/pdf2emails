@@ -8,8 +8,8 @@ export interface Country {
 // LatAm": es "paises donde dLocal Go realmente procesa pagos" (verificado
 // contra https://dlocalgo.com/es/cobertura) + su precio PPP mas bajo. dLocal
 // Go tambien opera en Kenia, Nigeria, Indonesia y Malasia — antes esos paises
-// caian en el precio global ($19 via Wompi, que ademas puede no aceptar bien
-// tarjetas emitidas ahi), a pesar de que dLocal Go si los cubre.
+// caian en el precio global ($19 via PayPal/dLocal, que ademas pueden no
+// aceptar bien tarjetas emitidas ahi), a pesar de que dLocal Go si los cubre.
 // DO y NI quedan porque ya estaban antes de esta auditoria, pero la pagina de
 // cobertura publica de dLocal Go NO los lista explicitamente entre los 13
 // paises de LatAm — si algun pago desde ahi falla, verificar directamente en

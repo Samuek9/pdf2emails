@@ -67,7 +67,7 @@ export default function HomePage() {
 
   // Restaura el desbloqueo SOLO si ya existe un comprobante de pago valido
   // (token firmado por el servidor tras confirmar el pago real — ver
-  // /thank-you, que es quien lo emite despues de volver de Wompi/dLocal).
+  // /thank-you, que es quien lo emite despues de volver de PayPal/dLocal).
   // No confiar nunca en un simple "?paid=1" en la URL: eso se podia falsificar
   // sin pagar.
   useEffect(() => {
@@ -171,7 +171,7 @@ export default function HomePage() {
   );
 
   // El token solo lo emite el servidor tras confirmar un pago real (ver
-  // /api/wompi/verify y /api/dlocal/verify) — sin token valido, /api/process
+  // /api/paypal/capture y /api/dlocal/verify) — sin token valido, /api/process
   // rechaza con 402 aunque el frontend "crea" que ya se pago.
   const handlePaymentSuccess = useCallback(
     (gateway: Gateway | "demo", token: string) => {

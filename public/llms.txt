@@ -4,7 +4,7 @@
 
 PDF2Emails is a free-to-start web tool that parses PDF files locally with pdf.js, extracts
 every email address, and lets you clean, deduplicate, verify, enrich and export the list to
-CSV/Excel. Scanned PDFs are supported via OCR (tesseract.js). Payments are handled by Wompi
+CSV/Excel. Scanned PDFs are supported via OCR (tesseract.js). Payments are handled by PayPal
 and dLocal Go.
 
 ## Key pages
@@ -25,7 +25,7 @@ and dLocal Go.
 - 100% client-side processing; files never leave the device.
 - Free extraction for small PDFs; paid unlock for cleaning, verifying and exporting the full list.
 - OCR support for scanned PDFs.
-- Prices by country: Latin America (dLocal Go) vs rest of world (Wompi).
+- Prices by country: Latin America (dLocal Go) vs rest of world (PayPal).
 
 ## Optional
 

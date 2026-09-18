@@ -127,11 +127,11 @@ export const en: Messages = {
   "checkout.approvedSub": "{n} emails are unlocked. Download your CSV or TXT now.",
   "checkout.view": "View emails and download",
   "checkout.demo":
-    "Demo mode: no payment credentials are configured, so the payment is simulated for you to test the full flow. Connect Wompi or dLocal Go in the environment variables for real charges.",
+    "Demo mode: no payment credentials are configured, so the payment is simulated for you to test the full flow. Connect PayPal or dLocal Go in the environment variables for real charges.",
   "checkout.secure": "Secure payment · Invoice support · No hidden subscriptions",
-  "checkout.errWompi": "The payment was not approved or was cancelled. Try again.",
-  "checkout.errWompiStart":
-    "Could not start the payment with Wompi. Use demo mode to test the flow.",
+  "checkout.errPaypal": "The payment was not approved or was cancelled. Try again.",
+  "checkout.errPaypalStart":
+    "Could not start the payment with PayPal. Use demo mode to test the flow.",
   "checkout.errDlocal":
     "Could not start the payment with dLocal Go. Configure the keys on the server or use demo mode.",
   "feedback.q": "Did the CSV file extract the emails you needed correctly?",
@@ -190,8 +190,8 @@ export const en: Messages = {
   "cta.btn": "Upload my PDF",
   "footer.tag": "© {year}",
   "footer.country": "Country (price demo):",
-  "checkout.payCardName": "Credit / debit card",
-  "checkout.payCardSub": "Visa · Mastercard · Amex",
+  "checkout.paypalName": "PayPal",
+  "checkout.paypalSub": "Card, PayPal balance or bank account",
   "checkout.payLocalName": "Local payment",
   "checkout.payLocalSub": "Pix · Nequi · PSE · OXXO",
   "cart.pkgVerifyDesc": "SMTP-verifies addresses and cleans names so your list doesn't bounce",

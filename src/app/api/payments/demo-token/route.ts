@@ -7,13 +7,13 @@ export const runtime = "nodejs";
 /**
  * Emite un token de "pago" SOLO cuando ninguna pasarela real esta configurada
  * (mismo criterio que /api/payments/config -> demoMode en el frontend). En
- * cuanto se configuren las llaves de Wompi o dLocal en produccion, esta ruta
+ * cuanto se configuren las llaves de PayPal o dLocal en produccion, esta ruta
  * se auto-desactiva: nunca puede usarse para saltarse un pago real.
  */
 export async function POST(request: NextRequest) {
-  const wompiConfigured = Boolean(process.env.WOMPI_PRIVATE_KEY && process.env.WOMPI_INTEGRITY_KEY);
+  const paypalConfigured = Boolean(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET);
   const dlocalConfigured = Boolean(process.env.DLOCAL_API_KEY && process.env.DLOCAL_SECRET_KEY);
-  if (wompiConfigured || dlocalConfigured) {
+  if (paypalConfigured || dlocalConfigured) {
     return NextResponse.json({ error: "Demo mode disabled: a real gateway is configured" }, { status: 403 });
   }
 

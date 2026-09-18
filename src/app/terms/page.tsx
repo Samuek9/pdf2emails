@@ -33,7 +33,7 @@ export default function Page() {
       </p>
       <h2 className="text-lg font-bold text-slate-900">4. Payments &amp; refunds</h2>
       <p>
-        Payments are processed by third-party providers (Wompi, dLocal Go). Because this is digital
+        Payments are processed by third-party providers (PayPal, dLocal Go). Because this is digital
         content delivered instantly, purchases are generally non-refundable. Contact us if you
         believe there was an error.
       </p>

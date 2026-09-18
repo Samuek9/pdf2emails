@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type PendingPayment =
-  | { gateway: "wompi"; reference: string; option: string; country: string; coupon?: string | null }
+  | {
+      gateway: "paypal";
+      orderId: string;
+      reference: string;
+      option: string;
+      country: string;
+      coupon?: string | null;
+    }
   | {
       gateway: "dlocal";
       orderId: string;
@@ -19,10 +26,10 @@ const PENDING_PAYMENT_KEY = "pdf2emails_pending_payment";
 export default function ThankYouPage() {
   const [status, setStatus] = useState<"idle" | "verifying" | "ok" | "error">("idle");
 
-  // Al volver de un flujo de pago con redireccion completa (dLocal, o Wompi
-  // via metodos como PSE), se confirma el pago de verdad contra la API real
-  // ANTES de desbloquear nada. "?paid=1" en la URL nunca es suficiente por si
-  // solo — sin un registro pendiente + verificacion, no se toca localStorage.
+  // Al volver de un flujo de pago con redireccion completa (PayPal o dLocal),
+  // se confirma/captura el pago de verdad contra la API real ANTES de
+  // desbloquear nada. "?paid=1" en la URL nunca es suficiente por si solo —
+  // sin un registro pendiente + verificacion, no se toca localStorage.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
@@ -45,7 +52,11 @@ export default function ThankYouPage() {
 
     setStatus("verifying");
 
-    const wompiId = pending.gateway === "wompi" ? params.get("id") || params.get("transaction-id") : null;
+    // PayPal agrega el id de la orden a la URL de retorno como "token"
+    // (return_url?paid=1&token=<orderId>&PayerID=...). Se acepta tambien el
+    // orderId guardado antes de salir del sitio.
+    const paypalOrderId =
+      pending.gateway === "paypal" ? params.get("token") || pending.orderId : null;
 
     const verifyReq =
       pending.gateway === "dlocal"
@@ -60,19 +71,19 @@ export default function ThankYouPage() {
               coupon: pending.coupon,
             }),
           })
-        : wompiId
-          ? fetch("/api/wompi/verify", {
+        : paypalOrderId
+          ? fetch("/api/paypal/capture", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                transactionId: wompiId,
+                orderId: paypalOrderId,
                 reference: pending.reference,
                 option: pending.option,
                 country: pending.country,
                 coupon: pending.coupon,
               }),
             })
-          : Promise.reject(new Error("missing wompi transaction id"));
+          : Promise.reject(new Error("missing paypal order id"));
 
     verifyReq
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`verify ${r.status}`))))

@@ -22,8 +22,13 @@ export function getPricing(countryCode: string, couponCode?: string | null): Pri
     verifyPriceUsd: fullverify.amountUsd,
     verifyOnlyUsd: latam ? CART_PRICES_USD.latam.verify : CART_PRICES_USD.row.verify,
     priceCop: latam ? LATAM_PRICE_COP : 0,
-    primaryGateway: latam ? "dlocal" : "wompi",
-    secondaryGateway: latam ? "wompi" : "dlocal",
+    // PayPal es el riel por defecto para TODO el mundo: es la unica cuenta ya
+    // verificada y cobra en USD sin importar el pais de la tarjeta. dLocal Go
+    // sigue configurado como alternativa regional (PSE/Nequi/Pix/OXXO) y se usa
+    // solo si PayPal no tiene llaves. Para volver a "LATAM primero dLocal Go"
+    // basta con poner aqui: primaryGateway: latam ? "dlocal" : "paypal".
+    primaryGateway: "paypal",
+    secondaryGateway: "dlocal",
     couponApplied: full.couponApplied,
   };
 }

@@ -83,7 +83,7 @@ export function VerifyModal({ open, onClose, emailsCount, emails, country, onChe
 
     setSubmitting(false);
     if (total > 0) {
-      // Cobro real: pasa al checkout (Wompi/dLocal). El monto real que se
+      // Cobro real: pasa al checkout (PayPal/dLocal). El monto real que se
       // cobra lo vuelve a calcular el servidor a partir de `option` — este
       // `total` es solo para mostrarlo en el modal mientras carga.
       onCheckout(total, option, trimmed);

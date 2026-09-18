@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createWompiIntent } from "@/lib/wompi";
+import { createPaypalOrder, paypalConfigured } from "@/lib/paypal";
 import { isCheckoutOption, resolveOrder, resolveServerCountry } from "@/lib/orders";
 
 export const runtime = "nodejs";
@@ -18,8 +18,8 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
-  if (!process.env.WOMPI_PRIVATE_KEY || !process.env.WOMPI_INTEGRITY_KEY) {
-    return NextResponse.json({ error: "WOMPI is not configured" }, { status: 501 });
+  if (!paypalConfigured()) {
+    return NextResponse.json({ error: "PAYPAL is not configured" }, { status: 501 });
   }
 
   // El monto NUNCA viene del cliente: se calcula aqui a partir del pais REAL
@@ -27,16 +27,24 @@ export async function POST(request: NextRequest) {
   const country = resolveServerCountry(request, body.country);
   const order = resolveOrder(country, body.option, body.coupon);
 
+  const site = (process.env.NEXT_PUBLIC_SITE_URL ?? request.nextUrl.origin).replace(/\/$/, "");
+
   try {
-    const intent = await createWompiIntent({
-      amountInCents: Math.round(order.amountUsd * 100),
-      currency: "USD",
+    const created = await createPaypalOrder({
+      amountUsd: order.amountUsd,
+      reference: body.reference,
+      description: "PDF2Emails - full email list unlock",
+      returnUrl: `${site}/thank-you?paid=1`,
+      cancelUrl: `${site}/`,
+    });
+    return NextResponse.json({
+      id: created.id,
+      approveUrl: created.approveUrl,
       reference: body.reference,
     });
-    return NextResponse.json(intent);
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Wompi error" },
+      { error: error instanceof Error ? error.message : "PayPal error" },
       { status: 502 },
     );
   }

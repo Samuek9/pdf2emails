@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Check, CheckCircle2, CreditCard, Landmark, Loader2, Lock, ShieldCheck, X } from "lucide-react";
+import { ArrowRight, Check, CheckCircle2, Landmark, Loader2, Lock, ShieldCheck, Wallet, X } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { t } from "@/lib/i18n";
 import { getPricing } from "@/lib/pricing";
@@ -23,14 +23,6 @@ interface CheckoutModalProps {
 
 type Step = "method" | "processing" | "success";
 
-declare global {
-  interface Window {
-    WidgetCheckout?: new (config: Record<string, unknown>) => {
-      open: (callback: (result: { transaction?: { id: string; status: string } }) => void) => void;
-    };
-  }
-}
-
 const PENDING_PAYMENT_KEY = "pdf2emails_pending_payment";
 
 // Los nombres amigables del metodo de pago se renderizan via gwMeta localizado.
@@ -47,23 +39,48 @@ export function CheckoutModal({
 }: CheckoutModalProps) {
   const pricing = useMemo(() => getPricing(country), [country]);
   const local = useLocalPrice(country, amount);
-  // Etiqueta de metodo de pago amigable (sin jargon de pasarela: Wompi/dLocal).
-  // LATAM: muestra los metodos locales reales del pais + dLocal Go.
-  const gwMeta =
-    pricing.region === "latam"
-      ? {
-          name: t("checkout.payLocalName"),
-          subtitle: getLocalPaymentMethods(country).join(" · ") || t("checkout.payLocalSub"),
-          icon: "bank" as const,
-        }
-      : { name: t("checkout.payCardName"), subtitle: t("checkout.payCardSub"), icon: "card" as const };
   const [step, setStep] = useState<Step>("method");
-  const [gateway, setGateway] = useState<Gateway>(pricing.primaryGateway);
   const [error, setError] = useState<string | null>(null);
   const [paidGateway, setPaidGateway] = useState<Gateway | "demo">("demo");
   const paidTokenRef = useRef<string>("");
   const referenceRef = useRef<string>("");
   const viewedTrackedRef = useRef(false);
+
+  // Que pasarelas tienen llaves configuradas en el servidor. Se arranca en
+  // "no cargado" y se espera la respuesta antes de decidir el flujo / mostrar
+  // el aviso de modo demo, para no parpadear con informacion falsa.
+  const [liveConfig, setLiveConfig] = useState<{ paypal: boolean; dlocal: boolean; loaded: boolean }>({
+    paypal: false,
+    dlocal: false,
+    loaded: false,
+  });
+
+  // Pasarela con la que se va a cobrar de verdad: la preferida del pais
+  // (dLocal en LATAM, PayPal en el resto) si tiene llaves; si no, la otra que
+  // este viva. Sin ninguna, se queda la preferida y el pago corre en demo.
+  const effectiveGateway: Gateway =
+    liveConfig.paypal || liveConfig.dlocal
+      ? liveConfig[pricing.primaryGateway]
+        ? pricing.primaryGateway
+        : liveConfig.paypal
+          ? "paypal"
+          : "dlocal"
+      : pricing.primaryGateway;
+
+  // Etiqueta de metodo de pago amigable (sin jargon de pasarela): PayPal, o
+  // los metodos locales reales del pais cuando cobra dLocal Go.
+  const gwMeta =
+    effectiveGateway === "paypal"
+      ? {
+          name: t("checkout.paypalName"),
+          subtitle: t("checkout.paypalSub"),
+          icon: "wallet" as const,
+        }
+      : {
+          name: t("checkout.payLocalName"),
+          subtitle: getLocalPaymentMethods(country).join(" · ") || t("checkout.payLocalSub"),
+          icon: "bank" as const,
+        };
 
   useEffect(() => {
     if (open && !viewedTrackedRef.current) {
@@ -78,18 +95,9 @@ export function CheckoutModal({
     }
   }, [open, pricing, country, lockedCount]);
 
-
-  const wompiLiveConfigured = Boolean(process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY);
-  const [liveConfig, setLiveConfig] = useState<{ wompi: boolean; dlocal: boolean; loaded: boolean }>({
-    wompi: wompiLiveConfigured,
-    dlocal: false,
-    loaded: false,
-  });
-
   useEffect(() => {
     if (open) {
       setStep("method");
-      setGateway(pricing.primaryGateway);
       setError(null);
       referenceRef.current = `pdf2emails-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     }
@@ -100,9 +108,9 @@ export function CheckoutModal({
     let cancelled = false;
     fetch("/api/payments/config")
       .then((r) => (r.ok ? r.json() : null))
-      .then((cfg: { wompi?: boolean; dlocal?: boolean } | null) => {
+      .then((cfg: { paypal?: boolean; dlocal?: boolean } | null) => {
         if (!cancelled && cfg) {
-          setLiveConfig({ wompi: !!cfg.wompi, dlocal: !!cfg.dlocal, loaded: true });
+          setLiveConfig({ paypal: !!cfg.paypal, dlocal: !!cfg.dlocal, loaded: true });
         } else if (!cancelled) {
           setLiveConfig((c) => ({ ...c, loaded: true }));
         }
@@ -115,7 +123,9 @@ export function CheckoutModal({
     };
   }, [open]);
 
-  const demoMode = !(liveConfig.wompi || liveConfig.dlocal);
+  // El aviso de modo demo solo aparece cuando el servidor ya dijo que no hay
+  // ninguna pasarela con llaves (antes de eso no se sabe todavia).
+  const demoMode = liveConfig.loaded && !(liveConfig.paypal || liveConfig.dlocal);
 
   if (!open) return null;
 
@@ -133,22 +143,10 @@ export function CheckoutModal({
     });
   }
 
-  function loadWompiScript(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (window.WidgetCheckout) return resolve();
-      const script = document.createElement("script");
-      script.src = "https://checkout.wompi.co/widget.js";
-      script.async = true;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error("No se pudo cargar el widget de Wompi"));
-      document.head.appendChild(script);
-    });
-  }
-
   async function handlePay() {
     setError(null);
     trackEvent("checkout_clicked", {
-      gateway,
+      gateway: effectiveGateway,
       price: pricing.displayPrice,
       currency: "USD",
       amountUsd: pricing.priceUsd,
@@ -171,96 +169,50 @@ export function CheckoutModal({
       });
     }
 
-    if (gateway === "wompi" && liveConfig.wompi) {
+    if (effectiveGateway === "paypal" && liveConfig.paypal) {
       setStep("processing");
       try {
-        await loadWompiScript();
-        // El monto lo calcula el servidor a partir de pais+opcion — nunca lo
+        // El monto lo calcula el servidor a partir del pais+opcion — nunca lo
         // mandamos nosotros, para que no se pueda pagar un monto distinto al
         // real manipulando la llamada.
-        const intentRes = await fetch("/api/wompi/create-intent", {
+        const res = await fetch("/api/paypal/create-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ reference: referenceRef.current, option, country, coupon }),
         });
-        if (!intentRes.ok) {
-          const errBody = await intentRes.text().catch(() => "");
-          throw new Error(`WOMPI create-intent (${intentRes.status}): ${errBody.slice(0, 160)}`);
+        if (!res.ok) {
+          const errBody = await res.text().catch(() => "");
+          throw new Error(`PayPal create-order (${res.status}): ${errBody.slice(0, 160)}`);
         }
-        const intent = (await intentRes.json()) as {
-          signature: string;
-          amountInCents: number;
-          currency: string;
-        };
-
-        const publicKey = process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY;
-        if (!publicKey) {
-          throw new Error(
-            "NEXT_PUBLIC_WOMPI_PUBLIC_KEY no está inyectada en el bundle del cliente. Revisa la variable en Vercel y haz redeploy.",
-          );
-        }
-        if (typeof window.WidgetCheckout !== "function") {
-          throw new Error("window.WidgetCheckout no está definido tras cargar checkout.wompi.co/widget.js");
-        }
-
-        // Por si Wompi usa un metodo redirect (PSE) en vez del callback en
-        // pagina: dejamos rastro de a que compra pertenece esta transaccion
-        // para poder verificarla en /thank-you al volver.
+        const intent = (await res.json()) as { id: string; approveUrl: string };
+        // Deja rastro de a que compra pertenece esta orden: es lo que permite
+        // capturarla y confirmar el pago al volver de PayPal (ver /thank-you).
         try {
           window.localStorage.setItem(
             PENDING_PAYMENT_KEY,
-            JSON.stringify({ gateway: "wompi", reference: referenceRef.current, option, country, coupon }),
+            JSON.stringify({
+              gateway: "paypal",
+              orderId: intent.id,
+              reference: referenceRef.current,
+              option,
+              country,
+              coupon,
+            }),
           );
         } catch { /* noop */ }
-
-        // El backend convierte USD->COP (cuenta de Wompi solo COP). El widget debe
-        // cobrar la MISMA moneda y monto que la transaccion creada.
-        const widget = new window.WidgetCheckout!({
-          currency: intent.currency,
-          amountInCents: intent.amountInCents,
-          reference: referenceRef.current,
-          publicKey,
-          // El Widget JS de Wompi espera la firma como OBJETO { integrity }.
-          signature: { integrity: intent.signature },
-          redirectUrl: `${window.location.origin}/thank-you?paid=1`,
-        });
-        widget.open((result) => {
-          const tx = result.transaction;
-          if (!tx || tx.status !== "APPROVED") {
-            setStep("method");
-            setError(t("checkout.errWompi"));
-            return;
-          }
-          // El callback en pagina SOLO dice que el widget cree que se aprobo.
-          // Confirmamos contra la API real de Wompi antes de desbloquear nada.
-          void fetch("/api/wompi/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ transactionId: tx.id, reference: referenceRef.current, option, country, coupon }),
-          })
-            .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`verify ${r.status}`))))
-            .then((d: { ok: boolean; token?: string }) => {
-              if (!d.ok || !d.token) throw new Error("verify not ok");
-              try { window.localStorage.removeItem(PENDING_PAYMENT_KEY); } catch { /* noop */ }
-              handleSuccess("wompi", d.token);
-            })
-            .catch(() => {
-              setStep("method");
-              setError(t("checkout.errWompi"));
-            });
-        });
+        // PayPal aloja el checkout (tarjeta, saldo PayPal o cuenta bancaria):
+        // aqui se sale del sitio y se vuelve a /thank-you?paid=1&token=<orderId>.
+        window.location.href = intent.approveUrl;
       } catch (e) {
         const detail = e instanceof Error ? e.message : String(e);
         setStep("method");
-        // Muestra el detalle real del error para poder diagnosticar (útil en
-        // desarrollo / pruebas). En producción se conserva el mensaje general.
-        setError(`${t("checkout.errWompiStart")} — ${detail}`);
+        setError(`${t("checkout.errPaypalStart")} — ${detail}`);
       }
       return;
     }
 
     // Flujo real con dLocal Go (payment link / redirect).
-    if (gateway === "dlocal" && liveConfig.dlocal) {
+    if (effectiveGateway === "dlocal" && liveConfig.dlocal) {
       setStep("processing");
       try {
         const res = await fetch("/api/dlocal/create-payment", {
@@ -315,10 +267,10 @@ export function CheckoutModal({
       const d = (await res.json().catch(() => null)) as { ok?: boolean; token?: string } | null;
       if (!res.ok || !d?.ok || !d.token) throw new Error("demo token failed");
       await new Promise((r) => setTimeout(r, 500));
-      handleSuccess(gateway === "wompi" ? "wompi" : "demo", d.token);
+      handleSuccess("demo", d.token);
     } catch {
       setStep("method");
-      setError(t("checkout.errWompi"));
+      setError(t("checkout.errPaypal"));
     }
   }
 
@@ -381,7 +333,7 @@ export function CheckoutModal({
             </p>
             <div className="mt-2 flex items-center gap-3 rounded-xl border border-emerald-500 bg-emerald-50/50 px-4 py-3 ring-1 ring-emerald-500">
               <span className="text-emerald-700">
-                {gwMeta.icon === "card" ? <CreditCard size={18} /> : <Landmark size={18} />}
+                {gwMeta.icon === "wallet" ? <Wallet size={18} /> : <Landmark size={18} />}
               </span>
               <span>
                 <span className="block text-sm font-semibold text-slate-800">

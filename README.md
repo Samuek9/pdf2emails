@@ -11,7 +11,7 @@ según el país del visitante.
 
 - Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS · Lucide Icons
 - `pdfjs-dist` para leer PDFs 100% en el navegador (el archivo nunca se sube a un servidor)
-- Wompi (tarjeta internacional) + dLocal Go (PSE/Pix/OXXO) — con **modo demo** si no hay credenciales
+- PayPal (cobro global: tarjeta, saldo PayPal o cuenta bancaria) + dLocal Go (PSE/Pix/OXXO) — con **modo demo** si no hay credenciales
 - PostHog (opcional) para el tracking del embudo; sin key se loguea por consola en dev
 
 ## Estructura
@@ -24,9 +24,10 @@ pdf2emails/
       layout.tsx               # Header + Footer + metadata SEO
       page.tsx                 # Landing: hero, extractor, precios, FAQ, CTA
       globals.css              # Tailwind + clases de UI
-      api/wompi/
-        create-intent/route.ts # Crea transaccion WOMPI + firma de integridad
-        verify/route.ts        # Consulta estado de una transaccion WOMPI
+      api/paypal/
+        create-order/route.ts   # Crea la orden PayPal + link de aprobacion
+        capture/route.ts        # Captura y confirma el pago (emite el token)
+        webhook/route.ts        # Red de seguridad: captura ordenes aprobadas huerfanas
     lib/
       pdf.ts                   # Extraccion de texto con pdfjs-dist
       emails.ts                # Regex, clasificacion, filtros y dedup
@@ -34,12 +35,12 @@ pdf2emails/
       pricing.ts               # PPP: LATAM $7.99 / ROW $19 + pasarelas
       countries.ts             # Listas LATAM/ROW + lectura de pais
       analytics.ts             # trackEvent + initAnalytics (PostHog lazy)
-      wompi.ts                 # Helpers server-side de WOMPI
+      paypal.ts                # Helpers server-side de PayPal (Orders API v2)
       types.ts
     components/
       PdfDropzone.tsx          # Drag & drop de PDF
       ResultsPanel.tsx         # Metricas, filtros, tabla, paywall, descarga
-      CheckoutModal.tsx        # Checkout PPP (Wompi/dLocal, modo demo)
+      CheckoutModal.tsx        # Checkout PPP (PayPal/dLocal, modo demo)
       FeedbackWidget.tsx       # Feedback de 1 clic post-descarga
       Header.tsx / Footer.tsx  # Footer incluye selector de pais (demo PPP)
 ```
@@ -68,8 +69,8 @@ Typecheck: `npm run typecheck` · Build de produccion: `npm run build`.
 
 | Región | Precio | Pasarela principal | Secundaria |
 |---|---|---|---|
-| LATAM (CO, MX, AR, CL, PE, BR…) | $7.99 USD (~ $32,000 COP) | dLocal Go (PSE/Pix/OXXO) | Wompi |
-| Resto del mundo | $19 USD | Wompi (tarjeta internacional) | dLocal Go |
+| LATAM (CO, MX, AR, CL, PE, BR…) | $7.99 USD (~ $32,000 COP) | PayPal | dLocal Go (PSE/Pix/OXXO) |
+| Resto del mundo | $19 USD | PayPal | dLocal Go |
 
 El país se detecta por `x-vercel-ip-country` (Vercel). En local, usa `NEXT_PUBLIC_DEFAULT_COUNTRY`.
 El middleware lo guarda en la cookie `user_country`.
@@ -77,9 +78,13 @@ El middleware lo guarda en la cookie `user_country`.
 ## Pagos (modo demo vs real)
 
 - **Sin credenciales** → el checkout corre en **modo demo**: el pago se simula para validar el embudo.
-- **Wompi real**: define `NEXT_PUBLIC_WOMPI_PUBLIC_KEY`, `WOMPI_PRIVATE_KEY` y `WOMPI_INTEGRITY_KEY`
-  en el servidor. El frontend usa el widget `checkout.wompi.co/widget.js` y las rutas
-  `/api/wompi/create-intent` y `/api/wompi/verify` crean/verifican la transaccion.
+- **PayPal real**: define `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` y `PAYPAL_ENV=live` (sandbox por
+  defecto) en el servidor, y crea el webhook en el dashboard de PayPal con los eventos
+  `CHECKOUT.ORDER.APPROVED`, `PAYMENT.CAPTURE.COMPLETED` y `PAYMENT.CAPTURE.DENIED` (su ID va en
+  `PAYPAL_WEBHOOK_ID`). El cliente sale del sitio a la pantalla de PayPal (`/api/paypal/create-order`
+  devuelve el `approveUrl`) y al volver a `/thank-you?paid=1&token=<orderId>` el servidor **captura**
+  la orden y confirma el monto en `/api/paypal/capture` antes de desbloquear nada. El webhook solo es
+  la red de seguridad: si el navegador no vuelve, captura la orden aprobada que quedo huerfana.
 - **dLocal Go real** (PSE, Pix, OXXO, tarjetas locales): define `DLOCAL_API_KEY`, `DLOCAL_SECRET_KEY`
   y `DLOCAL_ENV` (`sbx` o `live`). El cliente crea un payment link en `/api/dlocal/create-payment` y
   redirige al checkout de dLocal Go (`redirect_url`). Al volver a `/ ?paid=1` la landing desbloquea.

@@ -29,7 +29,7 @@ export interface ParsedPdf {
   totalRaw: number;
 }
 
-export type Gateway = "wompi" | "dlocal";
+export type Gateway = "paypal" | "dlocal";
 
 export interface Pricing {
   region: "latam" | "row";
